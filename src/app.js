@@ -13,44 +13,43 @@ function Apple() {
 
   //- rels:
   this.grow = function(apple) {
-    weight = apple.weight;
+    // if (apple.weight > 0.0 && apple.weight < 200.0) {
+      this.weight = apple.weight;
+      return true;
+    // }
+    // return false;
   };
   this.eat = function(apple) {
-    apple.weight < 0.0 ? weight = 0.0 : weight = apple.weight;
+    // if (apple.weight >= 200.0 && apple.weight <= 300.0) {
+      this.weight = 0.0;
+      return true;
+    // }
+    // return false;
   };
   this.toss = function(apple) {
-    weight = 0.0;
+    this.weight = 0.0;
+    return true;
   };
 
   //- states:
   this.state_growing = function() {
-    if ((this.weight >= 0.1 && this.weight < 200.0) === true) {
-      return [{
-        rel: 'grow',
-        method: "put"
-      }, {
-        rel: 'toss',
-        method: "delete"
-      }];
+    if (this.weight > 0.0 && this.weight < 200.0) {
+      return [{ rel: 'grow', method: "put" },
+              { rel: 'toss', method: "delete"}];
     }
     return false;
   };
 
   this.state_ready_to_eat = function() {
-    if ((this.weight >= 200.0) === true) {
-      return [{
-        rel: 'eat',
-        method: "put"
-      }, {
-        rel: 'toss',
-        method: "delete"
-      }];
+    if (this.weight >= 200.0 && this.weight < 300.0) {
+      return [{ rel: 'eat', method: "put" },
+              { rel: 'toss', method: "delete" }];
     }
     return false;
   };
 
   this.state_done = function() {
-    if ((this.weight < 0.1) === true) {
+    if (this.weight === 0.0) {
       return [];
     }
     return false;
@@ -68,20 +67,28 @@ function Todo() {
 
   //- rels:
   this.save = function(todo) {
-    this.done = false;
-    this.archived = false;
+    if(content.length <= 256) {
+      this.done = false;
+      this.archived = false;
+      return true;
+    }
+    return false;
   };
   this.markDone = function(todo) {
     this.done = true;
+    return true;
   };
   this.markNotDone = function(todo) {
     this.done = false;
+    return true;
   };
-  this.archine = function(todo) {
+  this.archive = function(todo) {
     this.archived = true;
+    return true;
   };
   this.reinstate = function(apple) {
     this.archived = false;
+    return true;
   };
   this.deleteValid = function(apple) {
     if (this.archived) return true;
