@@ -166,6 +166,14 @@ exports.Resource = function(entityCtor) {
     return halRep;
   };
 
+  function createAndStore(body, entity) {
+    var entity = new entityCtor();
+    validatePropertiesMatch(body, entity);
+    R.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
+    storage.setItem(entity.id, entity);
+    return getHalRep(typeName, entity); //todo: - return 201 (Created) -
+  }
+
   function execute(from, rel, body, entity) {
     var result = entity[rel](body);
     if (result) {
@@ -194,7 +202,6 @@ exports.Resource = function(entityCtor) {
     var entity = storage.getItem(idAndRel.id);
 
     validatePropertiesMatch(body, entity);
-
     checkIfApiCallAllowed(idAndRel.rel, entity);
 
     //- update entity
@@ -204,41 +211,26 @@ exports.Resource = function(entityCtor) {
 
   this.post = function(path, body) {
     validateType(path, 'POST');
-
     var idAndRel = getIdAndRelFromPath(path);
     if(idAndRel.id === 0) {
-      var entity = new entityCtor();
-
-      //- validate that incoming properties exist
-      validatePropertiesMatch(body, entity);
-
-      R.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
-      storage.setItem(entity.id, entity);
-
-      //- return HAL representation - 201 (Created) -
-      return getHalRep(typeName, entity);
+      return createAndStore(body, entity);
     }
-
-    //-
-    //- process post message id !== 0 and body.props don't have to exist on entity
+    //- else: process post message id !== 0 and body.props don't have to exist on entity
     var entity = storage.getItem(idAndRel.id);
     checkIfApiCallAllowed(idAndRel.rel, entity);
     return execute('POST', idAndRel.rel, body, entity);
   };
 
   this.patch = function(path, body) {
-    validateType(path, 'PUT');
+    validateType(path, 'PATCH');
     var idAndRel = getIdAndRelFromPath(path);
     var entity = storage.getItem(idAndRel.id);
 
-    //- validate that all incoming properties exist - full match not needed
     validatePropertiesExist(body, entity);
-
     checkIfApiCallAllowed(idAndRel.rel, entity);
 
     //- update entity
     R.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
-
     return execute('PATCH', idAndRel.rel, body, entity);
   };
 
