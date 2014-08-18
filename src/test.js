@@ -17,10 +17,10 @@ clearStorage();
 var reqGetAll = { method: 'get', url: 'http://test.demo.com/api/apples/', body: {}};
 var all = handle(app, reqGetAll);
 var createPath = all.getLink('create')['href'];
-var reqCreate = { method: 'post', url: createPath, body: { color: 'red', weight: 10.1 }};
+var reqCreate = { method: 'post', url: createPath, body: { color: 'red', weight: 10.0 }};
 var apple = handle(app, reqCreate);
   expect(apple.listLinkRels().length).to.be(3);
-  expect(apple.weight).to.be(10.1);
+  expect(apple.weight).to.be(10.0);
   expect(R.contains('self', apple.listLinkRels())).to.be(true);
   expect(R.contains('grow', apple.listLinkRels())).to.be(true);
   expect(R.contains('toss', apple.listLinkRels())).to.be(true);
@@ -29,18 +29,17 @@ var apple = handle(app, reqCreate);
 var selfPath = apple.getLink('self')['href'];
 var reqGetSelf = { method: 'get', url: selfPath, body: {}};
 apple = handle(app, reqGetSelf);
-  expect(apple.weight).to.be(10.1);
+  expect(apple.weight).to.be(10.0);
   expect(apple.listLinkRels().length).to.be(3);
   expect(R.contains('self', apple.listLinkRels())).to.be(true);
   expect(R.contains('grow', apple.listLinkRels())).to.be(true);
   expect(R.contains('toss', apple.listLinkRels())).to.be(true);
 
-//- call 'grow' api
+//- call 'grow' api (post - with id and propertis that don't exist on entity)
 var growPath = apple.getLink('grow')['href'];
-var reqGrow = { method: 'put', url: growPath, body: { color: 'red', weight: 230.0 }};
+var reqGrow = { method: 'post', url: growPath, body: { weightIncr: 230.0 }};
 apple = handle(app, reqGrow);
-log(apple);
-  expect(apple.weight).to.be(230.0);
+  expect(apple.weight).to.be(240.0);
   expect(apple.listLinkRels().length).to.be(3);
   expect(R.contains('self', apple.listLinkRels())).to.be(true);
   expect(R.contains('eat', apple.listLinkRels())).to.be(true);
@@ -48,7 +47,7 @@ log(apple);
 
 //- call 'eat' api
 var eatPath = apple.getLink('eat')['href'];
-var reqEat = { method: 'put', url: eatPath, body: { color: 'red', weight: 230.0 }};
+var reqEat = { method: 'post', url: eatPath, body: { weightDecr: 240.0 }};
 handle(app, reqEat);
 apple = handle(app, reqGetSelf);
   expect(apple.weight).to.be(0.0);

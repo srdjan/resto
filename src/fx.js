@@ -70,7 +70,7 @@ function createHalRoot(typeName, entity) {
 function getHalRep(typeName, entity) {
   var halRep = createHalRoot(typeName, entity);
   var links = getLinksForCurrentState(entity);
-  R.each(function(el, index, array) {
+  R.each(function(el) {
     halRep.addLink(el.rel, { href: '/api/' + typeName + 's/' + atob(entity.id + '/' + el.rel), method: el.method });
   }, links);
   return halRep;
@@ -104,6 +104,18 @@ exports.trimLeftAndRight = function(str, ch) {
 exports.Resource = function(entityCtor) {
   var entityCtor = entityCtor;
   var typeName = entityCtor.toString().match(/function ([^\(]+)/)[1].toLowerCase();
+
+  function checkIfApiCallAllowed(reqRel, entity) {
+    var links = getLinksForCurrentState(entity);
+    if ( ! R.some(function(link) { return link.rel === reqRel; }, links)) {
+      throw {
+        statusCode: 409,
+        message: 'Conflict',
+        log: 'Error: API call not allowed, rel: ' + reqRel + ' entity: ' + JSON.stringify(entity)
+      }
+    }
+    return true;
+  }
 
   function validateType(path, method) {
     var typeNameFromPath = getTypeFromPath(path);
@@ -154,6 +166,20 @@ exports.Resource = function(entityCtor) {
     return halRep;
   };
 
+  function execute(from, rel, body, entity) {
+    var result = entity[rel](body);
+    if (result) {
+      storage.setItem(entity.id, entity);
+      return getHalRep(typeName, entity);
+    }
+    throw {
+      statusCode: 422,
+      message: 'Unprocessable Entity',
+      log: from + ": Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)
+    };
+  }
+
+  //- public api -----
   this.get = function(path) {
     validateType(path, 'GET');
     var id = getIdFromPath(path);
@@ -167,35 +193,13 @@ exports.Resource = function(entityCtor) {
     var idAndRel = getIdAndRelFromPath(path);
     var entity = storage.getItem(idAndRel.id);
 
-    //- validate that all incoming properties match - otherwise PATCH should be used
     validatePropertiesMatch(body, entity);
 
-    //- check if API call allowed
-    var links = getLinksForCurrentState(entity);
-    if ( ! R.some(function(rel) { return rel.rel === idAndRel.rel; }, links)) {
-      throw {
-        statusCode: 409,
-        message: 'Conflict',
-        log: 'Error: API call not allowed, rel: ' + idAndRel.rel + ' entity: ' + JSON.stringify(entity)
-      }
-    }
+    checkIfApiCallAllowed(idAndRel.rel, entity);
 
     //- update entity
     R.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
-
-    //- execute domain logic and save entity changes
-    var result = entity[idAndRel.rel](entity);
-    if (result) {
-      storage.setItem(entity.id, entity);
-      return getHalRep(typeName, entity);
-    }
-
-    //- return error
-    throw {
-      statusCode: 422,
-      message: 'Unprocessable Entity',
-      log: "PUT: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)
-    };
+    return execute('PUT', idAndRel.rel, body, entity);
   };
 
   this.post = function(path, body) {
@@ -215,8 +219,11 @@ exports.Resource = function(entityCtor) {
       return getHalRep(typeName, entity);
     }
 
-    //-todo process post message id !== 0 and body.props don't have to exist on entity
-
+    //-
+    //- process post message id !== 0 and body.props don't have to exist on entity
+    var entity = storage.getItem(idAndRel.id);
+    checkIfApiCallAllowed(idAndRel.rel, entity);
+    return execute('POST', idAndRel.rel, body, entity);
   };
 
   this.patch = function(path, body) {
@@ -227,31 +234,12 @@ exports.Resource = function(entityCtor) {
     //- validate that all incoming properties exist - full match not needed
     validatePropertiesExist(body, entity);
 
-    //- check if API call allowed
-    var links = getLinksForCurrentState(entity);
-    if ( ! R.some(function(rel) { return rel.rel === idAndRel.rel; }, links)) {
-      throw {
-        statusCode: 409,
-        message: 'Conflict',
-        log: 'Error: API call not allowed, rel: ' + idAndRel.rel + ' entity: ' + JSON.stringify(entity)
-      }
-    }
+    checkIfApiCallAllowed(idAndRel.rel, entity);
 
     //- update entity
     R.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
 
-    //- execute domain logic and save entity changes
-    if (entity[idAndRel.rel](entity)) {
-      storage.setItem(entity.id, entity);
-      return getHalRep(typeName, entity);
-    }
-
-    //- return error
-    throw {
-      statusCode: 422,
-      message: 'Unprocessable Entity',
-      log: "PUT: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)
-    };
+    return execute('PATCH', idAndRel.rel, body, entity);
   };
 
   this.delete = function(path) {

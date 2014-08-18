@@ -12,18 +12,20 @@ function Apple() {
   this.color = 'green';
 
   //- rels:
-  this.grow = function(apple) {
-    if (apple.weight > 0.0 && apple.weight < 300.0) {
-      this.weight = apple.weight;
+  this.grow = function(msg) {
+    if (this.weight > 0.0 && this.weight < 300.0) {
+      this.weight += msg.weightIncr;
       return true;
     }
     fx.log('apple.grow validation failed!');
     return false;
   };
-  this.eat = function(apple) {
-    if (apple.weight >= 200.0 && apple.weight <= 300.0) {
-      this.weight = 0.0;
-      return true;
+  this.eat = function(msg) {
+    if (this.weight >= 200.0 && this.weight <= 300.0) {
+      if (this.weight <= msg.weightDecr) {
+        this.weight -= msg.weightDecr;
+        return true;
+      }
     }
     fx.log('apple.eat validation failed!');
     return false;
