@@ -13,18 +13,20 @@ function Apple() {
 
   //- rels:
   this.grow = function(apple) {
-    // if (apple.weight > 0.0 && apple.weight < 200.0) {
+    if (apple.weight > 0.0 && apple.weight < 300.0) {
       this.weight = apple.weight;
       return true;
-    // }
-    // return false;
+    }
+    fx.log('apple.grow validation failed!');
+    return false;
   };
   this.eat = function(apple) {
-    // if (apple.weight >= 200.0 && apple.weight <= 300.0) {
+    if (apple.weight >= 200.0 && apple.weight <= 300.0) {
       this.weight = 0.0;
       return true;
-    // }
-    // return false;
+    }
+    fx.log('apple.eat validation failed!');
+    return false;
   };
   this.toss = function(apple) {
     this.weight = 0.0;

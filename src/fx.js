@@ -184,7 +184,8 @@ exports.Resource = function(entityCtor) {
     R.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
 
     //- execute domain logic and save entity changes
-    if (entity[idAndRel.rel](entity)) {
+    var result = entity[idAndRel.rel](entity);
+    if (result) {
       storage.setItem(entity.id, entity);
       return getHalRep(typeName, entity);
     }

@@ -37,9 +37,10 @@ apple = handle(app, reqGetSelf);
 
 //- call 'grow' api
 var growPath = apple.getLink('grow')['href'];
-var reqGrow = { method: 'put', url: growPath, body: { color: 'red', weight: 290.0 }};
+var reqGrow = { method: 'put', url: growPath, body: { color: 'red', weight: 230.0 }};
 apple = handle(app, reqGrow);
-  expect(apple.weight).to.be(290.0);
+log(apple);
+  expect(apple.weight).to.be(230.0);
   expect(apple.listLinkRels().length).to.be(3);
   expect(R.contains('self', apple.listLinkRels())).to.be(true);
   expect(R.contains('eat', apple.listLinkRels())).to.be(true);
@@ -47,7 +48,7 @@ apple = handle(app, reqGrow);
 
 //- call 'eat' api
 var eatPath = apple.getLink('eat')['href'];
-var reqEat = { method: 'put', url: eatPath, body: { color: 'none', weight: 0.0 }};
+var reqEat = { method: 'put', url: eatPath, body: { color: 'red', weight: 230.0 }};
 handle(app, reqEat);
 apple = handle(app, reqGetSelf);
   expect(apple.weight).to.be(0.0);
