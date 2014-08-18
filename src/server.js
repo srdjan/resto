@@ -59,22 +59,16 @@ function processStaticFiles(fileName, response) {
 http.createServer(function(request, response) {
   var uri = url.parse(request.url).pathname;
   uri = fx.trimLeftAndRight(uri, '/');
+
+  fx.log(uri);
   if (uri.indexOf('api/') !== -1) {
     return processApi(request, response);
   }
-  if (uri.indexOf('/hal-browser') === -1) {
-    fx.log('hal-browser required in non-api path...');
-    response.writeHeader(404, {
-      "Content-Type": "application/json"
-    });
-    response.end();
-    return response;
-  }
 
+  var root = process.cwd();
   var tokens = uri.split('/');
-  tokens.shift();
-  if (tokens[tokens.length - 1] === 'hal-browser') tokens.push('index.html');
-  var fileName = path.join('../', tokens.join('/'));
+  var domin = tokens.shift();
+  var fileName = path.join(root, tokens.join('/'));
 
   fs.exists(fileName, function(exists) {
     if (!exists) {
