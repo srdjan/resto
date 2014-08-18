@@ -166,7 +166,7 @@ exports.Resource = function(entityCtor) {
     return halRep;
   };
 
-  function createAndStore(body, entity) {
+  function createAndStore(body) {
     var entity = new entityCtor();
     validatePropertiesMatch(body, entity);
     R.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
@@ -211,9 +211,10 @@ exports.Resource = function(entityCtor) {
 
   this.post = function(path, body) {
     validateType(path, 'POST');
+
     var idAndRel = getIdAndRelFromPath(path);
     if(idAndRel.id === 0) {
-      return createAndStore(body, entity);
+      return createAndStore(body);
     }
     //- else: process post message id !== 0 and body.props don't have to exist on entity
     var entity = storage.getItem(idAndRel.id);

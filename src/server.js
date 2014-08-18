@@ -5,15 +5,18 @@ var fs = require("fs");
 var fx = require('./fx.js');
 var app = require('./app.js');
 
-port = process.argv[2] || 8080;
+port = process.argv[2] || 8050;
 
 function processApi(req, response) {
   var body = '';
   if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') {
     req.on('data', function(chunk) {
+      fx.log('on.data');
       body += chunk.toString();
     });
+
     req.on('end', function() {
+      fx.log('on.end');
       req.body = JSON.parse(body);
       var result = fx.handle(app, req);
       var code = result.hasOwnProperty('statusCode') ? result.statusCode : 200;
@@ -22,6 +25,7 @@ function processApi(req, response) {
       });
       response.write(JSON.stringify(result));
       response.end();
+      return response;
     });
   }
   else {
@@ -32,8 +36,8 @@ function processApi(req, response) {
     });
     response.write(JSON.stringify(result));
     response.end();
+    return response;
   }
-  return response;
 };
 
 function processStaticFiles(fileName, response) {
@@ -57,17 +61,23 @@ function processStaticFiles(fileName, response) {
 //-- server --
 //--
 http.createServer(function(request, response) {
+  var root = process.cwd();
   var uri = url.parse(request.url).pathname;
   uri = fx.trimLeftAndRight(uri, '/');
 
-  fx.log(uri);
   if (uri.indexOf('api/') !== -1) {
     return processApi(request, response);
   }
 
-  var root = process.cwd();
   var tokens = uri.split('/');
-  var domin = tokens.shift();
+  tokens.shift();
+  if(tokens.length === 0) {
+    tokens.push('hal-browser');
+    tokens.push('index.html');
+  }
+  else {
+    tokens.unshift('hal-browser');
+  }
   var fileName = path.join(root, tokens.join('/'));
 
   fs.exists(fileName, function(exists) {

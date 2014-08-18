@@ -16,6 +16,7 @@ clearStorage();
 //-  test get all
 var reqGetAll = { method: 'get', url: 'http://test.demo.com/api/apples/', body: {}};
 var all = handle(app, reqGetAll);
+
 var createPath = all.getLink('create')['href'];
 var reqCreate = { method: 'post', url: createPath, body: { color: 'red', weight: 10.0 }};
 var apple = handle(app, reqCreate);
@@ -24,6 +25,10 @@ var apple = handle(app, reqCreate);
   expect(R.contains('self', apple.listLinkRels())).to.be(true);
   expect(R.contains('grow', apple.listLinkRels())).to.be(true);
   expect(R.contains('toss', apple.listLinkRels())).to.be(true);
+
+all = handle(app, reqGetAll);
+var embeds = all.getEmbeds('apples');
+  expect(embeds.length).to.be(1);
 
 //- test invariants
 var selfPath = apple.getLink('self')['href'];
@@ -60,13 +65,14 @@ apple = handle(app, reqGrow);
   expect(apple.statusCode).to.be(409);
 
 // //- test GetAll
+reqCreate = { method: 'post', url: createPath, body: { color: 'yellow', weight: 10.0 }};
 apple = handle(app, reqCreate);
-apple = handle(app, reqCreate);
+reqCreate = { method: 'post', url: createPath, body: { color: 'green', weight: 10.0 }};
 apple = handle(app, reqCreate);
 
 all = handle(app, reqGetAll);
-var embeds = all.getEmbeds('apples');
-  expect(embeds.length).to.be(4);
+embeds = all.getEmbeds('apples');
+  expect(embeds.length).to.be(3);
 
 //- clean
 clearStorage();
