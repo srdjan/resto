@@ -6,34 +6,31 @@ var R = require('ramda');
 var expect = require('expect.js');
 var fx = require('./fx.js');
 var app = require('./app.js');
-var log = fx.log;
-var clearStorage = fx.clearStorage;
-var handle = fx.handle;
 
 //- prepare
-clearStorage();
+fx.clearStorage();
 
 //-  test get all
 var reqGetAll = { method: 'get', url: 'http://test.demo.com/api/apples/', body: {}};
-var all = handle(app, reqGetAll);
+var all = fx.handle(app, reqGetAll);
 
 var createPath = all.getLink('create')['href'];
 var reqCreate = { method: 'post', url: createPath, body: { color: 'red', weight: 10.0 }};
-var apple = handle(app, reqCreate);
+var apple = fx.handle(app, reqCreate);
   expect(apple.listLinkRels().length).to.be(3);
   expect(apple.weight).to.be(10.0);
   expect(R.contains('self', apple.listLinkRels())).to.be(true);
   expect(R.contains('grow', apple.listLinkRels())).to.be(true);
   expect(R.contains('toss', apple.listLinkRels())).to.be(true);
 
-all = handle(app, reqGetAll);
+all = fx.handle(app, reqGetAll);
 var embeds = all.getEmbeds('apples');
   expect(embeds.length).to.be(1);
 
 //- test invariants
 var selfPath = apple.getLink('self')['href'];
 var reqGetSelf = { method: 'get', url: selfPath, body: {}};
-apple = handle(app, reqGetSelf);
+apple = fx.handle(app, reqGetSelf);
   expect(apple.weight).to.be(10.0);
   expect(apple.listLinkRels().length).to.be(3);
   expect(R.contains('self', apple.listLinkRels())).to.be(true);
@@ -43,7 +40,7 @@ apple = handle(app, reqGetSelf);
 //- call 'grow' api (post - with id and propertis that don't exist on entity)
 var growPath = apple.getLink('grow')['href'];
 var reqGrow = { method: 'post', url: growPath, body: { weightIncr: 230.0 }};
-apple = handle(app, reqGrow);
+apple = fx.handle(app, reqGrow);
   expect(apple.weight).to.be(240.0);
   expect(apple.listLinkRels().length).to.be(3);
   expect(R.contains('self', apple.listLinkRels())).to.be(true);
@@ -53,26 +50,26 @@ apple = handle(app, reqGrow);
 //- call 'eat' api
 var eatPath = apple.getLink('eat')['href'];
 var reqEat = { method: 'post', url: eatPath, body: { weightDecr: 240.0 }};
-handle(app, reqEat);
-apple = handle(app, reqGetSelf);
+fx.handle(app, reqEat);
+apple = fx.handle(app, reqGetSelf);
   expect(apple.weight).to.be(0.0);
   expect(apple.listLinkRels().length).to.be(1);
   expect(R.contains('self', apple.listLinkRels())).to.be(true);
 
 //- test api whitelisting - should not be able to call 'grow' in tis state
-apple = handle(app, reqGrow);
+apple = fx.handle(app, reqGrow);
   expect(apple).to.have.property('statusCode');
   expect(apple.statusCode).to.be(409);
 
 // //- test GetAll
 reqCreate = { method: 'post', url: createPath, body: { color: 'yellow', weight: 10.0 }};
-apple = handle(app, reqCreate);
+apple = fx.handle(app, reqCreate);
 reqCreate = { method: 'post', url: createPath, body: { color: 'green', weight: 10.0 }};
-apple = handle(app, reqCreate);
+apple = fx.handle(app, reqCreate);
 
-all = handle(app, reqGetAll);
+all = fx.handle(app, reqGetAll);
 embeds = all.getEmbeds('apples');
   expect(embeds.length).to.be(3);
 
 //- clean
-clearStorage();
+fx.clearStorage();
