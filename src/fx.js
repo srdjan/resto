@@ -3,19 +3,9 @@
 //---------------------------------------------------------------------------------
 'use strict;'
 var fn = require('./fn.js');
-var storage = require('node-persist');
+var datastore = require('./datastore.js');
 var halson = require('halson');
 var log = console.log;
-
-storage.initSync({
-  dir: '../../../../datastore',
-  stringify: JSON.stringify,
-  parse: JSON.parse,
-  encoding: 'utf8',
-  logging: false, // can also be custom logging function
-  continuous: true,
-  interval: false
-});
 
 //- api/apples || api/apples/abc3b4=1
 function getIdFromPath(path) {
@@ -80,35 +70,23 @@ function getHalRep(typeName, entity) {
   return halRep;
 }
 
-//-- exports ------------------------------------------------------------
-//--
-var milis = 0;
-exports.id = function() {
-  milis = new Date().getTime();
-  return (milis += 1).toString();
-};
-exports.log = log;
-exports.clearStorage = function() {
-  storage.clear();
-};
-exports.trimLeftAndRight = function(str, ch) {
-  return str.replace(new RegExp("^[" + ch + "]+"), "").replace(new RegExp("[" + ch + "]+$"), "");
+function checkIfApiCallAllowed(reqRel, entity) {
+  var links = getLinksForCurrentState(entity);
+  if ( ! fn.some(function(link) { return link.rel === reqRel; }, links)) {
+    throw {
+      statusCode: 409,
+      message: 'Conflict',
+      log: 'Error: API call not allowed, rel: ' + reqRel + ' entity: ' + JSON.stringify(entity)
+    }
+  }
+  return true;
 }
+
+//-- exports ------------------------------------------------------------
+//-----------------------------------------------------------------------
 exports.Resource = function(entityCtor) {
   var entityCtor = entityCtor;
   var typeName = entityCtor.toString().match(/function ([^\(]+)/)[1].toLowerCase();
-
-  function checkIfApiCallAllowed(reqRel, entity) {
-    var links = getLinksForCurrentState(entity);
-    if ( ! fn.some(function(link) { return link.rel === reqRel; }, links)) {
-      throw {
-        statusCode: 409,
-        message: 'Conflict',
-        log: 'Error: API call not allowed, rel: ' + reqRel + ' entity: ' + JSON.stringify(entity)
-      }
-    }
-    return true;
-  }
 
   function validateType(path, method) {
     var typeNameFromPath = getTypeFromPath(path);
@@ -135,14 +113,14 @@ exports.Resource = function(entityCtor) {
     var entity = new entityCtor();
     validatePropertiesMatch(body, entity);
     fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
-    storage.setItem(entity.id, entity);
+    datastore.save(entity.id, entity);
     return getHalRep(typeName, entity); //todo: - return 201 (Created) -
   }
 
   function execute(from, rel, body, entity) {
     var result = entity[rel](body);
     if (result) {
-      storage.setItem(entity.id, entity);
+      datastore.save(entity.id, entity);
       return getHalRep(typeName, entity);
     }
     throw {
@@ -153,7 +131,7 @@ exports.Resource = function(entityCtor) {
   }
 
   function getById(id) {
-    var entity = storage.getItem(id);
+    var entity = datastore.get(id);
     if (typeof entity === 'undefined') {
       throw { statusCode: 404, message: 'Not Found', log: "GET: entity === undefined" };
     }
@@ -165,15 +143,14 @@ exports.Resource = function(entityCtor) {
       .addLink('self', '/api/' + typeName + 's')
       .addLink('create', { href: '/api/' + typeName + 's/' + fn.atob('create'), method: 'POST'});
 
-    storage.values(function(entities) {
-      if (entities.length >= 1) {
-        var embeds = getEmbeds(entities);
-        if (embeds.length > 0) {
-          embeds = fn.map(function(embed) { halson({}).addLink('self', '/api/' + typeName + 's/' + fn.atob(embed.id)); }, embeds);
-          fn.each(function(el, index, array) { halRep.addEmbed(typeName + 's', el); }, embeds);
-        }
+    var entities = datastore.getAll();
+    if (entities.length >= 1) {
+      var embeds = getEmbeds(entities);
+      if (embeds.length > 0) {
+        embeds = fn.map(function(embed) { halson({}).addLink('self', '/api/' + typeName + 's/' + fn.atob(embed.id)); }, embeds);
+        fn.each(function(el, index, array) { halRep.addEmbed(typeName + 's', el); }, embeds);
       }
-    });
+    }
     return halRep;
   };
 
@@ -190,7 +167,7 @@ exports.Resource = function(entityCtor) {
   this.put = function(path, body) {
     validateType(path, 'PUT');
     var idAndRel = getIdAndRelFromPath(path);
-    var entity = storage.getItem(idAndRel.id);
+    var entity = datastore.get(idAndRel.id);
 
     validatePropertiesMatch(body, entity);
     checkIfApiCallAllowed(idAndRel.rel, entity);
@@ -208,7 +185,7 @@ exports.Resource = function(entityCtor) {
       return createAndStore(body);
     }
     //- else: process post message id !== 0 and body.props don't have to exist on entity
-    var entity = storage.getItem(idAndRel.id);
+    var entity = datastore.get(idAndRel.id);
     checkIfApiCallAllowed(idAndRel.rel, entity);
     return execute('POST', idAndRel.rel, body, entity);
   };
@@ -216,7 +193,7 @@ exports.Resource = function(entityCtor) {
   this.patch = function(path, body) {
     validateType(path, 'PATCH');
     var idAndRel = getIdAndRelFromPath(path);
-    var entity = storage.getItem(idAndRel.id);
+    var entity = datastore.get(idAndRel.id);
 
     validatePropertiesExist(body, entity);
     checkIfApiCallAllowed(idAndRel.rel, entity);
@@ -228,7 +205,7 @@ exports.Resource = function(entityCtor) {
 
   this.delete = function(path) {
     validateType(path, 'DELETE');
-    // storage.removeItem(url);
+    // datastore.removeItem(url);
     throw {
       statusCode: 501,
       message: 'Not Implemented',
@@ -240,7 +217,7 @@ exports.Resource = function(entityCtor) {
 exports.handle = function(app, req) {
   try {
     var path = req.url.substring(req.url.indexOf('api'), req.url.length);
-    path = exports.trimLeftAndRight(path, '/');
+    path = fn.trimLeftAndRight(path, '/');
     var resource = app[getTypeFromPath(path) + 'Resource'];
     var handler = resource[req.method.toLowerCase()];
     return handler(path, req.body);

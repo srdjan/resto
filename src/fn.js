@@ -15,6 +15,10 @@ exports.btoa = function(str) {
   return res.replace('-', '+').replace('_', '/').replace(',', '=');
 }
 
+exports.trimLeftAndRight = function(str, ch) {
+  return str.replace(new RegExp("^[" + ch + "]+"), "").replace(new RegExp("[" + ch + "]+$"), "");
+}
+
 exports.contains = R.contains;
 exports.filter = R.filter;
 exports.each = R.each;

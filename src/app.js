@@ -3,11 +3,12 @@
 //---------------------------------------------------------------------------------
 'use strict;'
 var fx = require('./fx.js');
+var datastore = require('./datastore.js');
 
 //--  Apple app APi
 //--
 function Apple() {
-  this.id = fx.id();
+  this.id = datastore.createId();
   this.weight = 0.1;
   this.color = 'green';
 

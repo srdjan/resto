@@ -3,6 +3,7 @@ var http = require("http");
 var url = require("url");
 var path = require("path");
 var fs = require("fs");
+var fn = require('./fn.js');
 var fx = require('./fx.js');
 var app = require('./app.js');
 
@@ -55,7 +56,7 @@ function processStaticFiles(fileName, response) {
 //--
 http.createServer(function(request, response) {
   var uri = url.parse(request.url).pathname;
-  uri = fx.trimLeftAndRight(uri, '/');
+  uri = fn.trimLeftAndRight(uri, '/');
   if (uri.indexOf('api/') !== -1) {
     return processApi(request, response);
   }
