@@ -5,12 +5,11 @@
 var expect = require('expect.js');
 var fn = require('./fn.js');
 var fx = require('./fx.js');
-var datastore = require('./datastore.js');
 var app = require('./app.js');
 var log = console.log;
 
 //- prepare
-datastore.clear();
+fx.clearDb();
 
 //-  test get all
 var reqGetAll = { method: 'get', url: 'http://test.demo.com/api/apples/', body: {}};
@@ -73,4 +72,4 @@ embeds = all.getEmbeds('apples');
   expect(embeds.length).to.be(3);
 
 //- clean
-datastore.clear();
+fx.clearDb();

@@ -25,9 +25,9 @@ exports.clear = function() {
   datastore.clear();
 };
 
-exports.save = function(id, obj) {
-  datastore.setItem(id, obj);
-  return obj;
+exports.save = function(obj) {
+  datastore.setItem(obj.id, obj);
+  datastore.getItem(obj.id);
 }
 
 exports.get = function(id) {
@@ -36,6 +36,8 @@ exports.get = function(id) {
 
 exports.getAll = function() {
   var objs = [];
-  datastore.values(function(recs) { objs = recs; });
+  datastore.values(function(vals) {
+    objs = vals;
+  });
   return objs;
 }

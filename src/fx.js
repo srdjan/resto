@@ -3,7 +3,7 @@
 //---------------------------------------------------------------------------------
 'use strict;'
 var fn = require('./fn.js');
-var datastore = require('./datastore.js');
+var db = require('./datastore.js');
 var hal = require('./hal.js');
 var log = console.log;
 
@@ -40,22 +40,10 @@ function getTypeFromPath(path) {
   throw { statusCode: 500, message: 'Internal Server Error', log: 'Not an API call: ' + path };
 }
 
-var getStates = fn.filter(function(m) { return m.startsWith('state_') });
 var filterEmpty = fn.filter(function(e) { return Object.getOwnPropertyNames(e).length > 0; });
 
-function getLinksForCurrentState(entity) {
-  var states = getStates(Object.keys(entity));
-  for (var i = 0; i < states.length; i++) {
-    var links = entity[states[i]]();
-    if (links !== false) {
-      return links;
-    }
-  }
-  throw { statusCode: 500, message: 'Internal Server Error', log: 'Invalid state invariants: ' + JSON.stringify(entity) };
-}
-
 function checkIfApiCallAllowed(reqRel, entity) {
-  var links = getLinksForCurrentState(entity);
+  var links = hal.getLinksForCurrentState(entity);
   if ( ! fn.some(function(link) { return link.rel === reqRel; }, links)) {
     throw {
       statusCode: 409,
@@ -82,6 +70,10 @@ function validatePropsMatch(body, entity) {
 
 //-- exports ------------------------------------------------------------
 //-----------------------------------------------------------------------
+exports.clearDb = function() {
+  db.clear();
+}
+
 exports.Resource = function(entityCtor) {
   var entityCtor = entityCtor;
   var typeName = entityCtor.toString().match(/function ([^\(]+)/)[1].toLowerCase();
@@ -97,17 +89,15 @@ exports.Resource = function(entityCtor) {
     var entity = new entityCtor();
     validatePropsMatch(body, entity);
     fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
-    datastore.save(entity.id, entity);
-    var links = getLinksForCurrentState(entity);
-    return hal.createFull(typeName, entity, links); //todo: - return 201 (Created) -
+    db.save(entity);
+    return { name: typeName, data: entity }; //todo: - return 201 (Created) -
   }
 
   function execute(from, rel, body, entity) {
     var result = entity[rel](body);
     if (result) {
-      datastore.save(entity.id, entity);
-      var links = getLinksForCurrentState(entity);
-      return hal.createFull(typeName, entity, links);
+      db.save(entity);
+      return { name: typeName, data: entity };
     }
     throw {
       statusCode: 422,
@@ -117,25 +107,21 @@ exports.Resource = function(entityCtor) {
   }
 
   function getById(id) {
-    var entity = datastore.get(id);
+    var entity = db.get(id);
     if (typeof entity === 'undefined') {
       throw { statusCode: 404, message: 'Not Found', log: "GET: entity === undefined" };
     }
-    var links = getLinksForCurrentState(entity);
-    return hal.createFull(typeName, entity, links);
+    return { name: typeName, data: entity };
   };
 
   function getAll() {
-    var halRep = hal.createRoot(typeName);
-
-    var entities = datastore.getAll();
+    var entities = db.getAll();
     if (entities.length >= 1) {
       entities = filterEmpty(entities);
-      if (entities.length > 0) {
-        halRep = hal.addEmbeds(typeName, halRep, entities);
-      }
     }
-    return halRep;
+    var result = { name: typeName, data: entities };
+    // log('getall: ' +  result.name + ' - ' + JSON.stringify(result.data));
+    return result;
   };
 
   //- public api -----
@@ -151,7 +137,7 @@ exports.Resource = function(entityCtor) {
   this.put = function(path, body) {
     validateType(path, 'PUT');
     var idAndRel = getIdAndRelFromPath(path);
-    var entity = datastore.get(idAndRel.id);
+    var entity = db.get(idAndRel.id);
 
     validatePropsMatch(body, entity);
     checkIfApiCallAllowed(idAndRel.rel, entity);
@@ -169,7 +155,7 @@ exports.Resource = function(entityCtor) {
       return createAndStore(body);
     }
     //- else: process post message id !== 0 and body.props don't have to exist on entity
-    var entity = datastore.get(idAndRel.id);
+    var entity = db.get(idAndRel.id);
     checkIfApiCallAllowed(idAndRel.rel, entity);
     return execute('POST', idAndRel.rel, body, entity);
   };
@@ -177,7 +163,7 @@ exports.Resource = function(entityCtor) {
   this.patch = function(path, body) {
     validateType(path, 'PATCH');
     var idAndRel = getIdAndRelFromPath(path);
-    var entity = datastore.get(idAndRel.id);
+    var entity = db.get(idAndRel.id);
 
     validatePropsExist(body, entity);
     checkIfApiCallAllowed(idAndRel.rel, entity);
@@ -204,7 +190,9 @@ exports.handle = function(app, req) {
     path = fn.trimLeftAndRight(path, '/');
     var resource = app[getTypeFromPath(path) + 'Resource'];
     var handler = resource[req.method.toLowerCase()];
-    return handler(path, req.body);
+    var result = handler(path, req.body);
+    var halResult = hal.convert(result.name, result.data);
+    return halResult;
   }
   catch (e) {
     log('Fx Exception: ' + JSON.stringify(e));

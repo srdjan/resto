@@ -14,14 +14,15 @@ function addRootProps(typeName, entity) {
   return halson(JSON.stringify(root)).addLink('self', '/api/' + typeName + 's/' + fn.atob(entity.id));
 }
 
-exports.createRoot = function(typeName) {
+function createRoot(typeName) {
   var root = halson({})
       .addLink('self', '/api/' + typeName + 's')
       .addLink('create', { href: '/api/' + typeName + 's/' + fn.atob('create'), method: 'POST'});
   return root;
 }
 
-exports.createFull = function(typeName, entity, links) {
+function createFull(typeName, entity) {
+  var links = exports.getLinksForCurrentState(entity);
   var halRep = addRootProps(typeName, entity);
   fn.each(function(el) {
     halRep.addLink(el.rel, { href: '/api/' + typeName + 's/' + fn.atob(entity.id + '/' + el.rel), method: el.method });
@@ -29,9 +30,23 @@ exports.createFull = function(typeName, entity, links) {
   return halRep;
 }
 
-exports.addEmbeds = function(typeName, halRep, entities) {
-  var embeds = fn.map(function(e) { halson({}).addLink('self', '/api/' + typeName + 's/' + fn.atob(e.id)); }, entities);
-  fn.each(function(el, index, array) { halRep.addEmbed(typeName + 's', el); }, embeds);
-  return halRep;
+exports.getLinksForCurrentState = function(entity) {
+  var states = fn.filter(function(m) { return m.startsWith('state_') }, Object.keys(entity));
+  for (var i = 0; i < states.length; i++) {
+    var links = entity[states[i]]();
+    if (links !== false) {
+      return links;
+    }
+  }
+  throw { statusCode: 500, message: 'Internal Server Error', log: 'Invalid state invariants: ' + JSON.stringify(entity) };
 }
 
+exports.convert = function(typeName, data) {
+  if (data instanceof Array) {
+    var halRep = createRoot(typeName);
+    var embeds = fn.map(function(e) { halson({}).addLink('self', '/api/' + typeName + 's/' + fn.atob(e.id)); }, data);
+    fn.each(function(el, index, array) { halRep.addEmbed(typeName + 's', el); }, embeds);
+    return halRep;
+  }
+  return createFull(typeName, data);
+}
