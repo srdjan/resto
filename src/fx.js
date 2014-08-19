@@ -2,7 +2,7 @@
 //- framework
 //---------------------------------------------------------------------------------
 'use strict;'
-var R = require('ramda');
+var fn = require('./fn.js');
 var storage = require('node-persist');
 var halson = require('halson');
 var log = console.log;
@@ -17,20 +17,10 @@ storage.initSync({
   interval: false
 });
 
-function atob(str) {
-  var res = new Buffer(str, 'ascii').toString('base64');
-  return res.replace('+', '-').replace('/', '_').replace('=', ',');
-}
-
-function btoa(str) {
-  var res = new Buffer(str, 'base64').toString('ascii');
-  return res.replace('-', '+').replace('_', '/').replace(',', '=');
-}
-
 //- api/apples || api/apples/abc3b4=1
 function getIdFromPath(path) {
   var tokens = path.split('/');
-  var id = btoa(tokens[tokens.length - 1]);
+  var id = fn.btoa(tokens[tokens.length - 1]);
   if (isNaN(id)) return 0;
   return id;
 }
@@ -40,7 +30,7 @@ function getIdAndRelFromPath(path) {
   var idAndRel = { id: 0, rel: ''};
 
   var tokens = path.split('/')
-  tokens = btoa(tokens[tokens.length - 1]).split('/');
+  tokens = fn.btoa(tokens[tokens.length - 1]).split('/');
   if (tokens.length === 2) {
     idAndRel.id = tokens[0];
     idAndRel.rel = tokens[1];
@@ -54,20 +44,20 @@ function getIdAndRelFromPath(path) {
 //- api/apples/123456/create
 function getTypeFromPath(path) {
   var tokens = path.split('/');
-  if (tokens.length > 0) {
+  if (tokens.length > 1) {
     return tokens[1].slice(0, -1);
   }
   throw { statusCode: 500, message: 'Internal Server Error', log: 'Not an API call: ' + path };
 }
 
-var getPropNames = R.filter(function(p) { return !p.startsWith('state_') && p !== 'id'; });
-var getStates = R.filter(function(m) { return m.startsWith('state_') });
-var getEmbeds = R.filter(function(e) { return Object.getOwnPropertyNames(e).length > 0; });
+var getPropNames = fn.filter(function(p) { return !p.startsWith('state_') && p !== 'id'; });
+var getStates = fn.filter(function(m) { return m.startsWith('state_') });
+var getEmbeds = fn.filter(function(e) { return Object.getOwnPropertyNames(e).length > 0; });
 
 function createHalRoot(typeName, entity) {
   var root = {};
-  R.each(function(propName) { root[propName] = entity[propName]; }, getPropNames(Object.keys(entity)));
-  return halson(JSON.stringify(root)).addLink('self', '/api/' + typeName + 's/' + atob(entity.id));
+  fn.each(function(propName) { root[propName] = entity[propName]; }, getPropNames(Object.keys(entity)));
+  return halson(JSON.stringify(root)).addLink('self', '/api/' + typeName + 's/' + fn.atob(entity.id));
 }
 
 function getLinksForCurrentState(entity) {
@@ -84,8 +74,8 @@ function getLinksForCurrentState(entity) {
 function getHalRep(typeName, entity) {
   var halRep = createHalRoot(typeName, entity);
   var links = getLinksForCurrentState(entity);
-  R.each(function(el) {
-    halRep.addLink(el.rel, { href: '/api/' + typeName + 's/' + atob(entity.id + '/' + el.rel), method: el.method });
+  fn.each(function(el) {
+    halRep.addLink(el.rel, { href: '/api/' + typeName + 's/' + fn.atob(entity.id + '/' + el.rel), method: el.method });
   }, links);
   return halRep;
 }
@@ -110,7 +100,7 @@ exports.Resource = function(entityCtor) {
 
   function checkIfApiCallAllowed(reqRel, entity) {
     var links = getLinksForCurrentState(entity);
-    if ( ! R.some(function(link) { return link.rel === reqRel; }, links)) {
+    if ( ! fn.some(function(link) { return link.rel === reqRel; }, links)) {
       throw {
         statusCode: 409,
         message: 'Conflict',
@@ -128,14 +118,14 @@ exports.Resource = function(entityCtor) {
   }
 
   function validatePropertiesExist(body, entity) {
-    var diff = R.difference(Object.keys(body), Object.keys(entity));
+    var diff = fn.diff(Object.keys(body), Object.keys(entity));
     if (diff.length > 0) {
       throw { statusCode: 400, message: 'Bad Request', log: 'Properties: ' + diff + ' do not exist ! ' + JSON.stringify(entity) }
     }
   }
 
   function validatePropertiesMatch(body, entity) {
-    var diff = R.difference(Object.keys(body), Object.keys(entity));
+    var diff = fn.diff(Object.keys(body), Object.keys(entity));
     if (diff.length > 0) {
       throw { statusCode: 400, message: 'Bad Request', log: 'Properties: ' + diff + ' failed to match ! ' + JSON.stringify(entity) }
     }
@@ -144,7 +134,7 @@ exports.Resource = function(entityCtor) {
   function createAndStore(body) {
     var entity = new entityCtor();
     validatePropertiesMatch(body, entity);
-    R.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
+    fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
     storage.setItem(entity.id, entity);
     return getHalRep(typeName, entity); //todo: - return 201 (Created) -
   }
@@ -173,14 +163,14 @@ exports.Resource = function(entityCtor) {
   function getAll() {
     var halRep = halson({})
       .addLink('self', '/api/' + typeName + 's')
-      .addLink('create', { href: '/api/' + typeName + 's/' + atob('create'), method: 'POST'});
+      .addLink('create', { href: '/api/' + typeName + 's/' + fn.atob('create'), method: 'POST'});
 
     storage.values(function(entities) {
       if (entities.length >= 1) {
         var embeds = getEmbeds(entities);
         if (embeds.length > 0) {
-          embeds = R.map(function(embed) { halson({}).addLink('self', '/api/' + typeName + 's/' + atob(embed.id)); }, embeds);
-          R.each(function(el, index, array) { halRep.addEmbed(typeName + 's', el); }, embeds);
+          embeds = fn.map(function(embed) { halson({}).addLink('self', '/api/' + typeName + 's/' + fn.atob(embed.id)); }, embeds);
+          fn.each(function(el, index, array) { halRep.addEmbed(typeName + 's', el); }, embeds);
         }
       }
     });
@@ -206,7 +196,7 @@ exports.Resource = function(entityCtor) {
     checkIfApiCallAllowed(idAndRel.rel, entity);
 
     //- update entity
-    R.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
+    fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
     return execute('PUT', idAndRel.rel, body, entity);
   };
 
@@ -232,7 +222,7 @@ exports.Resource = function(entityCtor) {
     checkIfApiCallAllowed(idAndRel.rel, entity);
 
     //- update entity
-    R.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
+    fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
     return execute('PATCH', idAndRel.rel, body, entity);
   };
 
@@ -252,8 +242,8 @@ exports.handle = function(app, req) {
     var path = req.url.substring(req.url.indexOf('api'), req.url.length);
     path = exports.trimLeftAndRight(path, '/');
     var resource = app[getTypeFromPath(path) + 'Resource'];
-    var fn = resource[req.method.toLowerCase()];
-    return fn(path, req.body);
+    var handler = resource[req.method.toLowerCase()];
+    return handler(path, req.body);
   }
   catch (e) {
     log('Fx Exception: ' + JSON.stringify(e));
