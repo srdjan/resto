@@ -47,7 +47,7 @@ apple = fx.handle(app, reqGrow);
   expect(fn.contains('eat', apple.listLinkRels())).to.be(true);
   expect(fn.contains('toss', apple.listLinkRels())).to.be(true);
 
-//- call 'eat' api
+//- call 'eat' api (partial post)
 var eatPath = apple.getLink('eat')['href'];
 var reqEat = { method: 'post', url: eatPath, body: { weightDecr: 240.0 }};
 fx.handle(app, reqEat);
@@ -61,9 +61,17 @@ apple = fx.handle(app, reqGrow);
   expect(apple).to.have.property('statusCode');
   expect(apple.statusCode).to.be(409);
 
-// //- test GetAll
-reqCreate = { method: 'post', url: createPath, body: { color: 'yellow', weight: 10.0 }};
+//- call 'toss' (full put) api
+reqCreate = { method: 'post', url: createPath, body: { color: 'brown', weight: 34.0 }};
 apple = fx.handle(app, reqCreate);
+var tossPath = apple.getLink('toss')['href'];
+var reqToss = { method: 'put', url: tossPath, body: { color: 'brown', weight: 0.0 }};
+apple = fx.handle(app, reqToss);
+  expect(apple.weight).to.be(0.0);
+  expect(apple.listLinkRels().length).to.be(1);
+  expect(fn.contains('self', apple.listLinkRels())).to.be(true);
+
+// //- test GetAll
 reqCreate = { method: 'post', url: createPath, body: { color: 'green', weight: 10.0 }};
 apple = fx.handle(app, reqCreate);
 
