@@ -4,7 +4,7 @@
 'use strict;'
 var fn = require('./fn.js');
 var datastore = require('./datastore.js');
-var halson = require('halson');
+var hal = require('./hal.js');
 var log = console.log;
 
 //- api/apples || api/apples/abc3b4=1
@@ -40,15 +40,8 @@ function getTypeFromPath(path) {
   throw { statusCode: 500, message: 'Internal Server Error', log: 'Not an API call: ' + path };
 }
 
-var getPropNames = fn.filter(function(p) { return !p.startsWith('state_') && p !== 'id'; });
 var getStates = fn.filter(function(m) { return m.startsWith('state_') });
-var getEmbeds = fn.filter(function(e) { return Object.getOwnPropertyNames(e).length > 0; });
-
-function createHalRoot(typeName, entity) {
-  var root = {};
-  fn.each(function(propName) { root[propName] = entity[propName]; }, getPropNames(Object.keys(entity)));
-  return halson(JSON.stringify(root)).addLink('self', '/api/' + typeName + 's/' + fn.atob(entity.id));
-}
+var filterEmpty = fn.filter(function(e) { return Object.getOwnPropertyNames(e).length > 0; });
 
 function getLinksForCurrentState(entity) {
   var states = getStates(Object.keys(entity));
@@ -61,15 +54,6 @@ function getLinksForCurrentState(entity) {
   throw { statusCode: 500, message: 'Internal Server Error', log: 'Invalid state invariants: ' + JSON.stringify(entity) };
 }
 
-function getHalRep(typeName, entity) {
-  var halRep = createHalRoot(typeName, entity);
-  var links = getLinksForCurrentState(entity);
-  fn.each(function(el) {
-    halRep.addLink(el.rel, { href: '/api/' + typeName + 's/' + fn.atob(entity.id + '/' + el.rel), method: el.method });
-  }, links);
-  return halRep;
-}
-
 function checkIfApiCallAllowed(reqRel, entity) {
   var links = getLinksForCurrentState(entity);
   if ( ! fn.some(function(link) { return link.rel === reqRel; }, links)) {
@@ -80,6 +64,20 @@ function checkIfApiCallAllowed(reqRel, entity) {
     }
   }
   return true;
+}
+
+function validatePropsExist(body, entity) {
+  var diff = fn.diff(Object.keys(body), Object.keys(entity));
+  if (diff.length > 0) {
+    throw { statusCode: 400, message: 'Bad Request', log: 'Properties: ' + diff + ' do not exist ! ' + JSON.stringify(entity) }
+  }
+}
+
+function validatePropsMatch(body, entity) {
+  var diff = fn.diff(Object.keys(body), Object.keys(entity));
+  if (diff.length > 0) {
+    throw { statusCode: 400, message: 'Bad Request', log: 'Properties: ' + diff + ' failed to match ! ' + JSON.stringify(entity) }
+  }
 }
 
 //-- exports ------------------------------------------------------------
@@ -95,33 +93,21 @@ exports.Resource = function(entityCtor) {
     }
   }
 
-  function validatePropertiesExist(body, entity) {
-    var diff = fn.diff(Object.keys(body), Object.keys(entity));
-    if (diff.length > 0) {
-      throw { statusCode: 400, message: 'Bad Request', log: 'Properties: ' + diff + ' do not exist ! ' + JSON.stringify(entity) }
-    }
-  }
-
-  function validatePropertiesMatch(body, entity) {
-    var diff = fn.diff(Object.keys(body), Object.keys(entity));
-    if (diff.length > 0) {
-      throw { statusCode: 400, message: 'Bad Request', log: 'Properties: ' + diff + ' failed to match ! ' + JSON.stringify(entity) }
-    }
-  }
-
   function createAndStore(body) {
     var entity = new entityCtor();
-    validatePropertiesMatch(body, entity);
+    validatePropsMatch(body, entity);
     fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
     datastore.save(entity.id, entity);
-    return getHalRep(typeName, entity); //todo: - return 201 (Created) -
+    var links = getLinksForCurrentState(entity);
+    return hal.createFull(typeName, entity, links); //todo: - return 201 (Created) -
   }
 
   function execute(from, rel, body, entity) {
     var result = entity[rel](body);
     if (result) {
       datastore.save(entity.id, entity);
-      return getHalRep(typeName, entity);
+      var links = getLinksForCurrentState(entity);
+      return hal.createFull(typeName, entity, links);
     }
     throw {
       statusCode: 422,
@@ -135,20 +121,18 @@ exports.Resource = function(entityCtor) {
     if (typeof entity === 'undefined') {
       throw { statusCode: 404, message: 'Not Found', log: "GET: entity === undefined" };
     }
-    return getHalRep(typeName, entity);
+    var links = getLinksForCurrentState(entity);
+    return hal.createFull(typeName, entity, links);
   };
 
   function getAll() {
-    var halRep = halson({})
-      .addLink('self', '/api/' + typeName + 's')
-      .addLink('create', { href: '/api/' + typeName + 's/' + fn.atob('create'), method: 'POST'});
+    var halRep = hal.createRoot(typeName);
 
     var entities = datastore.getAll();
     if (entities.length >= 1) {
-      var embeds = getEmbeds(entities);
-      if (embeds.length > 0) {
-        embeds = fn.map(function(embed) { halson({}).addLink('self', '/api/' + typeName + 's/' + fn.atob(embed.id)); }, embeds);
-        fn.each(function(el, index, array) { halRep.addEmbed(typeName + 's', el); }, embeds);
+      entities = filterEmpty(entities);
+      if (entities.length > 0) {
+        halRep = hal.addEmbeds(typeName, halRep, entities);
       }
     }
     return halRep;
@@ -169,7 +153,7 @@ exports.Resource = function(entityCtor) {
     var idAndRel = getIdAndRelFromPath(path);
     var entity = datastore.get(idAndRel.id);
 
-    validatePropertiesMatch(body, entity);
+    validatePropsMatch(body, entity);
     checkIfApiCallAllowed(idAndRel.rel, entity);
 
     //- update entity
@@ -195,7 +179,7 @@ exports.Resource = function(entityCtor) {
     var idAndRel = getIdAndRelFromPath(path);
     var entity = datastore.get(idAndRel.id);
 
-    validatePropertiesExist(body, entity);
+    validatePropsExist(body, entity);
     checkIfApiCallAllowed(idAndRel.rel, entity);
 
     //- update entity
