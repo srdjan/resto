@@ -3,7 +3,7 @@
 //---------------------------------------------------------------------------------
 'use strict;'
 var fn = require('./fn.js');
-var db = require('./datastore.js');
+var db = require('./db.js');
 var hal = require('./hal.js');
 var log = console.log;
 
