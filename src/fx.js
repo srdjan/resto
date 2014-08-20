@@ -31,18 +31,9 @@ function getIdAndRelFromPath(path) {
   return idAndRel;
 }
 
-//- api/apples/123456/create
-function getTypeFromPath(path) {
-  var tokens = path.split('/');
-  if (tokens.length > 1) {
-    return tokens[1].slice(0, -1);
-  }
-  throw { statusCode: 500, message: 'Internal Server Error', log: 'Not an API call: ' + path };
-}
-
 var filterEmpty = fn.filter(function(e) { return Object.getOwnPropertyNames(e).length > 0; });
 
-function checkIfApiCallAllowed(reqRel, entity) {
+function validateApiCall(reqRel, entity) {
   var links = hal.getLinksForCurrentState(entity);
   if ( ! fn.some(function(link) { return link.rel === reqRel; }, links)) {
     throw {
@@ -78,12 +69,6 @@ exports.Resource = function(entityCtor) {
   var entityCtor = entityCtor;
   var typeName = entityCtor.toString().match(/function ([^\(]+)/)[1].toLowerCase();
 
-  function validateType(path, method) {
-    var typeNameFromPath = getTypeFromPath(path);
-    if (typeNameFromPath !== typeName) {
-      throw { statusCode: 406, message: 'Not Acceptable', log: method + ": url type: " + typeNameFromPath + " diff than: " + typeName }
-    }
-  }
 
   function createAndStore(body) {
     var entity = new entityCtor();
@@ -93,7 +78,7 @@ exports.Resource = function(entityCtor) {
     return { name: typeName, data: entity }; //todo: - return 201 (Created) -
   }
 
-  function execute(from, rel, body, entity) {
+  function processAndStore(from, rel, body, entity) {
     var result = entity[rel](body);
     if (result) {
       db.save(entity);
@@ -120,14 +105,12 @@ exports.Resource = function(entityCtor) {
       entities = filterEmpty(entities);
     }
     var result = { name: typeName, data: entities };
-    // log('getall: ' +  result.name + ' - ' + JSON.stringify(result.data));
     return result;
   };
 
   //- public api -----
   //-
   this.get = function(path) {
-    validateType(path, 'GET');
     var id = getIdFromPath(path);
 
     if (id === 0) return getAll();
@@ -135,60 +118,62 @@ exports.Resource = function(entityCtor) {
   };
 
   this.put = function(path, body) {
-    validateType(path, 'PUT');
     var idAndRel = getIdAndRelFromPath(path);
     var entity = db.get(idAndRel.id);
 
     validatePropsMatch(body, entity);
-    checkIfApiCallAllowed(idAndRel.rel, entity);
+    validateApiCall(idAndRel.rel, entity);
 
     //- update entity
     fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
-    return execute('PUT', idAndRel.rel, body, entity);
+    return processAndStore('PUT', idAndRel.rel, body, entity);
   };
 
   this.post = function(path, body) {
-    validateType(path, 'POST');
-
     var idAndRel = getIdAndRelFromPath(path);
     if(idAndRel.id === 0) {
       return createAndStore(body);
     }
     //- else: process post message id !== 0 and body.props don't have to exist on entity
     var entity = db.get(idAndRel.id);
-    checkIfApiCallAllowed(idAndRel.rel, entity);
-    return execute('POST', idAndRel.rel, body, entity);
+    validateApiCall(idAndRel.rel, entity);
+    return processAndStore('POST', idAndRel.rel, body, entity);
   };
 
   this.patch = function(path, body) {
-    validateType(path, 'PATCH');
     var idAndRel = getIdAndRelFromPath(path);
     var entity = db.get(idAndRel.id);
 
     validatePropsExist(body, entity);
-    checkIfApiCallAllowed(idAndRel.rel, entity);
+    validateApiCall(idAndRel.rel, entity);
 
     //- update entity
     fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
-    return execute('PATCH', idAndRel.rel, body, entity);
+    return processAndStore('PATCH', idAndRel.rel, body, entity);
   };
 
   this.delete = function(path) {
-    validateType(path, 'DELETE');
-    // datastore.removeItem(url);
-    throw {
-      statusCode: 501,
-      message: 'Not Implemented',
-      log: "DELETE: not implemented!"
-    };
+    var id = getIdFromPath(path);
+    db.remove(id);
   };
 };
+
+//- api/apples/123456/create
+function getTypeFromPath(path) {
+  var tokens = path.split('/');
+  if (tokens.length > 1) {
+    return tokens[1].slice(0, -1);
+  }
+  throw { statusCode: 500, message: 'Internal Server Error', log: 'Not an API call: ' + path };
+}
 
 exports.handle = function(app, req) {
   try {
     var path = req.url.substring(req.url.indexOf('api'), req.url.length);
     path = fn.trimLeftAndRight(path, '/');
-    var resource = app[getTypeFromPath(path) + 'Resource'];
+
+    var requestedType = getTypeFromPath(path);
+    var resource = app[requestedType + 'Resource'];
     var handler = resource[req.method.toLowerCase()];
     var result = handler(path, req.body);
     var halResult = hal.convert(result.name, result.data);

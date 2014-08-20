@@ -41,3 +41,7 @@ exports.getAll = function() {
   });
   return objs;
 }
+
+exports.remove = function(id) {
+  return datastore.removeItem(id);
+}
