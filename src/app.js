@@ -39,7 +39,7 @@ function Apple() {
   //- states:
   this.state_growing = function() {
     if (this.weight > 0.0 && this.weight < 200.0) {
-      return [{ rel: 'grow', method: "put" },
+      return [{ rel: 'grow', method: "post" },
               { rel: 'toss', method: "delete"}];
     }
     return false;
@@ -47,7 +47,7 @@ function Apple() {
 
   this.state_ready_to_eat = function() {
     if (this.weight >= 200.0 && this.weight < 300.0) {
-      return [{ rel: 'eat', method: "put" },
+      return [{ rel: 'eat', method: "post" },
               { rel: 'toss', method: "delete" }];
     }
     return false;

@@ -12,10 +12,10 @@ var log = console.log;
 fx.clearDb();
 
 //-  test get all
-  var reqGetAll = { method: 'get', url: 'http://test.demo.com/api/apples/', body: {}};
+  var reqGetAll = { method: 'GET', url: 'http://test.demo.com/api/apples/', body: {}};
   var all = fx.handle(app, reqGetAll);
-  var createPath = all.getLink('create')['href'];
-  var reqCreate = { method: 'post', url: createPath, body: { color: 'red', weight: 10.0 }};
+  var createLink = all.getLink('create');
+  var reqCreate = { method: createLink.method, url: createLink.href, body: { color: 'red', weight: 10.0 }};
   var apple = fx.handle(app, reqCreate);
   expect(apple.listLinkRels().length).to.be(3);
   expect(apple.weight).to.be(10.0);
@@ -28,8 +28,8 @@ fx.clearDb();
   expect(embeds.length).to.be(1);
 
 //- test invariants
-  var selfPath = apple.getLink('self')['href'];
-  var reqGetSelf = { method: 'get', url: selfPath, body: {}};
+  var selfLink = apple.getLink('self');
+  var reqGetSelf = { method: 'GET', url: selfLink.href, body: {}};
   apple = fx.handle(app, reqGetSelf);
   expect(apple.weight).to.be(10.0);
   expect(apple.listLinkRels().length).to.be(3);
@@ -38,8 +38,8 @@ fx.clearDb();
   expect(fn.contains('toss', apple.listLinkRels())).to.be(true);
 
 //- call 'grow' api (post - with id and propertis that don't exist on entity)
-  var growPath = apple.getLink('grow')['href'];
-  var reqGrow = { method: 'post', url: growPath, body: { weightIncr: 230.0 }};
+  var growLink = apple.getLink('grow');
+  var reqGrow = { method: growLink.method, url: growLink.href, body: { weightIncr: 230.0 }};
   apple = fx.handle(app, reqGrow);
   expect(apple.weight).to.be(240.0);
   expect(apple.listLinkRels().length).to.be(3);
@@ -48,8 +48,8 @@ fx.clearDb();
   expect(fn.contains('toss', apple.listLinkRels())).to.be(true);
 
 //- call 'eat' api (partial post)
-  var eatPath = apple.getLink('eat')['href'];
-  var reqEat = { method: 'post', url: eatPath, body: { weightDecr: 240.0 }};
+  var eatLink = apple.getLink('eat');
+  var reqEat = { method: eatLink.method, url: eatLink.href, body: { weightDecr: 240.0 }};
   fx.handle(app, reqEat);
   apple = fx.handle(app, reqGetSelf);
   expect(apple.weight).to.be(0.0);
@@ -61,18 +61,18 @@ fx.clearDb();
   expect(apple).to.have.property('statusCode');
   expect(apple.statusCode).to.be(409);
 
-//- call 'toss' (full put) api
-  reqCreate = { method: 'post', url: createPath, body: { color: 'brown', weight: 34.0 }};
+//- todo: call 'toss' (full put) api
+  reqCreate = { method: createLink.method, url: createLink.href, body: { color: 'brown', weight: 34.0 }};
   apple = fx.handle(app, reqCreate);
-  var tossPath = apple.getLink('toss')['href'];
-  var reqToss = { method: 'put', url: tossPath, body: { color: 'brown', weight: 0.0 }};
-  apple = fx.handle(app, reqToss);
-  expect(apple.weight).to.be(0.0);
-  expect(apple.listLinkRels().length).to.be(1);
-  expect(fn.contains('self', apple.listLinkRels())).to.be(true);
+  // var tossLink = apple.getLink('toss');
+  // var reqToss = { method: tossLink.method, url: tossLink.href, body: { color: 'brown', weight: 0.0 }};
+  // apple = fx.handle(app, reqToss);
+  // expect(apple.weight).to.be(0.0);
+  // expect(apple.listLinkRels().length).to.be(1);
+  // expect(fn.contains('self', apple.listLinkRels())).to.be(true);
 
 // //- test GetAll
-  reqCreate = { method: 'post', url: createPath, body: { color: 'green', weight: 10.0 }};
+  reqCreate = { method: createLink.method, url: createLink.href, body: { color: 'green', weight: 10.0 }};
   apple = fx.handle(app, reqCreate);
 
   all = fx.handle(app, reqGetAll);
