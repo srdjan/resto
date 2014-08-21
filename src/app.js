@@ -4,6 +4,7 @@
 'use strict;'
 var fx = require('./fx.js');
 var db = require('./db.js');
+var log = console.log;
 
 //--  Apple app APi
 //--
@@ -18,17 +19,14 @@ function Apple() {
       this.weight += msg.weightIncr;
       return true;
     }
-    fx.log('apple.grow validation failed!');
+    log('apple.grow validation failed!');
     return false;
   };
   this.eat = function(msg) {
-    if (this.weight >= 200.0 && this.weight <= 300.0) {
-      if (this.weight <= msg.weightDecr) {
-        this.weight -= msg.weightDecr;
-        return true;
-      }
+    if (this.weight === 0.0) {
+      return true;
     }
-    fx.log('apple.eat validation failed!');
+    log('apple.eat validation failed!');
     return false;
   };
   this.toss = function(apple) {
@@ -39,16 +37,16 @@ function Apple() {
   //- states:
   this.state_growing = function() {
     if (this.weight > 0.0 && this.weight < 200.0) {
-      return [{ rel: 'grow', method: "post" },
-              { rel: 'toss', method: "delete"}];
+      return [{ rel: 'grow', method: "POST" },
+              { rel: 'toss', method: "DELETE"}];
     }
     return false;
   };
 
   this.state_ready_to_eat = function() {
     if (this.weight >= 200.0 && this.weight < 300.0) {
-      return [{ rel: 'eat', method: "post" },
-              { rel: 'toss', method: "delete" }];
+      return [{ rel: 'eat', method: "PUT" },
+              { rel: 'toss', method: "DELETE" }];
     }
     return false;
   };

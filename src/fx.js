@@ -78,7 +78,7 @@ exports.Resource = function(entityCtor) {
     return { name: typeName, data: entity }; //todo: - return 201 (Created) -
   }
 
-  function processAndStore(from, rel, body, entity) {
+  function processAndStore(rel, body, entity) {
     var result = entity[rel](body);
     if (result) {
       db.save(entity);
@@ -120,13 +120,10 @@ exports.Resource = function(entityCtor) {
   this.put = function(path, body) {
     var idAndRel = getIdAndRelFromPath(path);
     var entity = db.get(idAndRel.id);
-
-    validatePropsMatch(body, entity);
     validateApiCall(idAndRel.rel, entity);
-
-    //- update entity
+    validatePropsMatch(body, entity);
     fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
-    return processAndStore('PUT', idAndRel.rel, body, entity);
+    return processAndStore(idAndRel.rel, body, entity);
   };
 
   this.post = function(path, body) {
@@ -137,7 +134,7 @@ exports.Resource = function(entityCtor) {
     //- else: process post message id !== 0 and body.props don't have to exist on entity
     var entity = db.get(idAndRel.id);
     validateApiCall(idAndRel.rel, entity);
-    return processAndStore('POST', idAndRel.rel, body, entity);
+    return processAndStore(idAndRel.rel, body, entity);
   };
 
   this.patch = function(path, body) {
@@ -149,7 +146,7 @@ exports.Resource = function(entityCtor) {
 
     //- update entity
     fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
-    return processAndStore('PATCH', idAndRel.rel, body, entity);
+    return processAndStore(idAndRel.rel, body, entity);
   };
 
   this.delete = function(path) {

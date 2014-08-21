@@ -47,10 +47,10 @@ fx.clearDb();
   expect(fn.contains('eat', apple.listLinkRels())).to.be(true);
   expect(fn.contains('toss', apple.listLinkRels())).to.be(true);
 
-//- call 'eat' api (partial post)
+//- call 'eat' api (full put)
   var eatLink = apple.getLink('eat');
-  var reqEat = { method: eatLink.method, url: eatLink.href, body: { weightDecr: 240.0 }};
-  fx.handle(app, reqEat);
+  var reqEat = { method: eatLink.method, url: eatLink.href, body: { weight: 0.0, color: 'orange' }};
+  apple = fx.handle(app, reqEat);
   apple = fx.handle(app, reqGetSelf);
   expect(apple.weight).to.be(0.0);
   expect(apple.listLinkRels().length).to.be(1);
@@ -61,7 +61,7 @@ fx.clearDb();
   expect(apple).to.have.property('statusCode');
   expect(apple.statusCode).to.be(409);
 
-//- todo: call 'toss' (full put) api
+//- todo: call 'toss' (delete) api
   reqCreate = { method: createLink.method, url: createLink.href, body: { color: 'brown', weight: 34.0 }};
   apple = fx.handle(app, reqCreate);
   // var tossLink = apple.getLink('toss');
@@ -72,12 +72,9 @@ fx.clearDb();
   // expect(fn.contains('self', apple.listLinkRels())).to.be(true);
 
 // //- test GetAll
-  reqCreate = { method: createLink.method, url: createLink.href, body: { color: 'green', weight: 10.0 }};
-  apple = fx.handle(app, reqCreate);
-
   all = fx.handle(app, reqGetAll);
   embeds = all.getEmbeds('apples');
-  expect(embeds.length).to.be(3);
+  expect(embeds.length).to.be(2);
 
 //- clean
 fx.clearDb();
