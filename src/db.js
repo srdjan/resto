@@ -43,5 +43,5 @@ exports.getAll = function() {
 }
 
 exports.remove = function(id) {
-  return datastore.removeItem(id);
+  datastore.removeItem(id);
 }

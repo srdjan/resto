@@ -149,7 +149,9 @@ exports.Resource = function(entityCtor) {
 
   this.delete = function(path) {
     var idAndRel = getIdAndRelFromPath(path);
+    var entity = db.get(idAndRel.id);
     db.remove(idAndRel.id);
+    return { name: typeName, data: {} };
   };
 };
 

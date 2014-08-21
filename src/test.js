@@ -64,17 +64,15 @@ fx.clearDb();
 //- todo: call 'toss' (delete) api
   reqCreate = { method: createLink.method, url: createLink.href, body: { color: 'brown', weight: 34.0 }};
   apple = fx.handle(app, reqCreate);
-  // var tossLink = apple.getLink('toss');
-  // var reqToss = { method: tossLink.method, url: tossLink.href, body: { color: 'brown', weight: 0.0 }};
-  // apple = fx.handle(app, reqToss);
-  // expect(apple.weight).to.be(0.0);
-  // expect(apple.listLinkRels().length).to.be(1);
-  // expect(fn.contains('self', apple.listLinkRels())).to.be(true);
+  var tossLink = apple.getLink('toss');
+  var reqToss = { method: tossLink.method, url: tossLink.href, body: { color: 'brown', weight: 0.0 }};
+  apple = fx.handle(app, reqToss);
+  expect(fn.contains('self', apple.listLinkRels())).to.be(true);
 
 // //- test GetAll
   all = fx.handle(app, reqGetAll);
   embeds = all.getEmbeds('apples');
-  expect(embeds.length).to.be(2);
+  expect(embeds.length).to.be(1);
 
 //- clean
 fx.clearDb();
