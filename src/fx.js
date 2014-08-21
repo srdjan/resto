@@ -69,7 +69,6 @@ exports.Resource = function(entityCtor) {
   var entityCtor = entityCtor;
   var typeName = entityCtor.toString().match(/function ([^\(]+)/)[1].toLowerCase();
 
-
   function createAndStore(body) {
     var entity = new entityCtor();
     validatePropsMatch(body, entity);
@@ -140,9 +139,8 @@ exports.Resource = function(entityCtor) {
   this.patch = function(path, body) {
     var idAndRel = getIdAndRelFromPath(path);
     var entity = db.get(idAndRel.id);
-
-    validatePropsExist(body, entity);
     validateApiCall(idAndRel.rel, entity);
+    validatePropsExist(body, entity);
 
     //- update entity
     fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
@@ -150,8 +148,8 @@ exports.Resource = function(entityCtor) {
   };
 
   this.delete = function(path) {
-    var id = getIdFromPath(path);
-    db.remove(id);
+    var idAndRel = getIdAndRelFromPath(path);
+    db.remove(idAndRel.id);
   };
 };
 
