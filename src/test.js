@@ -25,6 +25,7 @@ fx.clearDb();
 
   all = fx.handle(app, reqGetAll);
   var embeds = all.getEmbeds('apples');
+  log(JSON.stringify(embeds));
   expect(embeds.length).to.be(1);
 
 //- test invariants

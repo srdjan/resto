@@ -44,7 +44,7 @@ exports.getLinksForCurrentState = function(entity) {
 exports.convert = function(typeName, data) {
  if (data instanceof Array) {
     var halRep = createRoot(typeName);
-    var embeds = fn.map(function(e) { halson({}).addLink('self', '/api/' + typeName + 's/' + fn.atob(e.id)); }, data);
+    var embeds = fn.map(function(e) { return halson({}).addLink('self', '/api/' + typeName + 's/' + fn.atob(e.id)); }, data);
     fn.each(function(el, index, array) { halRep.addEmbed(typeName + 's', el); }, embeds);
     return halRep;
   }
