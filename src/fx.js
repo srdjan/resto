@@ -123,8 +123,19 @@ exports.Resource = function(entityCtor) {
     validatePropsMatch(body, entity);
 
     //-todo: lets have domain logic execute on old entity state and incoming msg
-    fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
-    return processAndStore(idAndRel.rel, body, entity);
+    // fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
+    // return processAndStore(idAndRel.rel, body, entity);
+    var result = entity[idAndRel.rel](body);
+    if (result) {
+      fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
+      db.save(entity);
+      return { name: typeName, data: entity };
+    }
+    throw {
+      statusCode: 422,
+      message: 'Unprocessable Entity',
+      log: "PUT: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)
+    };
   };
 
   this.post = function(path, body) {
@@ -135,7 +146,16 @@ exports.Resource = function(entityCtor) {
     //- else: process post message id !== 0 and body.props don't have to exist on entity
     var entity = db.get(idAndRel.id);
     validateApiCall(idAndRel.rel, entity);
-    return processAndStore(idAndRel.rel, body, entity);
+    var result = entity[idAndRel.rel](body);
+    if (result) {
+      db.save(entity);
+      return { name: typeName, data: entity };
+    }
+    throw {
+      statusCode: 422,
+      message: 'Unprocessable Entity',
+      log: "POST: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)
+    };
   };
 
   this.patch = function(path, body) {
@@ -144,9 +164,17 @@ exports.Resource = function(entityCtor) {
     validateApiCall(idAndRel.rel, entity);
     validatePropsExist(body, entity);
 
-    //- update entity
-    fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
-    return processAndStore(idAndRel.rel, body, entity);
+    var result = entity[idAndRel.rel](body);
+    if (result) {
+      fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
+      db.save(entity);
+      return { name: typeName, data: entity };
+    }
+    throw {
+      statusCode: 422,
+      message: 'Unprocessable Entity',
+      log: "PATCH: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)
+    };
   };
 
   this.delete = function(path) {
