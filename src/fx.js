@@ -36,11 +36,7 @@ var filterEmpty = fn.filter(function(e) { return Object.getOwnPropertyNames(e).l
 function validateApiCall(reqRel, entity) {
   var links = hal.getLinksForCurrentState(entity);
   if ( ! fn.some(function(link) { return link.rel === reqRel; }, links)) {
-    throw {
-      statusCode: 409,
-      message: 'Conflict',
-      log: 'Error: API call not allowed, rel: ' + reqRel + ' entity: ' + JSON.stringify(entity)
-    }
+    throw { statusCode: 409, message: 'Conflict', log: 'API call not allowed, rel: ' + reqRel + ' ! ' + JSON.stringify(entity) }
   }
   return true;
 }
@@ -59,6 +55,11 @@ function validatePropsMatch(body, entity) {
   }
 }
 
+function getPath(url) {
+  var path = url.substring(url.indexOf('api'), url.length);
+  return fn.trimLeftAndRight(path, '/');
+}
+
 //-- exports ------------------------------------------------------------
 //-----------------------------------------------------------------------
 exports.clearDb = function() {
@@ -75,19 +76,6 @@ exports.Resource = function(entityCtor) {
     fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
     db.save(entity);
     return { name: typeName, data: entity }; //todo: - return 201 (Created) -
-  }
-
-  function processAndStore(rel, body, entity) {
-    var result = entity[rel](body);
-    if (result) {
-      db.save(entity);
-      return { name: typeName, data: entity };
-    }
-    throw {
-      statusCode: 422,
-      message: 'Unprocessable Entity',
-      log: from + ": Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)
-    };
   }
 
   function getById(id) {
@@ -111,7 +99,6 @@ exports.Resource = function(entityCtor) {
   //-
   this.get = function(path) {
     var id = getIdFromPath(path);
-
     if (id === 0) return getAll();
     return getById(id);
   };
@@ -122,20 +109,14 @@ exports.Resource = function(entityCtor) {
     validateApiCall(idAndRel.rel, entity);
     validatePropsMatch(body, entity);
 
-    //-todo: lets have domain logic execute on old entity state and incoming msg
-    // fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
-    // return processAndStore(idAndRel.rel, body, entity);
     var result = entity[idAndRel.rel](body);
     if (result) {
       fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
       db.save(entity);
       return { name: typeName, data: entity };
     }
-    throw {
-      statusCode: 422,
-      message: 'Unprocessable Entity',
-      log: "PUT: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)
-    };
+    log("PUT: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity));
+    return { name: typeName, statusCode: 422, message: 'Unprocessable Entity'};
   };
 
   this.post = function(path, body) {
@@ -151,11 +132,8 @@ exports.Resource = function(entityCtor) {
       db.save(entity);
       return { name: typeName, data: entity };
     }
-    throw {
-      statusCode: 422,
-      message: 'Unprocessable Entity',
-      log: "POST: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)
-    };
+    log("POST: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity));
+    return { name: typeName, statusCode: 422, message: 'Unprocessable Entity'};
   };
 
   this.patch = function(path, body) {
@@ -170,11 +148,8 @@ exports.Resource = function(entityCtor) {
       db.save(entity);
       return { name: typeName, data: entity };
     }
-    throw {
-      statusCode: 422,
-      message: 'Unprocessable Entity',
-      log: "PATCH: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)
-    };
+    log("PATCH: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity));
+    return { name: typeName, statusCode: 422, message: 'Unprocessable Entity'};
   };
 
   this.delete = function(path) {
@@ -196,27 +171,21 @@ function getTypeFromPath(path) {
 
 exports.handle = function(app, req) {
   try {
-    var path = req.url.substring(req.url.indexOf('api'), req.url.length);
-    path = fn.trimLeftAndRight(path, '/');
-
+    var path = getPath(req.url);
     var requestedType = getTypeFromPath(path);
     var resource = app[requestedType + 'Resource'];
     var handler = resource[req.method.toLowerCase()];
     var result = handler(path, req.body);
-    var halResult = hal.convert(result.name, result.data);
-    return halResult;
+    if(result.hasOwnProperty('data')) {
+      return hal.convert(result.name, result.data);
+    }
+    return { statusCode: result.statusCode, message: result.message };
   }
   catch (e) {
     log('Fx Exception: ' + JSON.stringify(e));
     if (e.hasOwnProperty('statusCode')) {
-      return {
-        statusCode: e.statusCode,
-        message: e.message
-      };
+      return { statusCode: e.statusCode, message: e.message };
     }
-    return {
-      statusCode: 500,
-      message: e
-    };
+    return { statusCode: 500, message: e };
   }
 };
