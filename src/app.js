@@ -22,16 +22,18 @@ function Apple() {
     log('apple.grow validation failed!');
     return false;
   };
-  this.eat = function(msg) {
+  this.eat = function() {
     if (this.weight === 0.0) {
       return true;
     }
     log('apple.eat validation failed!');
     return false;
   };
-  this.toss = function(apple) {
-    this.weight = 0.0;
-    return true;
+  this.toss = function() {
+    if (this.weight === 0.0) {
+      return true;
+    }
+    return false;
   };
 
   //- states:

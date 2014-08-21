@@ -121,6 +121,8 @@ exports.Resource = function(entityCtor) {
     var entity = db.get(idAndRel.id);
     validateApiCall(idAndRel.rel, entity);
     validatePropsMatch(body, entity);
+
+    //-todo: lets have domain logic execute on old entity state and incoming msg
     fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
     return processAndStore(idAndRel.rel, body, entity);
   };
