@@ -44,7 +44,7 @@ function Apple() {
 
   this.state_done = function() {
     if (this.weight === 0.0) {
-      return [];
+      return [{ rel: 'toss', method: "DELETE"}];
     }
     return false;
   };
