@@ -25,13 +25,12 @@ fx.clearDb();
 
   all = fx.handle(app, reqGetAll);
   var embeds = all.getEmbeds('apples');
-  log(JSON.stringify(embeds));
   expect(embeds.length).to.be(1);
 
 //- test invariants
   var selfLink = apple.getLink('self');
-  var reqGetSelf = { method: 'GET', url: selfLink.href, body: {}};
-  apple = fx.handle(app, reqGetSelf);
+  var reqSelf = { method: 'GET', url: selfLink.href, body: {}};
+  apple = fx.handle(app, reqSelf);
   expect(apple.weight).to.be(10.0);
   expect(apple.listLinkRels().length).to.be(3);
   expect(fn.contains('self', apple.listLinkRels())).to.be(true);
@@ -52,7 +51,7 @@ fx.clearDb();
   var eatLink = apple.getLink('eat');
   var reqEat = { method: eatLink.method, url: eatLink.href, body: { weight: 0.0, color: 'orange' }};
   apple = fx.handle(app, reqEat);
-  apple = fx.handle(app, reqGetSelf);
+  apple = fx.handle(app, reqSelf);
   expect(apple.weight).to.be(0.0);
   expect(apple.listLinkRels().length).to.be(1);
   expect(fn.contains('self', apple.listLinkRels())).to.be(true);
@@ -62,15 +61,22 @@ fx.clearDb();
   expect(apple).to.have.property('statusCode');
   expect(apple.statusCode).to.be(409);
 
-//- call 'create' and toss' (delete) api
+//- test GetAll - there shoudl be one apple left :)
   reqCreate = { method: createLink.method, url: createLink.href, body: { color: 'brown', weight: 34.0 }};
   apple = fx.handle(app, reqCreate);
+  all = fx.handle(app, reqGetAll);
+  embeds = all.getEmbeds('apples');
+  expect(embeds.length).to.be(2);
+
+// - call 'create' and toss' (delete) api
+  selfLink = embeds[1].getLink('self');
+  reqSelf = { method: 'GET', url: selfLink.href, body: { }};
+  apple = fx.handle(app, reqSelf);
   var tossLink = apple.getLink('toss');
   var reqToss = { method: tossLink.method, url: tossLink.href, body: { color: 'brown', weight: 0.0 }};
   apple = fx.handle(app, reqToss);
   expect(fn.contains('self', apple.listLinkRels())).to.be(true);
 
-// //- test GetAll - there shoudl be one apple left :)
   all = fx.handle(app, reqGetAll);
   embeds = all.getEmbeds('apples');
   expect(embeds.length).to.be(1);

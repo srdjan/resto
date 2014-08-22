@@ -83,7 +83,9 @@ exports.Resource = function(entityCtor) {
     if (typeof entity === 'undefined') {
       throw { statusCode: 404, message: 'Not Found', log: "GET: entity === undefined" };
     }
-    return { name: typeName, data: entity };
+    var newEntity = new entityCtor();
+    fn.each(function(key) { newEntity[key] = entity[key]; }, Object.keys(entity));
+    return { name: typeName, data: newEntity };
   };
 
   function getAll() {
