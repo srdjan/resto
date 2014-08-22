@@ -80,7 +80,6 @@ function processStaticFileRequest(request, response) {
 }
 
 //-- server --
-//--to do add domain error handling
 http.createServer(function(request, response) {
   if (request.url.indexOf('/api') !== -1) {
     log(request.url);

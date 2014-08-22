@@ -67,6 +67,7 @@ exports.Resource = function(entityCtor) {
 
   function createAndStore(body) {
     var entity = new entityCtor();
+    entity.id = db.createId();
     validatePropsMatch(body, entity);
     fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
     db.save(entity);

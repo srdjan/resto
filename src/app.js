@@ -1,43 +1,31 @@
-//---------------------------------------------------------------------------------
-//- application
-//---------------------------------------------------------------------------------
 'use strict;'
 var fx = require('./fx.js');
-var db = require('./db.js');
 var log = console.log;
 
-//--  Apple app APi
-//--
 function Apple() {
-  this.id = db.createId();
   this.weight = 0.1;
   this.color = 'green';
 
-  //- rels:
   this.grow = function(msg) {
     if (this.weight > 0.0 && this.weight < 300.0) {
       this.weight += msg.weightIncr;
       return true;
     }
-    log('apple.grow validation failed!');
     return false;
   };
   this.eat = function(msg) {
     if (msg.weight === 0.0) {
       return true;
     }
-    log('apple.eat validation failed!');
     return false;
   };
   this.toss = function(msg) {
     if (this.weight === 0.0) {
       return true;
     }
-    log('apple.toss validation failed!');
     return false;
   };
 
-  //- states:
   this.state_growing = function() {
     if (this.weight > 0.0 && this.weight < 200.0) {
       return [{ rel: 'grow', method: "POST" },
@@ -62,6 +50,8 @@ function Apple() {
   };
 };
 exports.appleResource = new fx.Resource(Apple);
+
+
 
 //--  TODO app APi
 //--
