@@ -76,8 +76,7 @@ exports.Resource = function(entityCtor) {
   function getById(id) {
     var entity = db.get(id);
     if (typeof entity === 'undefined') {
-      log("getById: entity === undefined");
-      return { name: typeName, statusCode: 404, message: 'Not Found'};
+      return { name: typeName, statusCode: 404, message: 'Not Found', message: "getById: entity === undefined"};
     }
     var newEntity = new entityCtor();
     fn.each(function(key) { newEntity[key] = entity[key]; }, Object.keys(entity));
@@ -104,8 +103,7 @@ exports.Resource = function(entityCtor) {
   this.put = function(path, body) {
     var idAndRel = getIdAndRelFromPath(path);
     if (idAndRel.id === 0) {
-      log("PUT: Id required, path: " + path + " Body: " + JSON.stringify(body));
-      return { name: typeName, statusCode: 400, message: 'Bad Request'};
+      return { name: typeName, statusCode: 400, message: 'Bad Request', message: "PUT: Id required, path: " + path + " Body: " + JSON.stringify(body)};
     }
     var entity = db.get(idAndRel.id);
     validateApiCall(idAndRel.rel, entity);
@@ -117,8 +115,7 @@ exports.Resource = function(entityCtor) {
       db.save(entity);
       return { name: typeName, data: entity };
     }
-    log("PUT: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity));
-    return { name: typeName, statusCode: 422, message: 'Unprocessable Entity'};
+    return { name: typeName, statusCode: 422, message: 'Unprocessable Entity', message: "PUT: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)};
   };
 
   this.post = function(path, body) {
@@ -135,8 +132,7 @@ exports.Resource = function(entityCtor) {
       db.save(entity);
       return { name: typeName, data: entity };
     }
-    log("POST: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity));
-    return { name: typeName, statusCode: 422, message: 'Unprocessable Entity'};
+    return { name: typeName, statusCode: 422, message: 'Unprocessable Entity', message: "POST: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)};
   };
 
   this.patch = function(path, body) {
@@ -151,8 +147,7 @@ exports.Resource = function(entityCtor) {
       db.save(entity);
       return { name: typeName, data: entity };
     }
-    log("PATCH: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity));
-    return { name: typeName, statusCode: 422, message: 'Unprocessable Entity'};
+    return { name: typeName, statusCode: 422, message: 'Unprocessable Entity', message: "PATCH: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)};
   };
 
   this.delete = function(path) {
@@ -187,6 +182,7 @@ exports.handle = function(app, req) {
     if(result.hasOwnProperty('data')) {
       return hal.convert(result.name, result.data);
     }
+    log(result.message);
     return { statusCode: result.statusCode, message: result.message };
   }
   catch (e) {
