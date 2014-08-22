@@ -107,6 +107,10 @@ exports.Resource = function(entityCtor) {
 
   this.put = function(path, body) {
     var idAndRel = getIdAndRelFromPath(path);
+    if (idAndRel.id === 0) {
+      log("PUT: Id required, path: " + path + " Body: " + JSON.stringify(body));
+      return { name: typeName, statusCode: 400, message: 'Bad Request'};
+    }
     var entity = db.get(idAndRel.id);
     validateApiCall(idAndRel.rel, entity);
     validatePropsMatch(body, entity);

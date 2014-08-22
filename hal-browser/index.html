@@ -17,7 +17,6 @@
   </head>
 
   <body>
-
     <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container-fluid">
@@ -78,8 +77,8 @@
                 <% } %>
               </td>
               <td>
-                <a class="non-get btn btn-warning" href="<%= link.href %>" title="Perform non-GET request">!</a>
-              </td>
+              <a class="non-get btn btn-warning" href="<%= link.href %>" title="Perform non-GET request"><%= rel %></a>
+            </td>
             </tr>
           <% }); %>
         <% } else { %>
@@ -100,7 +99,7 @@
               <% } %>
             </td>
             <td>
-              <a class="non-get btn btn-warning" href="<%= obj.href %>" title="Perform non-GET request">!</a>
+              <a class="non-get btn btn-warning" href="<%= obj.href %>" title="Perform non-GET request"><%= rel %></a>
             </td>
           </tr>
         <% } %>
