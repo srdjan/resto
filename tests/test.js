@@ -3,9 +3,9 @@
 //---------------------------------------------------------------------------------
 'use strict;'
 var expect = require('expect.js');
-var fn = require('./fn.js');
-var fx = require('./fx.js');
-var app = require('./app.js');
+var fn = require('../src/fn.js');
+var fx = require('../src/fx.js');
+var app = require('../src/app.js');
 var log = console.log;
 
 //- prepare
