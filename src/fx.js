@@ -55,11 +55,6 @@ function validatePropsMatch(body, entity) {
   }
 }
 
-function getPath(url) {
-  var path = url.substring(url.indexOf('api'), url.length);
-  return fn.trimLeftAndRight(path, '/');
-}
-
 //-- exports ------------------------------------------------------------
 //-----------------------------------------------------------------------
 exports.clearDb = function() {
@@ -75,13 +70,14 @@ exports.Resource = function(entityCtor) {
     validatePropsMatch(body, entity);
     fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
     db.save(entity);
-    return { name: typeName, data: entity }; //todo: - return 201 (Created) -
+    return entity;
   }
 
   function getById(id) {
     var entity = db.get(id);
     if (typeof entity === 'undefined') {
-      throw { statusCode: 404, message: 'Not Found', log: "GET: entity === undefined" };
+      log("getById: entity === undefined");
+      return { name: typeName, statusCode: 404, message: 'Not Found'};
     }
     var newEntity = new entityCtor();
     fn.each(function(key) { newEntity[key] = entity[key]; }, Object.keys(entity));
@@ -128,7 +124,8 @@ exports.Resource = function(entityCtor) {
   this.post = function(path, body) {
     var idAndRel = getIdAndRelFromPath(path);
     if(idAndRel.id === 0) {
-      return createAndStore(body);
+      var entity = createAndStore(body);
+      return { name: typeName, data: entity }; //todo: - return 201 (Created) -
     }
     //- else: process post message id !== 0 and body.props don't have to exist on entity
     var entity = db.get(idAndRel.id);
@@ -173,6 +170,11 @@ function getTypeFromPath(path) {
     return tokens[1].slice(0, -1);
   }
   throw { statusCode: 500, message: 'Internal Server Error', log: 'Not an API call: ' + path };
+}
+
+function getPath(url) {
+  var path = url.substring(url.indexOf('api'), url.length);
+  return fn.trimLeftAndRight(path, '/');
 }
 
 exports.handle = function(app, req) {
