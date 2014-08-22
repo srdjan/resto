@@ -3,11 +3,12 @@ var http = require("http");
 var url = require("url");
 var path = require("path");
 var fs = require("fs");
-var fn = require('./fn.js');
-var fx = require('./fx.js');
-var app = require('./app.js');
+var fn = require('./src/fn.js');
+var fx = require('./src/fx.js');
+var app = require('./src/app.js');
+var log = console.log;
 
-port = process.argv[2] || 8060;
+port = process.argv[2] || 8040;
 
 function statusCode(result) {
   return result.hasOwnProperty('statusCode') ? result.statusCode : 200;
@@ -20,7 +21,7 @@ function createResponse(result, response) {
   return response;
 }
 
-function processApi(req, response) {
+function processApiRequest(req, response) {
   var body = '';
   if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') {
     req.on('data', function(chunk) { body += chunk.toString(); });
@@ -36,7 +37,7 @@ function processApi(req, response) {
   }
 };
 
-function processStaticFiles(fileName, response) {
+function getFile(fileName, response) {
   fs.readFile(fileName, "binary", function(err, file) {
     if (err) {
       response.writeHead(500, { "Content-Type": "text/plain" });
@@ -52,35 +53,40 @@ function processStaticFiles(fileName, response) {
   });
 };
 
-//-- server --
-//--
-http.createServer(function(request, response) {
-  var uri = url.parse(request.url).pathname;
-  uri = fn.trimLeftAndRight(uri, '/');
-  if (uri.indexOf('api/') !== -1) {
-    return processApi(request, response);
-  }
+function processStaticFileRequest(request, response) {
+  var hostname = url.parse(request.url, false, true).hostname;
+  var pathname = url.parse(request.url).pathname;
+  pathname = fn.trimLeftAndRight(pathname, '/');
+  if(hostname !== null && hostname !== 'hal-browser') pathname = pathname.slice(hostname.length);
 
-  var tokens = uri.split('/');
-  tokens.shift();
+  var tokens = [];
+  if(pathname.length > 0) tokens = pathname.split('/');
+
   if(tokens.length === 0) {
     tokens.push('hal-browser');
     tokens.push('index.html');
-  }
-  else {
-    tokens.unshift('hal-browser');
   }
 
   var fileName = path.join(process.cwd(), tokens.join('/'));
   fs.exists(fileName, function(exists) {
     if (!exists) {
-      fx.log('Not found, fileName: ' + fileName);
+      log('Not found, hostname: ' + hostname + ' pathname: ' + pathname + ' fileName: ' + fileName);
       response.writeHeader(404, { "Content-Type": "application/json" });
       response.end();
       return response;
     }
-    return processStaticFiles(fileName, response);
+    return getFile(fileName, response);
   });
+}
+
+//-- server --
+//--to do add domain error handling
+http.createServer(function(request, response) {
+  if (request.url.indexOf('/api') !== -1) {
+    log(request.url);
+    return processApiRequest(request, response);
+  }
+  return processStaticFileRequest(request, response);
 }).listen(parseInt(port, 10));
 
-console.log("Static file server running at\n => http://localhost:" + port + "/\nCTRL + SHIFT + C to shutdown");
+log("Server running at: http://localhost:" + port + "/\nCTRL + SHIFT + C to shutdown");

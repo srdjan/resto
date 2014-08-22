@@ -62,7 +62,7 @@ fx.clearDb();
   expect(apple).to.have.property('statusCode');
   expect(apple.statusCode).to.be(409);
 
-//- todo: call 'toss' (delete) api
+//- call 'toss' (delete) api
   reqCreate = { method: createLink.method, url: createLink.href, body: { color: 'brown', weight: 34.0 }};
   apple = fx.handle(app, reqCreate);
   var tossLink = apple.getLink('toss');
