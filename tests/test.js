@@ -62,7 +62,7 @@ fx.clearDb();
   expect(apple).to.have.property('statusCode');
   expect(apple.statusCode).to.be(409);
 
-//- call 'toss' (delete) api
+//- call 'create' and toss' (delete) api
   reqCreate = { method: createLink.method, url: createLink.href, body: { color: 'brown', weight: 34.0 }};
   apple = fx.handle(app, reqCreate);
   var tossLink = apple.getLink('toss');
@@ -70,7 +70,7 @@ fx.clearDb();
   apple = fx.handle(app, reqToss);
   expect(fn.contains('self', apple.listLinkRels())).to.be(true);
 
-// //- test GetAll
+// //- test GetAll - there shoudl be one apple left :)
   all = fx.handle(app, reqGetAll);
   embeds = all.getEmbeds('apples');
   expect(embeds.length).to.be(1);
