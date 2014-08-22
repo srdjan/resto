@@ -10,12 +10,12 @@ var log = console.log;
 
 port = process.argv[2] || 8884;
 
-function statusCode(result) {
+function hasStatusCode(result) {
   return result.hasOwnProperty('statusCode') ? result.statusCode : 200;
 }
 
 function createResponse(result, response) {
-  response.writeHeader(statusCode(result), { "Content-Type": "application/json" });
+  response.writeHeader(hasStatusCode(result), { "Content-Type": "application/json" });
   response.write(JSON.stringify(result));
   response.end();
   return response;

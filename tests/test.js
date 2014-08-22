@@ -53,7 +53,7 @@ fx.clearDb();
   apple = fx.handle(app, reqEat);
   apple = fx.handle(app, reqSelf);
   expect(apple.weight).to.be(0.0);
-  expect(apple.listLinkRels().length).to.be(1);
+  expect(apple.listLinkRels().length).to.be(2);
   expect(fn.contains('self', apple.listLinkRels())).to.be(true);
 
 //- test api whitelisting - should not be able to call 'grow' in tis state
