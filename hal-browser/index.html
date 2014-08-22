@@ -178,12 +178,9 @@
         <p>Target URI</p>
         <input name="url" type="text" class="url" value="<%= href %>" />
         <p>Method:</p>
-        <input name="method" type="text" class="method" value="POST" />
+        <input name="method" type="text" class="method" value="POST | PUT | DELETE | PATCH" />
         <p>Headers:</p>
-<textarea name="headers" class="headers" style="height: 100px">
-Content-Type: application/json
-<%= user_defined_headers %>
-</textarea>
+        <input name="headers" type="text" class="headers" value="Content-Type: application/json" />
         <p>Body:</p>
 <textarea name="body" class="body" style="height: 200px">
 {
