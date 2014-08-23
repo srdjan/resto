@@ -107,7 +107,7 @@
               </td>
             <% } else { %>
               <td>
-                <a class="non-get btn btn-warning" href="<%= obj.href %>"><%= obj.method.toLowerCase() %></a>
+                <a class="non-get btn btn-warning" href="<%= obj.href %>" method="<%= obj.method %>"><%= obj.method.toLowerCase() %></a>
               </td>
             <% } %>
           </tr>
@@ -173,7 +173,7 @@
         <p>Target URI</p>
         <input name="url" type="text" class="url" value="<%= href %>" />
         <p>Method:</p>
-        <input name="method" type="text" class="method" value="POST | PUT | DELETE | PATCH" />
+        <input name="method" type="text" class="method" value="<%= method %>" />
         <p>Headers:</p>
         <input name="headers" type="text" class="headers" value="Content-Type: application/json" />
         <p>Body:</p>

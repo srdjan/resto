@@ -27,6 +27,8 @@ HAL.Browser = Backbone.Router.extend({
     }
 
     if(location.hash.slice(1,9) === 'NON-GET:') {
+      console.log('location.hash: ' + location.hash);
+      console.log('vent: ' + vent);
       new HAL.Views.NonSafeRequestDialog({
             href: location.hash.slice(9),
             vent: vent
@@ -39,6 +41,7 @@ HAL.Browser = Backbone.Router.extend({
   },
 
   loadUrl: function(url) {
+    console.log('load url: ' + url);
     if (this.getHash() === url) {
       HAL.client.get(url);
     } else {
