@@ -23,7 +23,7 @@ HAL.Views.EmbeddedResource = Backbone.View.extend({
     e.preventDefault();
     this.$accordionBody.collapse('toggle');
   },
-  
+
   onDoxClick: function(e) {
     e.preventDefault();
     this.vent.trigger('show-docs', {
@@ -35,12 +35,13 @@ HAL.Views.EmbeddedResource = Backbone.View.extend({
   render: function() {
     this.$el.empty();
 
-    this.propertiesView.render(this.resource.toJSON());
+    if (Object.keys(this.resource.toJSON()).length > 0) {
+      this.propertiesView.render(this.resource.toJSON());
+    }
+
     this.linksView.render(this.resource.links);
 
-    this.$el.append(this.template({
-      resource: this.resource
-    }));
+    this.$el.append(this.template({ resource: this.resource }));
 
     var $inner = $('<div class="accordion-inner"></div>');
     $inner.append(this.propertiesView.el);

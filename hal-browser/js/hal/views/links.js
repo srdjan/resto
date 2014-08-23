@@ -32,7 +32,6 @@ HAL.Views.Links = Backbone.View.extend({
 
   showNonSafeRequestDialog: function(e) {
     e.preventDefault();
-    console.log('currenttarget: ' + $(e.target).attr('method'));
     var d = new HAL.Views.NonSafeRequestDialog({
       href: $(e.currentTarget).attr('href'),
       method: $(e.currentTarget).attr('method'),

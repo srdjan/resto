@@ -23,7 +23,8 @@ HAL.Views.RequestHeaders = Backbone.View.extend({
   },
 
   render: function() {
-    this.$el.html(this.template());
+    //note: not showing empty custom headers...
+    // this.$el.html(this.template());
   },
 
   template: _.template($('#request-headers-template').html())
