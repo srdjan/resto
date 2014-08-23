@@ -65,12 +65,11 @@ exports.Resource = function(entityCtor) {
   var entityCtor = entityCtor;
   var typeName = entityCtor.toString().match(/function ([^\(]+)/)[1].toLowerCase();
 
-  function createAndStore(body) {
+  function create(body) {
     var entity = new entityCtor();
     entity.id = db.createId();
     validatePropsMatch(body, entity);
     fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
-    db.save(entity);
     return entity;
   }
 
@@ -122,7 +121,8 @@ exports.Resource = function(entityCtor) {
   this.post = function(path, body) {
     var idAndRel = getIdAndRelFromPath(path);
     if(idAndRel.id === 0) {
-      var entity = createAndStore(body);
+      var entity = create(body);
+      db.save(entity);
       return { name: typeName, data: entity }; //todo: - return 201 (Created) -
     }
     //- else: process post message id !== 0 and body.props don't have to exist on entity
@@ -138,7 +138,7 @@ exports.Resource = function(entityCtor) {
 
   this.patch = function(path, body) {
     var idAndRel = getIdAndRelFromPath(path);
-    var entity = db.get(idAndRel.id);
+    var entity = getById(idAndRel.id);
     validateApiCall(idAndRel.rel, entity);
     validatePropsExist(body, entity);
 
