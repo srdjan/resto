@@ -8,7 +8,7 @@ var fx = require('./src/fx.js');
 var app = require('./src/app.js');
 var log = console.log;
 
-port = process.argv[2] || 8884;
+port = process.argv[2] || 8080;
 
 function hasStatusCode(result) {
   return result.hasOwnProperty('statusCode') ? result.statusCode : 200;

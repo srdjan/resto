@@ -52,8 +52,7 @@
           <th>title</th>
           <th>name / index</th>
           <th>docs</th>
-          <th>GET</th>
-          <th>NON-GET</th>
+          <th>method</th>
         </tr>
       </thead>
       <tbody>
@@ -71,21 +70,19 @@
               <% } %>
               </td>
 
-              <td>
               <% if (obj.method === undefined) { %>
+                <td>
                 <% if (obj.templated === true) { %>
-                  <a class="query btn btn-success" href="<%= obj.href %>" title="Query URI template"><i class="icon-question-sign"></i></a>
+                  <a class="query btn btn-success" href="<%= obj.href %>">query</a>
                 <% } else { %>
-                  <a class="follow btn btn-success" href="<%= obj.href %>" title="Follow link"><i class="icon-arrow-right"></i></a>
+                  <a class="follow btn btn-success" href="<%= obj.href %>">get</a>
                 <% } %>
+                </td>
+              <% } else { %>
+                <td>
+                  <a class="non-get btn btn-warning" href="<%= obj.href %>"><%= link.method.toLowerCase() %></a>
+                </td>
               <% } %>
-              </td>
-
-              <td>
-                <% if (obj.method !== undefined) { %>
-                  <a class="non-get btn btn-warning" href="<%= link.href %>" title="Perform non-GET request"><%= rel %></a>
-                <% } %>
-              </td>
             </tr>
           <% }); %>
         <% } else { %>
@@ -100,21 +97,19 @@
             <% } %>
             </td>
 
-            <td>
-              <% if (obj.method === undefined) { %>
-                <% if (obj.templated === true) { %>
-                  <a class="query btn btn-success" href="<%= obj.href %>" title="Query URI template"><i class="icon-question-sign"></i></a>
-                <% } else { %>
-                  <a class="follow btn btn-success" href="<%= obj.href %>" title="Follow link"><i class="icon-arrow-right"></i></a>
-                <% } %>
+            <% if (obj.method === undefined) { %>
+              <td>
+              <% if (obj.templated === true) { %>
+                <a class="query btn btn-success" href="<%= obj.href %>">query</a>
+              <% } else { %>
+                <a class="follow btn btn-success" href="<%= obj.href %>">get</a>
               <% } %>
-            </td>
-
-            <td>
-              <% if (obj.method !== undefined) { %>
-                <a class="non-get btn btn-warning" href="<%= obj.href %>" title="non-GET request"><%= rel %></a>
-              <% } %>
-            </td>
+              </td>
+            <% } else { %>
+              <td>
+                <a class="non-get btn btn-warning" href="<%= obj.href %>"><%= obj.method.toLowerCase() %></a>
+              </td>
+            <% } %>
           </tr>
         <% } %>
       <% }) %>
