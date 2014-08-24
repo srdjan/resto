@@ -10,15 +10,15 @@ var log = console.log;
 
 port = process.argv[2] || 8080;
 
-function hasStatusCode(result) {
-  return result.hasOwnProperty('statusCode') ? result.statusCode : 200;
-}
-
 function createResponse(result, response) {
-  response.writeHeader(hasStatusCode(result), { "Content-Type": "application/json" });
+  response.writeHeader(getStatusCode(result), { "Content-Type": "application/json" });
   response.write(JSON.stringify(result));
   response.end();
   return response;
+}
+
+function getStatusCode(result) {
+  return result.hasOwnProperty('statusCode') ? result.statusCode : 200;
 }
 
 function processApiRequest(req, response) {
@@ -79,7 +79,6 @@ function processStaticFileRequest(request, response) {
   });
 }
 
-//-- server --
 http.createServer(function(request, response) {
   if (request.url.indexOf('/api') !== -1) {
     log(request.url);
@@ -88,4 +87,4 @@ http.createServer(function(request, response) {
   return processStaticFileRequest(request, response);
 }).listen(parseInt(port, 10));
 
-log("Server running at: http://localhost:" + port + "/\nCTRL + SHIFT + C to shutdown");
+log("Server running at port: " + port + "\nCTRL + SHIFT + C to shutdown");

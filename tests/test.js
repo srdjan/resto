@@ -5,11 +5,12 @@
 var expect = require('expect.js');
 var fn = require('../src/fn.js');
 var fx = require('../src/fx.js');
+var db = require('../src/db.js');
 var app = require('../src/app.js');
 var log = console.log;
 
 //- prepare
-fx.clearDb();
+db.clear();
 
 //-  test get all
   var reqGetAll = { method: 'GET', url: 'http://test.demo.com/api/apples/', body: {}};
@@ -82,4 +83,4 @@ fx.clearDb();
   expect(embeds.length).to.be(1);
 
 //- clean
-fx.clearDb();
+db.clear();

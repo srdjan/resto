@@ -55,49 +55,40 @@ function validatePropsMatch(body, entity) {
   }
 }
 
-//-- exports ------------------------------------------------------------
-//-----------------------------------------------------------------------
-exports.clearDb = function() {
-  db.clear();
+function getAll(typeName) {
+  var entities = db.getAll();
+  if (entities.length >= 1) {
+    entities = filterEmpty(entities);
+  }
+  return { name: typeName, data: entities };
+};
+
+function getById(id, typeName, typeCtor) {
+  var entity = db.get(id);
+  if (typeof entity === 'undefined') {
+    return { name: typeName, statusCode: 404, message: 'Not Found', message: "getById: entity === undefined"};
+  }
+  var newEntity = new typeCtor();
+  fn.each(function(key) { newEntity[key] = entity[key]; }, Object.keys(entity));
+  return { name: typeName, data: newEntity };
+};
+
+function create(body, typeCtor) {
+  var entity = new typeCtor();
+  entity.id = db.createId();
+  validatePropsMatch(body, entity);
+  fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
+  return entity;
 }
 
-exports.Resource = function(entityCtor) {
-  var entityCtor = entityCtor;
-  var typeName = entityCtor.toString().match(/function ([^\(]+)/)[1].toLowerCase();
+exports.Resource = function(typeCtor) {
+  var typeCtor = typeCtor;
+  var typeName = typeCtor.toString().match(/function ([^\(]+)/)[1].toLowerCase();
 
-  function create(body) {
-    var entity = new entityCtor();
-    entity.id = db.createId();
-    validatePropsMatch(body, entity);
-    fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
-    return entity;
-  }
-
-  function getById(id) {
-    var entity = db.get(id);
-    if (typeof entity === 'undefined') {
-      return { name: typeName, statusCode: 404, message: 'Not Found', message: "getById: entity === undefined"};
-    }
-    var newEntity = new entityCtor();
-    fn.each(function(key) { newEntity[key] = entity[key]; }, Object.keys(entity));
-    return { name: typeName, data: newEntity };
-  };
-
-  function getAll() {
-    var entities = db.getAll();
-    if (entities.length >= 1) {
-      entities = filterEmpty(entities);
-    }
-    var result = { name: typeName, data: entities };
-    return result;
-  };
-
-  //- public api -----
-  //-
   this.get = function(path) {
     var id = getIdFromPath(path);
-    if (id === 0) return getAll();
-    return getById(id);
+    if (id === 0) return getAll(typeName);
+    return getById(id, typeName, typeCtor);
   };
 
   this.put = function(path, body) {
@@ -121,7 +112,7 @@ exports.Resource = function(entityCtor) {
   this.post = function(path, body) {
     var idAndRel = getIdAndRelFromPath(path);
     if(idAndRel.id === 0) {
-      var entity = create(body);
+      var entity = create(body, typeCtor);
       db.save(entity);
       return { name: typeName, data: entity }; //todo: - return 201 (Created) -
     }

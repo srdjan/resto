@@ -1,5 +1,7 @@
 !TODO-
 ===============================================================================
+-todo: handle entity without states
+-todo: add better server error handling (invalid json...)
 -todo: add paging
 -todo: add meta links to display, validation...
 -todo: add services
