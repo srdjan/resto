@@ -60,17 +60,17 @@ function getAll(typeName) {
   if (entities.length >= 1) {
     entities = filterEmpty(entities);
   }
-  return { name: typeName, data: entities };
+  return { name: typeName, data: entities, statusCode: 200, message: {} };
 };
 
 function getById(id, typeName, typeCtor) {
   var entity = db.get(id);
   if (typeof entity === 'undefined') {
-    return { name: typeName, statusCode: 404, message: 'Not Found', message: "getById: entity === undefined"};
+    return { name: typeName, data: {}, statusCode: 404, message: 'Not Found', message: "getById: entity === undefined"};
   }
   var newEntity = new typeCtor();
   fn.each(function(key) { newEntity[key] = entity[key]; }, Object.keys(entity));
-  return { name: typeName, data: newEntity };
+  return { name: typeName, data: newEntity, statusCode: 200, message: {} };
 };
 
 function create(body, typeCtor) {
@@ -94,7 +94,7 @@ exports.Resource = function(typeCtor) {
   this.put = function(path, body) {
     var idAndRel = getIdAndRelFromPath(path);
     if (idAndRel.id === 0) {
-      return { name: typeName, statusCode: 400, message: 'Bad Request', message: "PUT: Id required, path: " + path + " Body: " + JSON.stringify(body)};
+      return { name: typeName, data: {}, statusCode: 400, message: 'Bad Request', message: "PUT: Id required, path: " + path + " Body: " + JSON.stringify(body)};
     }
     var entity = db.get(idAndRel.id);
     validateApiCall(idAndRel.rel, entity);
@@ -104,9 +104,9 @@ exports.Resource = function(typeCtor) {
     if (result) {
       fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
       db.save(entity);
-      return { name: typeName, data: entity };
+      return { name: typeName, data: entity, statusCode: 200, message: {} };
     }
-    return { name: typeName, statusCode: 422, message: 'Unprocessable Entity', message: "PUT: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)};
+    return { name: typeName, data: {}, statusCode: 422, message: 'Unprocessable Entity', message: "PUT: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)};
   };
 
   this.post = function(path, body) {
@@ -114,7 +114,7 @@ exports.Resource = function(typeCtor) {
     if(idAndRel.id === 0) {
       var entity = create(body, typeCtor);
       db.save(entity);
-      return { name: typeName, data: entity }; //todo: - return 201 (Created) -
+      return { name: typeName, data: entity, statusCode: 200, message: {} }; //todo: - return 201 (Created) -
     }
     //- else: process post message id !== 0 and body.props don't have to exist on entity
     var entity = db.get(idAndRel.id);
@@ -122,9 +122,9 @@ exports.Resource = function(typeCtor) {
     var result = entity[idAndRel.rel](body);
     if (result) {
       db.save(entity);
-      return { name: typeName, data: entity };
+      return { name: typeName, data: entity, statusCode: 200, message: {} };
     }
-    return { name: typeName, statusCode: 422, message: 'Unprocessable Entity', message: "POST: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)};
+    return { name: typeName, data: {}, statusCode: 422, message: 'Unprocessable Entity', message: "POST: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)};
   };
 
   this.patch = function(path, body) {
@@ -139,14 +139,14 @@ exports.Resource = function(typeCtor) {
       db.save(entity);
       return { name: typeName, data: entity };
     }
-    return { name: typeName, statusCode: 422, message: 'Unprocessable Entity', message: "PATCH: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)};
+    return { name: typeName, data: {}, statusCode: 422, message: 'Unprocessable Entity', message: "PATCH: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)};
   };
 
   this.delete = function(path) {
     var idAndRel = getIdAndRelFromPath(path);
     var entity = db.get(idAndRel.id);
     db.remove(idAndRel.id);
-    return { name: typeName, data: {} };
+    return { name: typeName, data: {}, statusCode: 200, message: {} };
   };
 };
 
@@ -164,24 +164,27 @@ function getPath(url) {
   return fn.trimLeftAndRight(path, '/');
 }
 
-exports.handle = function(app, req) {
+exports.handle = function(request, response) {
   try {
-    var path = getPath(req.url);
+    var path = getPath(request.url);
     var requestedType = getTypeFromPath(path);
-    var resource = app[requestedType + 'Resource'];
-    var handler = resource[req.method.toLowerCase()];
-    var result = handler(path, req.body);
-    if(result.hasOwnProperty('data')) {
-      return hal.convert(result.name, result.data);
-    }
-    log(result.message);
-    return { statusCode: result.statusCode, message: result.message };
+    var resource = request.context[requestedType + 'Resource'];
+    var handler = resource[request.method.toLowerCase()];
+    var result = handler(path, request.body);
+    var halRep = hal.convert(result.name, result.data);
+    response.setHeader("Content-Type", "application/json");
+    response.writeHead(result.statusCode);
+    response.write(JSON.stringify(halRep));
+    response.end();
   }
   catch (e) {
     log('Fx Exception: ' + JSON.stringify(e));
-    if (e.hasOwnProperty('statusCode')) {
-      return { statusCode: e.statusCode, message: e.message };
+    if ( ! e.hasOwnProperty('statusCode')) {
+      e.statusCode = 500;
     }
-    return { statusCode: 500, message: e };
+    response.setHeader("Content-Type", "application/json");
+    response.writeHead(e.statusCode);
+    response.write(e.message || {});
+    response.end();
   }
 };

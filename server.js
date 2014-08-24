@@ -10,37 +10,30 @@ var log = console.log;
 
 port = process.argv[2] || 8080;
 
-function createResponse(result, response) {
-  response.writeHeader(getStatusCode(result), { "Content-Type": "application/json" });
-  response.write(JSON.stringify(result));
-  response.end();
-  return response;
-}
-
 function getStatusCode(result) {
   return result.hasOwnProperty('statusCode') ? result.statusCode : 200;
 }
 
-function processApiRequest(req, response) {
+function processApi(request, response) {
   var body = '';
-  if (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH') {
-    req.on('data', function(chunk) { body += chunk.toString(); });
-    req.on('end', function() {
-      req.body = JSON.parse(body);
-      var result = fx.handle(app, req);
-      return createResponse(result, response);
+  request.context = app;
+  if (request.method === 'POST' || request.method === 'PUT' || request.method === 'PATCH') {
+    request.on('data', function(chunk) { body += chunk.toString(); });
+    request.on('end', function() {
+      request.body = JSON.parse(body);
+      fx.handle(request, response);
     });
   }
   else {
-    var result = fx.handle(app, req);
-    return createResponse(result, response);
+    fx.handle(request, response);
   }
 };
 
 function getFile(fileName, response) {
   fs.readFile(fileName, "binary", function(err, file) {
     if (err) {
-      response.writeHead(500, { "Content-Type": "text/plain" });
+      response.writeHead(500);
+      response.setHeader("Content-Type", "text/plain");
       response.write(err + "\n");
       response.end();
     }
@@ -49,11 +42,10 @@ function getFile(fileName, response) {
       response.write(file, "binary");
       response.end();
     }
-    return response;
   });
 };
 
-function processStaticFileRequest(request, response) {
+function returnFile(request, response) {
   var hostname = url.parse(request.url, false, true).hostname;
   var pathname = url.parse(request.url).pathname;
   pathname = fn.trimLeftAndRight(pathname, '/');
@@ -81,10 +73,9 @@ function processStaticFileRequest(request, response) {
 
 http.createServer(function(request, response) {
   if (request.url.indexOf('/api') !== -1) {
-    log(request.url);
-    return processApiRequest(request, response);
+    return processApi(request, response);
   }
-  return processStaticFileRequest(request, response);
+  return returnFile(request, response);
 }).listen(parseInt(port, 10));
 
 log("Server running at port: " + port + "\nCTRL + SHIFT + C to shutdown");
