@@ -4,13 +4,14 @@
 'use strict;'
 var fn = require('./fn.js');
 var hal = require('./hal.js');
+var app = require('./app.js');
 var log = console.log;
 
 exports.handle = function(request, response) {
   try {
     var path = getPath(request.url);
     var requestedType = getTypeFromPath(path);
-    var resource = request.context[requestedType + 'Resource'];
+    var resource = app[requestedType + 'Resource'];
     var handler = resource[request.method.toLowerCase()];
     var result = handler(path, request.body);
     var halRep = hal.convert(result.name, result.data);

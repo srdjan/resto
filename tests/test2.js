@@ -7,7 +7,6 @@ var expect = require('expect.js');
 var httpMock = require('./httpMock.js');
 var fn = require('../src/fn.js');
 var db = require('../src/db.js');
-var app = require('../src/app.js');
 var resolver = require('../src/resolver.js');
 var log = console.log;
 
@@ -15,7 +14,7 @@ var log = console.log;
 db.clear();
 
 //-  test get all
-  var reqGetAll = new httpMock.Request('GET', 'http://test.demo.com/api/apples/', {}, {}, app);
+  var reqGetAll = new httpMock.Request('GET', 'http://test.demo.com/api/apples/', {}, {});
   var response = new httpMock.Response();
   resolver.handle(reqGetAll, response);
   var all = halson(response.body);
@@ -26,7 +25,7 @@ db.clear();
 
 //- test create
   var createLink = all.getLink('create');
-  var reqCreate = new httpMock.Request(createLink.method, createLink.href, {}, {weight: 10.0, color: "red"}, app);
+  var reqCreate = new httpMock.Request(createLink.method, createLink.href, {}, {weight: 10.0, color: "red"});
   var response = new httpMock.Response();
   resolver.handle(reqCreate, response);
   var apple = halson(response.body);
@@ -44,7 +43,7 @@ db.clear();
 
 //- test invariants
   var selfLink = apple.getLink('self');
-  var reqSelf = new httpMock.Request('GET', selfLink.href, {}, {}, app);
+  var reqSelf = new httpMock.Request('GET', selfLink.href, {}, {});
   response = new httpMock.Response();
   resolver.handle(reqSelf, response);
   apple = halson(response.body);
@@ -56,7 +55,7 @@ db.clear();
 
 //- call 'grow' api (post - with id and propertis that don't exist on entity)
   var growLink = apple.getLink('grow');
-  var reqGrow = new httpMock.Request(growLink.method, growLink.href, {}, { weightIncr: 230.0}, app);
+  var reqGrow = new httpMock.Request(growLink.method, growLink.href, {}, { weightIncr: 230.0});
   response = new httpMock.Response();
   resolver.handle(reqGrow, response);
   apple = halson(response.body);
@@ -68,7 +67,7 @@ db.clear();
 
 //- call 'eat' api (full put)
   var eatLink = apple.getLink('eat');
-  var reqEat = new httpMock.Request(eatLink.method, eatLink.href, {}, { weight: 0.0, color: 'orange'}, app);
+  var reqEat = new httpMock.Request(eatLink.method, eatLink.href, {}, { weight: 0.0, color: 'orange'});
   response = new httpMock.Response();
   resolver.handle(reqEat, response);
   apple = halson(response.body);
@@ -98,7 +97,7 @@ db.clear();
   resolver.handle(reqSelf, response);
   apple = halson(response.body);
   var tossLink = apple.getLink('toss');
-  var reqToss = new httpMock.Request(tossLink.method, tossLink.href, {}, { weight: 0.0, color: 'brown'}, app);
+  var reqToss = new httpMock.Request(tossLink.method, tossLink.href, {}, { weight: 0.0, color: 'brown'});
   response = new httpMock.Response();
   resolver.handle(reqToss, response);
   apple = halson(response.body);

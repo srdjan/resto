@@ -5,7 +5,6 @@ var path = require("path");
 var fs = require("fs");
 var fn = require('./src/fn.js');
 var resolver = require('./src/resolver.js');
-var app = require('./src/app.js');
 var log = console.log;
 
 port = process.argv[2] || 8080;
@@ -16,7 +15,6 @@ function getStatusCode(result) {
 
 function processApi(request, response) {
   var body = '';
-  request.context = app;
   if (request.method === 'POST' || request.method === 'PUT' || request.method === 'PATCH') {
     request.on('data', function(chunk) { body += chunk.toString(); });
     request.on('end', function() {
