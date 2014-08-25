@@ -4,7 +4,7 @@ var url = require("url");
 var path = require("path");
 var fs = require("fs");
 var fn = require('./src/fn.js');
-var fx = require('./src/fx.js');
+var resolver = require('./src/resolver.js');
 var app = require('./src/app.js');
 var log = console.log;
 
@@ -21,11 +21,11 @@ function processApi(request, response) {
     request.on('data', function(chunk) { body += chunk.toString(); });
     request.on('end', function() {
       request.body = JSON.parse(body);
-      fx.handle(request, response);
+      resolver.handle(request, response);
     });
   }
   else {
-    fx.handle(request, response);
+    resolver.handle(request, response);
   }
 };
 
