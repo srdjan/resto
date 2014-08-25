@@ -7,7 +7,7 @@ var fn = require('./src/fn.js');
 var resolver = require('./src/resolver.js');
 var log = console.log;
 
-port = process.argv[2] || 8070;
+port = process.argv[2] || 8060;
 
 function processApi(request, response) {
   var body = '';
