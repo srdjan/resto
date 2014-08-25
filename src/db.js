@@ -16,25 +16,25 @@ datastore.initSync({
 });
 
 var milis = 0;
-exports.createId = function() {
+function createId() {
   milis = new Date().getTime();
   return (milis += 1).toString();
 };
 
-exports.clear = function() {
+function clear() {
   datastore.clear();
 };
 
-exports.save = function(obj) {
+function save(obj) {
   datastore.setItem(obj.id, obj);
   datastore.getItem(obj.id);
 }
 
-exports.get = function(id) {
+function get(id) {
   return datastore.getItem(id);
 }
 
-exports.getAll = function() {
+function getAll() {
   var objs = [];
   datastore.values(function(vals) {
     objs = vals;
@@ -42,6 +42,13 @@ exports.getAll = function() {
   return objs;
 }
 
-exports.remove = function(id) {
+function remove(id) {
   datastore.removeItem(id);
 }
+
+module.exports.createId = createId;
+module.exports.clear = clear;
+module.exports.save = save;
+module.exports.get = get;
+module.exports.getAll = getAll;
+module.exports.remove = remove;

@@ -81,7 +81,7 @@ function create(body, typeCtor) {
   return entity;
 }
 
-exports.Resource = function(typeCtor) {
+function Resource(typeCtor) {
   var typeCtor = typeCtor;
   var typeName = typeCtor.toString().match(/function ([^\(]+)/)[1].toLowerCase();
 
@@ -149,4 +149,6 @@ exports.Resource = function(typeCtor) {
     return { name: typeName, data: {}, statusCode: 200, message: {} };
   };
 };
+
+module.exports.Resource = Resource;
 

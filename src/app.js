@@ -1,5 +1,5 @@
 'use strict;'
-var fx = require('./fx.js');
+var Resource = require('./fx.js').Resource;
 var log = console.log;
 
 function Apple() {
@@ -49,4 +49,5 @@ function Apple() {
     return false;
   };
 };
-exports.appleResource = new fx.Resource(Apple);
+
+module.exports.appleResource = new Resource(Apple);
