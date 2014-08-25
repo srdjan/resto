@@ -1,10 +1,9 @@
 //note: taken from: https://github.com/vojtajina/node-mocks
-exports.Request = function(method, url, headers, body, context) {
+exports.Request = function(method, url, body, headers) {
   this.method = method;
   this.url = url;
-  this.headers = headers || {};
   this.body = body || {};
-  this.context = context || {};
+  this.headers = headers || {};
   this.getHeader = function(key) {
     return this.headers[key];
   };
