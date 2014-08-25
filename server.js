@@ -9,10 +9,6 @@ var log = console.log;
 
 port = process.argv[2] || 8080;
 
-function getStatusCode(result) {
-  return result.hasOwnProperty('statusCode') ? result.statusCode : 200;
-}
-
 function processApi(request, response) {
   var body = '';
   if (request.method === 'POST' || request.method === 'PUT' || request.method === 'PATCH') {
