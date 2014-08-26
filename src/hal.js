@@ -8,6 +8,15 @@ var log = console.log;
 
 var getPropNames = fn.filter(function(p) { return !p.startsWith('state_') && p !== 'id'; });
 
+function createFull(typeName, entity) {
+  var links = fn.getLinks(entity);
+  var halRep = addRootProps(typeName, entity);
+  fn.each(function(el) {
+    halRep.addLink(el.rel, { href: '/api/' + typeName + 's/' + fn.atob(entity.id + '/' + el.rel), method: el.method });
+  }, links);
+  return halRep;
+}
+
 function addRootProps(typeName, entity) {
   var root = {};
   fn.each(function(propName) { root[propName] = entity[propName]; }, getPropNames(Object.keys(entity)));
@@ -21,37 +30,14 @@ function createRoot(typeName) {
   return root;
 }
 
-function createFull(typeName, entity) {
-  var links = exports.getLinksForCurrentState(entity);
-  var halRep = addRootProps(typeName, entity);
-  fn.each(function(el) {
-    halRep.addLink(el.rel, { href: '/api/' + typeName + 's/' + fn.atob(entity.id + '/' + el.rel), method: el.method });
-  }, links);
-  return halRep;
-}
-
-function getLinksForCurrentState(entity) {
-  var states = fn.filter(function(m) { return m.startsWith('state_') }, Object.keys(entity));
-  for (var i = 0; i < states.length; i++) {
-    var links = entity[states[i]]();
-    if (links !== false) {
-      return links;
-    }
-  }
-  throw { statusCode: 500, message: 'Internal Server Error', log: 'Invalid state invariants: ' + JSON.stringify(entity) };
-}
-
-function convert(typeName, data) {
+exports.convert = function(typeName, data) {
  if (data instanceof Array) {
     var halRep = createRoot(typeName);
     var embeds = fn.map(function(e) { return halson({}).addLink('self', '/api/' + typeName + 's/' + fn.atob(e.id)); }, data);
     fn.each(function(el, index, array) { halRep.addEmbed(typeName + 's', el); }, embeds);
     return halRep;
   }
-  if(Object.keys(data).length === 0) return createRoot(typeName);
+  if (Object.keys(data).length === 0) return createRoot(typeName);
   return createFull(typeName, data);
 }
-
-module.exports.getLinksForCurrentState = getLinksForCurrentState;
-module.exports.convert = convert;
 

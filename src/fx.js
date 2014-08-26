@@ -4,7 +4,6 @@
 'use strict;'
 var fn = require('./fn.js');
 var db = require('./db.js');
-var hal = require('./hal.js');
 var log = console.log;
 
 //- api/apples || api/apples/abc3b4=1
@@ -18,7 +17,6 @@ function getIdFromPath(path) {
 //- api/apples/123456/create
 function getIdAndRelFromPath(path) {
   var idAndRel = { id: 0, rel: ''};
-
   var tokens = path.split('/')
   tokens = fn.btoa(tokens[tokens.length - 1]).split('/');
   if (tokens.length === 2) {
@@ -34,7 +32,7 @@ function getIdAndRelFromPath(path) {
 var filterEmpty = fn.filter(function(e) { return Object.getOwnPropertyNames(e).length > 0; });
 
 function validateApiCall(reqRel, entity) {
-  var links = hal.getLinksForCurrentState(entity);
+  var links = fn.getLinks(entity);
   if ( ! fn.some(function(link) { return link.rel === reqRel; }, links)) {
     throw { statusCode: 409, message: 'Conflict', log: 'API call not allowed, rel: ' + reqRel + ' ! ' + JSON.stringify(entity) }
   }
@@ -81,7 +79,7 @@ function create(body, typeCtor) {
   return entity;
 }
 
-function Resource(typeCtor) {
+exports.Resource = function(typeCtor) {
   var typeCtor = typeCtor;
   var typeName = typeCtor.toString().match(/function ([^\(]+)/)[1].toLowerCase();
 
@@ -149,6 +147,4 @@ function Resource(typeCtor) {
     return { name: typeName, data: {}, statusCode: 200, message: {} };
   };
 };
-
-module.exports.Resource = Resource;
 

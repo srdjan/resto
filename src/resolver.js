@@ -7,6 +7,20 @@ var hal = require('./hal.js');
 var app = require('./app.js');
 var log = console.log;
 
+//- api/apples/123456/create
+function getTypeFromPath(path) {
+  var tokens = path.split('/');
+  if (tokens.length > 1) {
+    return tokens[1].slice(0, -1);
+  }
+  throw { statusCode: 500, message: 'Internal Server Error', log: 'Not an API call: ' + path };
+}
+
+function getPath(url) {
+  var path = url.substring(url.indexOf('api'), url.length);
+  return fn.trimLeftAndRight(path, '/');
+}
+
 exports.handle = function(request, response) {
   try {
     var path = getPath(request.url);
@@ -31,18 +45,4 @@ exports.handle = function(request, response) {
     response.end();
   }
 };
-
-//- api/apples/123456/create
-function getTypeFromPath(path) {
-  var tokens = path.split('/');
-  if (tokens.length > 1) {
-    return tokens[1].slice(0, -1);
-  }
-  throw { statusCode: 500, message: 'Internal Server Error', log: 'Not an API call: ' + path };
-}
-
-function getPath(url) {
-  var path = url.substring(url.indexOf('api'), url.length);
-  return fn.trimLeftAndRight(path, '/');
-}
 

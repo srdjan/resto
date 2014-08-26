@@ -5,28 +5,34 @@
 var R = require('ramda');
 var log = console.log;
 
-function atob(str) {
+exports.atob = function(str) {
   var res = new Buffer(str, 'ascii').toString('base64');
   return res.replace('+', '-').replace('/', '_').replace('=', ',');
 }
 
-function btoa(str) {
+exports.btoa = function(str) {
   var res = new Buffer(str, 'base64').toString('ascii');
   return res.replace('-', '+').replace('_', '/').replace(',', '=');
 }
 
-function trimLeftAndRight(str, ch) {
+exports.trimLeftAndRight = function(str, ch) {
   return str.replace(new RegExp("^[" + ch + "]+"), "").replace(new RegExp("[" + ch + "]+$"), "");
 }
 
-exports.atob = atob;
-exports.btoa = btoa;
-exports.trimLeftAndRight = trimLeftAndRight;
+exports.getLinks = function(entity) {
+  var states = R.filter(function(m) { return m.startsWith('state_') }, Object.keys(entity));
+  for (var i = 0; i < states.length; i++) {
+    var links = entity[states[i]]();
+    if (links !== false) {
+      return links;
+    }
+  }
+  throw { statusCode: 500, message: 'Internal Server Error', log: 'Invalid state invariants: ' + JSON.stringify(entity) };
+}
+
 exports.contains = R.contains;
 exports.filter = R.filter;
 exports.each = R.each;
 exports.some = R.some;
 exports.diff = R.difference;
 exports.map = R.map;
-
-
