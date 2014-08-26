@@ -4,7 +4,7 @@ var url = require("url");
 var path = require("path");
 var fs = require("fs");
 var fn = require('./src/fn.js');
-var resolver = require('./src/resolver.js');
+var app = require('./src/resolver.js');
 var log = console.log;
 
 port = process.argv[2] || 8060;
@@ -15,19 +15,18 @@ function processApi(request, response) {
     request.on('data', function(chunk) { body += chunk.toString(); });
     request.on('end', function() {
       request.body = JSON.parse(body);
-      resolver.handle(request, response);
+      app.handle(request, response);
     });
   }
   else {
-    resolver.handle(request, response);
+    app.handle(request, response);
   }
 };
 
 function getFile(fileName, response) {
   fs.readFile(fileName, "binary", function(err, file) {
     if (err) {
-      response.writeHead(500);
-      response.setHeader("Content-Type", "text/plain");
+      response.writeHead(500, {"Content-Type": "text/plain"});
       response.write(err + "\n");
     }
     else {
@@ -58,8 +57,7 @@ function returnFile(request, response) {
       return getFile(fileName, response);
     }
     log('Not found, hostname: ' + hostname + ' pathname: ' + pathname + ' fileName: ' + fileName);
-    response.writeHead(404);
-    response.setHeader("Content-Type", "application/json");
+    response.writeHead(404, {"Content-Type": "application/json"});
     response.end();
   });
 }

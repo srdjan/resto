@@ -8,8 +8,7 @@ var app = require('./app.js');
 var log = console.log;
 
 function writeResponse(statusCode, content, response) {
-  response.setHeader("Content-Type", "application/json");
-  response.writeHead(statusCode);
+  response.writeHead(statusCode, {"Content-Type": "application/json"});
   response.write(JSON.stringify(content));
   response.end();
 }
