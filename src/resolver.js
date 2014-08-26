@@ -16,33 +16,33 @@ function getTypeFromPath(path) {
   throw { statusCode: 500, message: 'Internal Server Error', log: 'Not an API call: ' + path };
 }
 
-function getPath(url) {
-  var path = url.substring(url.indexOf('api'), url.length);
-  return fn.trimLeftAndRight(path, '/');
+function writeResponse(statusCode, content, response) {
+  response.setHeader("Content-Type", "application/json");
+  response.writeHead(statusCode);
+  response.write(JSON.stringify(content));
+  response.end();
+}
+
+function getHandler(url, method) {
+  var path = fn.getPath(url);
+  var requestedType = getTypeFromPath(path);
+  var resource = app[requestedType + 'Resource'];
+  return resource[method];
 }
 
 exports.handle = function(request, response) {
   try {
-    var path = getPath(request.url);
-    var requestedType = getTypeFromPath(path);
-    var resource = app[requestedType + 'Resource'];
-    var handler = resource[request.method.toLowerCase()];
-    var result = handler(path, request.body);
+    var handler = getHandler(request.url, request.method.toLowerCase());
+    var result = handler(request, response);
     var halRep = hal.convert(result.name, result.data);
-    response.setHeader("Content-Type", "application/json");
-    response.writeHead(result.statusCode);
-    response.write(JSON.stringify(halRep));
-    response.end();
+    writeResponse(result.statusCode, halRep, response);
   }
   catch (e) {
     log('Fx Exception: ' + JSON.stringify(e));
     if ( ! e.hasOwnProperty('statusCode')) {
       e.statusCode = 500;
     }
-    response.setHeader("Content-Type", "application/json");
-    response.writeHead(e.statusCode);
-    response.write(e.message || {});
-    response.end();
+    writeResponse(e.statusCode, e.message || {}, response);
   }
 };
 

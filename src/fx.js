@@ -83,41 +83,44 @@ exports.Resource = function(typeCtor) {
   var typeCtor = typeCtor;
   var typeName = typeCtor.toString().match(/function ([^\(]+)/)[1].toLowerCase();
 
-  this.get = function(path) {
+  this.get = function(request, reponse) {
+    var path = fn.getPath(request.url);
     var id = getIdFromPath(path);
     if (id === 0) return getAll(typeName);
     return getById(id, typeName, typeCtor);
   };
 
-  this.put = function(path, body) {
+  this.put = function(request, response) {
+    var path = fn.getPath(request.url);
     var idAndRel = getIdAndRelFromPath(path);
     if (idAndRel.id === 0) {
-      return { name: typeName, data: {}, statusCode: 400, message: 'Bad Request', message: "PUT: Id required, path: " + path + " Body: " + JSON.stringify(body)};
+      return { name: typeName, data: {}, statusCode: 400, message: 'Bad Request', message: "PUT: Id required, path: " + path + " Body: " + JSON.stringify(request.body)};
     }
     var entity = db.get(idAndRel.id);
     validateApiCall(idAndRel.rel, entity);
-    validatePropsMatch(body, entity);
+    validatePropsMatch(request.body, entity);
 
-    var result = entity[idAndRel.rel](body);
+    var result = entity[idAndRel.rel](request.body);
     if (result) {
-      fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
+      fn.each(function(key) { entity[key] = request.body[key]; }, Object.keys(request.body));
       db.save(entity);
       return { name: typeName, data: entity, statusCode: 200, message: {} };
     }
     return { name: typeName, data: {}, statusCode: 422, message: 'Unprocessable Entity', message: "PUT: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)};
   };
 
-  this.post = function(path, body) {
+  this.post = function(request, response) {
+    var path = fn.getPath(request.url);
     var idAndRel = getIdAndRelFromPath(path);
     if(idAndRel.id === 0) {
-      var entity = create(body, typeCtor);
+      var entity = create(request.body, typeCtor);
       db.save(entity);
       return { name: typeName, data: entity, statusCode: 200, message: {} }; //todo: - return 201 (Created) -
     }
     //- else: process post message id !== 0 and body.props don't have to exist on entity
     var entity = db.get(idAndRel.id);
     validateApiCall(idAndRel.rel, entity);
-    var result = entity[idAndRel.rel](body);
+    var result = entity[idAndRel.rel](request.body);
     if (result) {
       db.save(entity);
       return { name: typeName, data: entity, statusCode: 200, message: {} };
@@ -125,22 +128,24 @@ exports.Resource = function(typeCtor) {
     return { name: typeName, data: {}, statusCode: 422, message: 'Unprocessable Entity', message: "POST: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)};
   };
 
-  this.patch = function(path, body) {
+  this.patch = function(request, response) {
+    var path = fn.getPath(request.url);
     var idAndRel = getIdAndRelFromPath(path);
     var entity = getById(idAndRel.id);
     validateApiCall(idAndRel.rel, entity);
-    validatePropsExist(body, entity);
+    validatePropsExist(request.body, entity);
 
-    var result = entity[idAndRel.rel](body);
+    var result = entity[idAndRel.rel](request.body);
     if (result) {
-      fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
+      fn.each(function(key) { entity[key] = request.body[key]; }, Object.keys(request.body));
       db.save(entity);
       return { name: typeName, data: entity };
     }
     return { name: typeName, data: {}, statusCode: 422, message: 'Unprocessable Entity', message: "PATCH: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)};
   };
 
-  this.delete = function(path) {
+  this.delete = function(request, response) {
+    var path = fn.getPath(request.url);
     var idAndRel = getIdAndRelFromPath(path);
     var entity = db.get(idAndRel.id);
     db.remove(idAndRel.id);

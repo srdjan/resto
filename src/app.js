@@ -33,7 +33,6 @@ function Apple() {
     }
     return false;
   };
-
   this.state_ready_to_eat = function() {
     if (this.weight >= 200.0 && this.weight < 300.0) {
       return [{ rel: 'eat', method: "PUT" },
@@ -41,7 +40,6 @@ function Apple() {
     }
     return false;
   };
-
   this.state_done = function() {
     if (this.weight === 0.0) {
       return [{ rel: 'toss', method: "DELETE"}];

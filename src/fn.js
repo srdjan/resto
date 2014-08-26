@@ -30,6 +30,11 @@ exports.getLinks = function(entity) {
   throw { statusCode: 500, message: 'Internal Server Error', log: 'Invalid state invariants: ' + JSON.stringify(entity) };
 }
 
+exports.getPath = function(url) {
+  var path = url.substring(url.indexOf('api'), url.length);
+  return exports.trimLeftAndRight(path, '/');
+}
+
 exports.contains = R.contains;
 exports.filter = R.filter;
 exports.each = R.each;
