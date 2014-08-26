@@ -1,22 +1,22 @@
--todo
-  -todo: make video and blog twit about it
-  -todo: handle entity without states
-  -todo: add paging
-  -todo: add meta links to display, validation...
-  -todo: add services
-  -todo: add orchestrator
-  -todo: make client up (http://sennajs.com/docs/,  https://github.com/giann/zappa, https://github.com/Raynos/http-framework...
-  -todo: add better server error handling (invalid json...)
-        https://stormpath.com/blog/node-api-client-part-one/
-        http://appdevelopermagazine.com/1718/2014/7/31/StrongLoop-Node.js-API-Server-Released-for-Developing,-Securing-and-Scaling-REST-APIs/
-        http://avoidwork.github.io/tenso/rest.html
+-todo: handle entity without states
+-todo: add paging
+-todo: add services
+-todo: add contracts.js
+-todo: add es6-ify
+-todo: make client up (http://sennajs.com/docs/,  https://github.com/giann/zappa, https://github.com/Raynos/http-framework...
+-todo: add meta links to display, validation...
+-todo: add better server error handling (invalid json...)
+      https://stormpath.com/blog/node-api-client-part-one/
+      http://appdevelopermagazine.com/1718/2014/7/31/StrongLoop-Node.js-API-Server-Released-for-Developing,-Securing-and-Scaling-REST-APIs/
+      http://avoidwork.github.io/tenso/rest.html
+-todo: add orchestrator
 
-+done
-  +todo: publish slides
-  +done: use rel.method value instead of hardcoded POST
-  +done: don't show non get link for GET
-  +done: fx should return plain js objects - add wrapper to convert to hal
-  +done: fix hal-browser not showing root props
++todo: make video and blog twit about it
++todo: publish slides
++todo: use rel.method value instead of hardcoded POST
++todo: don't show non get link for GET
++todo: fx should return plain js objects - add wrapper to convert to hal
++todo: fix hal-browser not showing root props
 
 !idea
   !idea: test in production [http://bahmutov.calepin.co/test-in-production.html]
