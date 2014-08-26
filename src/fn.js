@@ -3,11 +3,18 @@
 //---------------------------------------------------------------------------------
 'use strict;'
 var R = require('ramda');
+exports.contains = R.contains;
+exports.filter = R.filter;
+exports.each = R.each;
+exports.some = R.some;
+exports.diff = R.difference;
+exports.map = R.map;
+
 var log = console.log;
 
-getPath = function(url) {
+function getTokens(url) {
   var path = url.substring(url.indexOf('api'), url.length);
-  return exports.trimLeftAndRight(path, '/');
+  return exports.trimLeftAndRight(path, '/').split('/');
 }
 
 exports.atob = function(str) {
@@ -22,8 +29,7 @@ exports.btoa = function(str) {
 
 //- api/apples || api/apples/abc3b4=1
 exports.getId = function(url) {
-  var path = getPath(url);
-  var tokens = path.split('/');
+  var tokens = getTokens(url);
   var id = exports.btoa(tokens[tokens.length - 1]);
   if (isNaN(id)) return 0;
   return id;
@@ -31,9 +37,8 @@ exports.getId = function(url) {
 
 //- api/apples/123456/create
 exports.getIdAndRel = function(url) {
-  var path = getPath(url);
+  var tokens = getTokens(url);
   var idAndRel = { id: 0, rel: ''};
-  var tokens = path.split('/')
   tokens = exports.btoa(tokens[tokens.length - 1]).split('/');
   if (tokens.length === 2) {
     idAndRel.id = tokens[0];
@@ -62,17 +67,10 @@ exports.getLinks = function(entity) {
 
 //- api/apples/123456/create
 exports.getTypeFromPath = function(url) {
-  var path = getPath(url);
-  var tokens = path.split('/');
+  var tokens = getTokens(url);
   if (tokens.length > 1) {
     return tokens[1].slice(0, -1);
   }
   throw { statusCode: 500, message: 'Internal Server Error', log: 'Not an API call: ' + path };
 }
 
-exports.contains = R.contains;
-exports.filter = R.filter;
-exports.each = R.each;
-exports.some = R.some;
-exports.diff = R.difference;
-exports.map = R.map;
