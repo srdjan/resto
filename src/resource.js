@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------
-//- framework
+//- resource
 //---------------------------------------------------------------------------------
 'use strict;'
 var fn = require('./fn.js');
@@ -62,7 +62,9 @@ exports.Resource = function(typeCtor) {
 
   this.get = function(request, reponse) {
     var id = fn.getId(request.url);
-    if (id === 0) return getAll(typeName);
+    if (id === 0) {
+      return getAll(typeName);
+    }
     return getById(id, typeName, typeCtor);
   };
 
@@ -71,6 +73,7 @@ exports.Resource = function(typeCtor) {
     if (idAndRel.id === 0) {
       return { name: typeName, data: {}, statusCode: 400, message: 'Bad Request', message: "PUT: Id required, path: " + request.url + " Body: " + JSON.stringify(request.body)};
     }
+
     var entity = db.get(idAndRel.id);
     validateApiCall(idAndRel.rel, entity);
     validatePropsMatch(request.body, entity);

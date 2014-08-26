@@ -1,17 +1,14 @@
 //---------------------------------------------------------------------------------
 //- resolver
 //---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
+//- resolver
+//---------------------------------------------------------------------------------
 'use strict;'
 var fn = require('./fn.js');
 var hal = require('./hal.js');
 var app = require('./app.js');
 var log = console.log;
-
-function writeResponse(statusCode, content, response) {
-  response.writeHead(statusCode, {"Content-Type": "application/json"});
-  response.write(JSON.stringify(content));
-  response.end();
-}
 
 function getHandler(url, method) {
   var requestedType = fn.getTypeFromPath(url);
@@ -19,19 +16,24 @@ function getHandler(url, method) {
   return resource[method];
 }
 
-exports.handle = function(request, response) {
+exports.handle = function(ctx) {
   try {
-    var handler = getHandler(request.url, request.method.toLowerCase());
-    var result = handler(request, response);
+    var handler = getHandler(ctx.req.url, ctx.req.method.toLowerCase());
+    var result = handler(ctx.req, ctx.resp);
     var halRep = hal.convert(result.name, result.data);
-    writeResponse(result.statusCode, halRep, response);
+    ctx.resp.statusCode = 200;
+    ctx.resp.write(JSON.stringify(halRep));
   }
   catch (e) {
-    log('Fx Exception: ' + JSON.stringify(e));
     if ( ! e.hasOwnProperty('statusCode')) {
+      log('3')
       e.statusCode = 500;
+      e.message = 'Unknown Error!'
     }
-    writeResponse(e.statusCode, e.message || {}, response);
+    log('Fx Exception, statusCode: ' + e.statusCode + ' mesg: ' + e.message);
+    ctx.resp.statusCode = e.statusCode;
+    ctx.resp.write(e.message);
   }
+  return ctx;
 };
 

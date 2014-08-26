@@ -3,6 +3,7 @@
 //---------------------------------------------------------------------------------
 'use strict;'
 var R = require('ramda');
+exports.compose = R.compose;
 exports.contains = R.contains;
 exports.filter = R.filter;
 exports.each = R.each;
