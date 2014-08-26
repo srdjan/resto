@@ -15,7 +15,7 @@ var log = console.log;
 db.clear();
 
 //-  test get all
-  var reqGetAll = new Request('GET', 'http://test.demo.com/api/apples/');
+  var reqGetAll = new Request('GET', 'http://farm.com/api/apples/');
   var response = new Response();
   resolver.handle(reqGetAll, response);
   var all = halson(response.body);

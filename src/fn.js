@@ -5,6 +5,11 @@
 var R = require('ramda');
 var log = console.log;
 
+getPath = function(url) {
+  var path = url.substring(url.indexOf('api'), url.length);
+  return exports.trimLeftAndRight(path, '/');
+}
+
 exports.atob = function(str) {
   var res = new Buffer(str, 'ascii').toString('base64');
   return res.replace('+', '-').replace('/', '_').replace('=', ',');
@@ -13,6 +18,31 @@ exports.atob = function(str) {
 exports.btoa = function(str) {
   var res = new Buffer(str, 'base64').toString('ascii');
   return res.replace('-', '+').replace('_', '/').replace(',', '=');
+}
+
+//- api/apples || api/apples/abc3b4=1
+exports.getId = function(url) {
+  var path = getPath(url);
+  var tokens = path.split('/');
+  var id = exports.btoa(tokens[tokens.length - 1]);
+  if (isNaN(id)) return 0;
+  return id;
+}
+
+//- api/apples/123456/create
+exports.getIdAndRel = function(url) {
+  var path = getPath(url);
+  var idAndRel = { id: 0, rel: ''};
+  var tokens = path.split('/')
+  tokens = exports.btoa(tokens[tokens.length - 1]).split('/');
+  if (tokens.length === 2) {
+    idAndRel.id = tokens[0];
+    idAndRel.rel = tokens[1];
+  }
+  else {
+    idAndRel.rel = tokens[0];
+  }
+  return idAndRel;
 }
 
 exports.trimLeftAndRight = function(str, ch) {
@@ -30,9 +60,14 @@ exports.getLinks = function(entity) {
   throw { statusCode: 500, message: 'Internal Server Error', log: 'Invalid state invariants: ' + JSON.stringify(entity) };
 }
 
-exports.getPath = function(url) {
-  var path = url.substring(url.indexOf('api'), url.length);
-  return exports.trimLeftAndRight(path, '/');
+//- api/apples/123456/create
+exports.getTypeFromPath = function(url) {
+  var path = getPath(url);
+  var tokens = path.split('/');
+  if (tokens.length > 1) {
+    return tokens[1].slice(0, -1);
+  }
+  throw { statusCode: 500, message: 'Internal Server Error', log: 'Not an API call: ' + path };
 }
 
 exports.contains = R.contains;

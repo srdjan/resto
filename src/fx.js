@@ -6,29 +6,6 @@ var fn = require('./fn.js');
 var db = require('./db.js');
 var log = console.log;
 
-//- api/apples || api/apples/abc3b4=1
-function getIdFromPath(path) {
-  var tokens = path.split('/');
-  var id = fn.btoa(tokens[tokens.length - 1]);
-  if (isNaN(id)) return 0;
-  return id;
-}
-
-//- api/apples/123456/create
-function getIdAndRelFromPath(path) {
-  var idAndRel = { id: 0, rel: ''};
-  var tokens = path.split('/')
-  tokens = fn.btoa(tokens[tokens.length - 1]).split('/');
-  if (tokens.length === 2) {
-    idAndRel.id = tokens[0];
-    idAndRel.rel = tokens[1];
-  }
-  else {
-    idAndRel.rel = tokens[0];
-  }
-  return idAndRel;
-}
-
 var filterEmpty = fn.filter(function(e) { return Object.getOwnPropertyNames(e).length > 0; });
 
 function validateApiCall(reqRel, entity) {
@@ -84,17 +61,15 @@ exports.Resource = function(typeCtor) {
   var typeName = typeCtor.toString().match(/function ([^\(]+)/)[1].toLowerCase();
 
   this.get = function(request, reponse) {
-    var path = fn.getPath(request.url);
-    var id = getIdFromPath(path);
+    var id = fn.getId(request.url);
     if (id === 0) return getAll(typeName);
     return getById(id, typeName, typeCtor);
   };
 
   this.put = function(request, response) {
-    var path = fn.getPath(request.url);
-    var idAndRel = getIdAndRelFromPath(path);
+    var idAndRel = fn.getIdAndRel(request.url);
     if (idAndRel.id === 0) {
-      return { name: typeName, data: {}, statusCode: 400, message: 'Bad Request', message: "PUT: Id required, path: " + path + " Body: " + JSON.stringify(request.body)};
+      return { name: typeName, data: {}, statusCode: 400, message: 'Bad Request', message: "PUT: Id required, path: " + request.url + " Body: " + JSON.stringify(request.body)};
     }
     var entity = db.get(idAndRel.id);
     validateApiCall(idAndRel.rel, entity);
@@ -110,8 +85,7 @@ exports.Resource = function(typeCtor) {
   };
 
   this.post = function(request, response) {
-    var path = fn.getPath(request.url);
-    var idAndRel = getIdAndRelFromPath(path);
+    var idAndRel = fn.getIdAndRel(request.url);
     if(idAndRel.id === 0) {
       var entity = create(request.body, typeCtor);
       db.save(entity);
@@ -129,8 +103,7 @@ exports.Resource = function(typeCtor) {
   };
 
   this.patch = function(request, response) {
-    var path = fn.getPath(request.url);
-    var idAndRel = getIdAndRelFromPath(path);
+    var idAndRel = fn.getIdAndRel(request.url);
     var entity = getById(idAndRel.id);
     validateApiCall(idAndRel.rel, entity);
     validatePropsExist(request.body, entity);
@@ -145,8 +118,7 @@ exports.Resource = function(typeCtor) {
   };
 
   this.delete = function(request, response) {
-    var path = fn.getPath(request.url);
-    var idAndRel = getIdAndRelFromPath(path);
+    var idAndRel = fn.getIdAndRel(request.url);
     var entity = db.get(idAndRel.id);
     db.remove(idAndRel.id);
     return { name: typeName, data: {}, statusCode: 200, message: {} };

@@ -7,15 +7,6 @@ var hal = require('./hal.js');
 var app = require('./app.js');
 var log = console.log;
 
-//- api/apples/123456/create
-function getTypeFromPath(path) {
-  var tokens = path.split('/');
-  if (tokens.length > 1) {
-    return tokens[1].slice(0, -1);
-  }
-  throw { statusCode: 500, message: 'Internal Server Error', log: 'Not an API call: ' + path };
-}
-
 function writeResponse(statusCode, content, response) {
   response.setHeader("Content-Type", "application/json");
   response.writeHead(statusCode);
@@ -24,8 +15,7 @@ function writeResponse(statusCode, content, response) {
 }
 
 function getHandler(url, method) {
-  var path = fn.getPath(url);
-  var requestedType = getTypeFromPath(path);
+  var requestedType = fn.getTypeFromPath(url);
   var resource = app[requestedType + 'Resource'];
   return resource[method];
 }
