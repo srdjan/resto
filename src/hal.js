@@ -30,14 +30,23 @@ function createRoot(typeName) {
   return root;
 }
 
-exports.convert = function(result) {
+function convert(result) {
  if (result.data instanceof Array) {
     var halRep = createRoot(result.name);
-    var embeds = fn.map(function(e) { return halson({}).addLink('self', '/api/' + result.name + 's/' + fn.atob(e.id)); }, result.data);
+    var embeds = fn.map(function(e) { return halson({}).addLink('self', '/api/' + result.name + 's/' + fn.atob(e.id)); },
+                                result.data);
     fn.each(function(el, index, array) { halRep.addEmbed(result.name + 's', el); }, embeds);
     return halRep;
   }
   if (Object.keys(result.data).length === 0) return createRoot(result.name);
   return createFull(result);
 }
+
+exports.toHal = function(ctx) {
+  var halRep = convert(ctx.result);
+  ctx.resp.writeHead(ctx.result.statusCode, {"Content-Type": "application/json"});
+  ctx.resp.write(JSON.stringify(halRep));
+  ctx.resp.end();
+  return ctx;
+};
 

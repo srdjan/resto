@@ -8,13 +8,6 @@ function Request(method, url, body, headers) {
   this.getHeader = function(key) {
     return this.headers[key];
   };
-
-  this.on = function(key, clbck, chunk) {
-    if(key === 'data') {
-      clbck(chunk);
-    }
-
-  }
 };
 
 function Response() {

@@ -4,8 +4,8 @@
 'use strict;'
 var http = require("http");
 var file = require("./src/filehelper.js");
-var m = require('./src/middleware.js');
 var fn = require('./src/fn.js');
+var processApi = require('./src/pipeline.js').process;
 var log = console.log;
 
 port = process.argv[2] || 8080;
@@ -17,11 +17,11 @@ http.createServer(function(request, response) {
       request.on('data', function(chunk) { body += chunk.toString(); });
       request.on('end', function() {
         request.body = JSON.parse(body);
-        m.pipeline({ req: request, resp: response });
+        processApi({ req: request, resp: response });
       });
     }
     else {
-      m.pipeline({ req: request, resp: response });
+      processApi({ req: request, resp: response });
     }
   }
   else {

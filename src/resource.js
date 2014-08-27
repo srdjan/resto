@@ -11,22 +11,21 @@ var filterEmpty = fn.filter(function(e) { return Object.getOwnPropertyNames(e).l
 function validateApiCall(reqRel, entity) {
   var links = fn.getLinks(entity);
   if ( ! fn.some(function(link) { return link.rel === reqRel; }, links)) {
-    throw { statusCode: 409, message: 'Conflict', log: 'API call not allowed, rel: ' + reqRel + ' ! ' + JSON.stringify(entity) }
+    throw { statusCode: 404, message: 'Conflict - API call not allowed' };
   }
-  return true;
 }
 
 function validatePropsExist(body, entity) {
   var diff = fn.diff(Object.keys(body), Object.keys(entity));
   if (diff.length > 0) {
-    throw { statusCode: 400, message: 'Bad Request', log: 'Properties: ' + diff + ' do not exist ! ' + JSON.stringify(entity) }
+    throw { statusCode: 400, message: 'Bad Request:\n' + JSON.stringify(entity) }
   }
 }
 
 function validatePropsMatch(body, entity) {
   var diff = fn.diff(Object.keys(body), Object.keys(entity));
   if (diff.length > 0) {
-    throw { statusCode: 400, message: 'Bad Request', log: 'Properties: ' + diff + ' failed to match ! ' + JSON.stringify(entity) }
+    throw { statusCode: 400, message: 'Bad Request:\n' + JSON.stringify(entity) }
   }
 }
 
@@ -35,21 +34,20 @@ function getAll(typeName) {
   if (entities.length >= 1) {
     entities = filterEmpty(entities);
   }
-  return { name: typeName, data: entities, statusCode: 200, message: {} };
+  return { name: typeName, data: entities, statusCode: 200 };
 };
 
 function getById(id, typeName, typeCtor) {
   var entity = db.get(id);
   if (typeof entity === 'undefined') {
-    return { name: typeName, data: {}, statusCode: 404, message: 'Not Found', message: "getById: entity === undefined"};
+    throw { statusCode: 404, message: 'Not Found'};
   }
   var newEntity = new typeCtor();
   fn.each(function(key) { newEntity[key] = entity[key]; }, Object.keys(entity));
-  return { name: typeName, data: newEntity, statusCode: 200, message: {} };
+  return { name: typeName, data: newEntity, statusCode: 200 };
 };
 
 function create(body, typeCtor) {
-  log(body)
   var entity = new typeCtor();
   entity.id = db.createId();
   validatePropsMatch(body, entity);
@@ -72,7 +70,7 @@ exports.Resource = function(typeCtor) {
   this.put = function(request, response) {
     var idAndRel = fn.getIdAndRel(request.url);
     if (idAndRel.id === 0) {
-      return { name: typeName, data: {}, statusCode: 400, message: 'Bad Request', message: "PUT: Id required, path: " + request.url + " Body: " + JSON.stringify(request.body)};
+      throw { statusCode: 400, message: 'Bad Request'};
     }
 
     var entity = db.get(idAndRel.id);
@@ -85,7 +83,7 @@ exports.Resource = function(typeCtor) {
       db.save(entity);
       return { name: typeName, data: entity, statusCode: 200, message: {} };
     }
-    return { name: typeName, data: {}, statusCode: 422, message: 'Unprocessable Entity', message: "PUT: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)};
+    throw { statusCode: 422, message: 'Unprocessable Entity'};
   };
 
   this.post = function(request, response) {
@@ -103,7 +101,7 @@ exports.Resource = function(typeCtor) {
       db.save(entity);
       return { name: typeName, data: entity, statusCode: 200, message: {} };
     }
-    return { name: typeName, data: {}, statusCode: 422, message: 'Unprocessable Entity', message: "POST: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)};
+    throw { statusCode: 422, message: 'Unprocessable Entity' };
   };
 
   this.patch = function(request, response) {
@@ -118,7 +116,7 @@ exports.Resource = function(typeCtor) {
       db.save(entity);
       return { name: typeName, data: entity };
     }
-    return { name: typeName, data: {}, statusCode: 422, message: 'Unprocessable Entity', message: "PATCH: Unprocessable, Rel: " + idAndRel.rel + " Entity: " + JSON.stringify(entity)};
+    throw { statusCode: 422, message: 'Unprocessable Entity' };
   };
 
   this.delete = function(request, response) {
@@ -128,4 +126,3 @@ exports.Resource = function(typeCtor) {
     return { name: typeName, data: {}, statusCode: 200, message: {} };
   };
 };
-
