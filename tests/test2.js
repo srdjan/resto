@@ -15,7 +15,7 @@ var log = console.log;
 db.clear();
 
 //-  test get all
-  var reqGetAll = new Request('GET', 'http://farm.com/api/apples/');
+  var reqGetAll = new Request('GET', '/api/apples/');
   var response = new Response();
   var ctx = { req: reqGetAll, resp: response };
   m.pipeline(ctx);

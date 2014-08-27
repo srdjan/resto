@@ -49,6 +49,7 @@ function getById(id, typeName, typeCtor) {
 };
 
 function create(body, typeCtor) {
+  log(body)
   var entity = new typeCtor();
   entity.id = db.createId();
   validatePropsMatch(body, entity);
@@ -92,7 +93,7 @@ exports.Resource = function(typeCtor) {
     if(idAndRel.id === 0) {
       var entity = create(request.body, typeCtor);
       db.save(entity);
-      return { name: typeName, data: entity, statusCode: 200, message: {} }; //todo: - return 201 (Created) -
+      return { name: typeName, data: entity, statusCode: 201, message: {} };
     }
     //- else: process post message id !== 0 and body.props don't have to exist on entity
     var entity = db.get(idAndRel.id);

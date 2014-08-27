@@ -8,19 +8,19 @@ var log = console.log;
 
 var getPropNames = fn.filter(function(p) { return !p.startsWith('state_') && p !== 'id'; });
 
-function createFull(typeName, entity) {
-  var links = fn.getLinks(entity);
-  var halRep = addRootProps(typeName, entity);
+function createFull(result) {
+  var links = fn.getLinks(result.data);
+  var halRep = addRootProps(result);
   fn.each(function(el) {
-    halRep.addLink(el.rel, { href: '/api/' + typeName + 's/' + fn.atob(entity.id + '/' + el.rel), method: el.method });
+    halRep.addLink(el.rel, { href: '/api/' + result.name + 's/' + fn.atob(result.data.id + '/' + el.rel), method: el.method });
   }, links);
   return halRep;
 }
 
-function addRootProps(typeName, entity) {
+function addRootProps(result) {
   var root = {};
-  fn.each(function(propName) { root[propName] = entity[propName]; }, getPropNames(Object.keys(entity)));
-  return halson(JSON.stringify(root)).addLink('self', '/api/' + typeName + 's/' + fn.atob(entity.id));
+  fn.each(function(propName) { root[propName] = result.data[propName]; }, getPropNames(Object.keys(result.data)));
+  return halson(JSON.stringify(root)).addLink('self', '/api/' + result.name + 's/' + fn.atob(result.data.id));
 }
 
 function createRoot(typeName) {
@@ -30,14 +30,14 @@ function createRoot(typeName) {
   return root;
 }
 
-exports.convert = function(typeName, data) {
- if (data instanceof Array) {
-    var halRep = createRoot(typeName);
-    var embeds = fn.map(function(e) { return halson({}).addLink('self', '/api/' + typeName + 's/' + fn.atob(e.id)); }, data);
-    fn.each(function(el, index, array) { halRep.addEmbed(typeName + 's', el); }, embeds);
+exports.convert = function(result) {
+ if (result.data instanceof Array) {
+    var halRep = createRoot(result.name);
+    var embeds = fn.map(function(e) { return halson({}).addLink('self', '/api/' + result.name + 's/' + fn.atob(e.id)); }, result.data);
+    fn.each(function(el, index, array) { halRep.addEmbed(result.name + 's', el); }, embeds);
     return halRep;
   }
-  if (Object.keys(data).length === 0) return createRoot(typeName);
-  return createFull(typeName, data);
+  if (Object.keys(result.data).length === 0) return createRoot(result.name);
+  return createFull(result);
 }
 
