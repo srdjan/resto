@@ -7,6 +7,7 @@ var file = require("./src/filehelper.js");
 var fn = require('./src/fn.js');
 var pipeline = require('./src/pipeline.js').pipeline;
 var log = console.log;
+var port = 8080;
 
 http.createServer(function(request, response) {
   if (fn.isApiCall(request)) {
@@ -15,6 +16,6 @@ http.createServer(function(request, response) {
   else {
     file.get(request, response);
   }
-}).listen(8080);
+}).listen(port);
 
-log("Server running at port: " + 8080 + "\nCTRL + SHIFT + C to shutdown");
+log("Server running at port: " + port + "\nCTRL + SHIFT + C to shutdown");

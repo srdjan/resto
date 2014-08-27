@@ -6,8 +6,6 @@ var fn = require('./fn.js');
 var db = require('./db.js');
 var log = console.log;
 
-var filterEmpty = fn.filter(function(e) { return Object.getOwnPropertyNames(e).length > 0; });
-
 function validateApiCall(reqRel, entity) {
   var links = fn.getLinks(entity);
   if ( ! fn.some(function(link) { return link.rel === reqRel; }, links)) {
@@ -32,7 +30,7 @@ function validatePropsMatch(body, entity) {
 function getAll(typeName) {
   var entities = db.getAll();
   if (entities.length >= 1) {
-    entities = filterEmpty(entities);
+    entities = fn.filterEmpty(entities);
   }
   return { name: typeName, data: entities, statusCode: 200 };
 };
@@ -59,7 +57,7 @@ exports.Resource = function(typeCtor) {
   var typeCtor = typeCtor;
   var typeName = typeCtor.toString().match(/function ([^\(]+)/)[1].toLowerCase();
 
-  this.get = function(request, reponse) {
+  this.get = function(request) {
     var id = fn.getId(request.url);
     if (id === 0) {
       return getAll(typeName);
@@ -67,7 +65,7 @@ exports.Resource = function(typeCtor) {
     return getById(id, typeName, typeCtor);
   };
 
-  this.put = function(request, response) {
+  this.put = function(request) {
     var idAndRel = fn.getIdAndRel(request.url);
     if (idAndRel.id === 0) {
       throw { statusCode: 400, message: 'Bad Request'};
@@ -86,7 +84,7 @@ exports.Resource = function(typeCtor) {
     throw { statusCode: 422, message: 'Unprocessable Entity'};
   };
 
-  this.post = function(request, response) {
+  this.post = function(request) {
     var idAndRel = fn.getIdAndRel(request.url);
     if(idAndRel.id === 0) {
       var entity = create(request.body, typeCtor);
@@ -104,7 +102,7 @@ exports.Resource = function(typeCtor) {
     throw { statusCode: 422, message: 'Unprocessable Entity' };
   };
 
-  this.patch = function(request, response) {
+  this.patch = function(request) {
     var idAndRel = fn.getIdAndRel(request.url);
     var entity = getById(idAndRel.id);
     validateApiCall(idAndRel.rel, entity);
@@ -119,7 +117,7 @@ exports.Resource = function(typeCtor) {
     throw { statusCode: 422, message: 'Unprocessable Entity' };
   };
 
-  this.delete = function(request, response) {
+  this.delete = function(request) {
     var idAndRel = fn.getIdAndRel(request.url);
     var entity = db.get(idAndRel.id);
     db.remove(idAndRel.id);

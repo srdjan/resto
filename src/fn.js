@@ -10,8 +10,9 @@ exports.each = R.each;
 exports.some = R.some;
 exports.diff = R.difference;
 exports.map = R.map;
-
 var log = console.log;
+
+exports.filterEmpty = R.filter(function(e) { return Object.getOwnPropertyNames(e).length > 0; });
 
 function getTokens(url) {
   var path = url.substring(url.indexOf('api'), url.length);
