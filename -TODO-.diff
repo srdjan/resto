@@ -23,6 +23,7 @@
   !idea: create web app for todos with !,@,# and keywords, rules, actions, messaies
 
 !use
+  !use: https://github.com/xyncro/frost
   !use: http://www.rackspace.com/blog/objectrocket-adds-fully-managed-redis-service/?cm_mmc=managed-_-cloud-_-contentnam-_-dbweekly-ORredis
   !use: https://github.com/ericelliott/cuid
   !#use: http://timelessrepo.com/haters-gonna-hateoas for RESTful APIs talk

@@ -75,6 +75,24 @@ exports.getTypeFromPath = function(url) {
   throw { statusCode: 500, message: 'Internal Server Error', log: 'Not an API call: ' + path };
 }
 
-exports.requestWithBody = function(method) {
+exports.isApiCall = function(request) {
+  return request.url.indexOf('/api') !== -1;
+}
+
+function hasBody(method) {
   return method === 'POST' || method === 'PUT' || method === 'PATCH'
+}
+
+exports.processApi = function(request, response, pipeline) {
+  if (hasBody(request.method)) {
+    var body = '';
+    request.on('data', function(chunk) { body += chunk.toString(); });
+    request.on('end', function() {
+      request.body = JSON.parse(body);
+      pipeline({ req: request, resp: response });
+    });
+  }
+  else {
+    pipeline({ req: request, resp: response });
+  }
 }

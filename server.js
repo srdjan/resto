@@ -11,18 +11,8 @@ var log = console.log;
 port = process.argv[2] || 8080;
 
 http.createServer(function(request, response) {
-  if (request.url.indexOf('/api') !== -1) {
-    if (fn.requestWithBody(request.method)) {
-      var body = '';
-      request.on('data', function(chunk) { body += chunk.toString(); });
-      request.on('end', function() {
-        request.body = JSON.parse(body);
-        processApi({ req: request, resp: response });
-      });
-    }
-    else {
-      processApi({ req: request, resp: response });
-    }
+  if (fn.isApiCall(request)) {
+    fn.processApi(request, response, processApi);
   }
   else {
     file.get(request, response);
