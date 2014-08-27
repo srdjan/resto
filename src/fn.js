@@ -75,3 +75,6 @@ exports.getTypeFromPath = function(url) {
   throw { statusCode: 500, message: 'Internal Server Error', log: 'Not an API call: ' + path };
 }
 
+exports.requestWithBody = function(method) {
+  return method === 'POST' || method === 'PUT' || method === 'PATCH'
+}
