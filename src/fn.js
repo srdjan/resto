@@ -36,6 +36,17 @@ exports.getId = function(url) {
   return id;
 }
 
+exports.getLinks = function(entity) {
+  var states = R.filter(function(m) { return m.startsWith('state_') }, Object.keys(entity));
+  for (var i = 0; i < states.length; i++) {
+    var links = entity[states[i]]();
+    if (links !== false) {
+      return links;
+    }
+  }
+  throw { statusCode: 500, message: 'Internal Server Error (invalid links?'};
+}
+
 //- api/apples/123456/create
 exports.getIdAndRel = function(url) {
   var tokens = getTokens(url);
@@ -55,17 +66,6 @@ exports.trimLeftAndRight = function(str, ch) {
   return str.replace(new RegExp("^[" + ch + "]+"), "").replace(new RegExp("[" + ch + "]+$"), "");
 }
 
-exports.getLinks = function(entity) {
-  var states = R.filter(function(m) { return m.startsWith('state_') }, Object.keys(entity));
-  for (var i = 0; i < states.length; i++) {
-    var links = entity[states[i]]();
-    if (links !== false) {
-      return links;
-    }
-  }
-  throw { statusCode: 500, message: 'Internal Server Error', log: 'Invalid state invariants: ' + JSON.stringify(entity) };
-}
-
 //- api/apples/123456/create
 exports.getTypeFromPath = function(url) {
   var tokens = getTokens(url);
@@ -75,13 +75,9 @@ exports.getTypeFromPath = function(url) {
   throw { statusCode: 500, message: 'Internal Server Error', log: 'Not an API call: ' + path };
 }
 
-exports.isApiCall = function(request) {
-  return request.url.indexOf('/api') !== -1;
-}
+exports.isApiCall = function(request) { return request.url.indexOf('/api') !== -1; }
 
-function hasBody(method) {
-  return method === 'POST' || method === 'PUT' || method === 'PATCH'
-}
+function hasBody(method) { return method === 'POST' || method === 'PUT' || method === 'PATCH' }
 
 exports.processApi = function(request, response, pipeline) {
   if (hasBody(request.method)) {

@@ -7,19 +7,19 @@ var handler = require('../src/resolver.js').handle;
 var toHal = require('../src/hal.js').toHal;
 var log = console.log;
 
-//todo:  var pipeline = fn.compose(toHal, handler, jsonSanitizer, auth);
+//todo:  var pipelineFn = fn.compose(toHal, handler, jsonSanitizer, auth);
 
-var pipeline = fn.compose(toHal, handler);
+var pipelineFn = fn.compose(toHal, handler);
 
-exports.process = function(ctx) {
+exports.pipeline = function(ctx) {
   try {
-    pipeline(ctx);
+    pipelineFn(ctx);
   }
   catch (e) {
     if ( ! e.hasOwnProperty('statusCode')) {
       e.statusCode = 500;
     }
-    // log('Fx Exception, statusCode: ' + e.statusCode + ' meessage: ' + e.message);
+    log('Fx Exception, statusCode: ' + e.statusCode + ' meessage: ' + e.message);
     ctx.resp.writeHead(e.statusCode, {"Content-Type": "application/json"});
     ctx.resp.write(e.message);
   }

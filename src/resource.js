@@ -18,14 +18,14 @@ function validateApiCall(reqRel, entity) {
 function validatePropsExist(body, entity) {
   var diff = fn.diff(Object.keys(body), Object.keys(entity));
   if (diff.length > 0) {
-    throw { statusCode: 400, message: 'Bad Request:\n' + JSON.stringify(entity) }
+    throw { statusCode: 400, message: 'Bad Request - validate props exist:\n' + JSON.stringify(entity) }
   }
 }
 
 function validatePropsMatch(body, entity) {
   var diff = fn.diff(Object.keys(body), Object.keys(entity));
   if (diff.length > 0) {
-    throw { statusCode: 400, message: 'Bad Request:\n' + JSON.stringify(entity) }
+    throw { statusCode: 400, message: 'Bad Request - validate props match:\n' + JSON.stringify(entity) }
   }
 }
 
