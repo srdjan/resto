@@ -1,13 +1,16 @@
 'use strict;'
-var Resource = require('./fx.js').Resource;
+// var Resource = require('./fx.js').Resource;
+var stampit = require('stampit');
 var log = console.log;
+var New = stampit().enclose;
 
-function Todo() {
-  this.content = '';
-  this.done = false;
-  this.archived = false;
+var _todo = New(function () {
+  var content = '';
+  var done = false;
+  var archived = false;
+});
 
-  //- rels:
+var _api = New(function () {
   this.save = function(todo) {
     if(tood.content.length <= 256) {
       this.done = false;
@@ -36,9 +39,10 @@ function Todo() {
     if (this.archived) return true;
     return false;
   };
+});
 
-  //- states:
-  this.state_pending = function() {
+var _states = New(function () {
+  this.pending = function() {
     if ( ! this.done && ! this.archived) {
       return [
         { rel: 'save', method: "put" },
@@ -49,7 +53,7 @@ function Todo() {
     return false;
   };
 
-  this.state_done = function() {
+  this.done = function() {
     if (this.done === true) {
       return [
         { rel: 'archive', method: "put" },
@@ -59,7 +63,7 @@ function Todo() {
     return false;
   };
 
-  this.state_archived = function() {
+  this.archived = function() {
     if (this.archived === true) {
       return [
       { rel: 'reinstate', method: "put" },
@@ -68,6 +72,9 @@ function Todo() {
     }
     return false;
   };
-};
+});
 
-module.exports.todoResource = new Resource(Todo);
+var todo = stampit.compose(_todo, _api, _states);
+log(todo.done());
+
+// module.exports.todoResource = new Resource(Todo);

@@ -7,43 +7,34 @@ var toHal = require('./hal.js').toHal;
 var proxy = require('./proxy-logger.js');
 var log = console.log;
 
-var pipe = function pipeline() {
-  var queue = [];
-  var logBefore = false;
-  var logAfter = false;
+var stash = [];
+var logBefore = false;
+var logAfter = false;
 
-  return {
-    setLogBefore: function(yn) {
-      logBefore = yn;
-    },
-    setLogAfter: function(yn) {
-      logAfter = yn;
-    },
-    use: function(f) {
-      queue.push(f);
-    },
-    run: function(ctx) {
-      fn.each(function(f) {
-          if(logBefore) {
-            log(fn.getFnName(f) + ', before: ' + JSON.stringify(ctx) + '\r\n');
-          }
+function use(f) {
+  stash.push(f);
+}
 
-          f(ctx);
+function trace(f, ctx) {
+  log(fn.getFnName(f) + ', before: ' + JSON.stringify(ctx) + '\r\n');
+}
 
-          if(logAfter) {
-            log(fn.getFnName(f) + ', after: ' + JSON.stringify(ctx) + '\r\n');
-          }
-        }, queue); }
-  };
-}();
+function run(ctx) {
+  fn.each(function(f) {
+      if(logBefore) { trace(f, ctx); }
 
-pipe.use(handler);
-pipe.use(toHal);
-// pipe.setLogBefore(true);
+      f(ctx);
+
+      if(logBefore) { trace(f, ctx); }
+    }, stash);
+}
+
+use(handler);
+use(toHal);
 
 exports.pipeline = function(ctx) {
   try {
-    pipe.run(ctx);
+    run(ctx);
   }
   catch (e) {
     if ( ! e.hasOwnProperty('statusCode')) {
@@ -53,4 +44,12 @@ exports.pipeline = function(ctx) {
     ctx.resp.writeHead(e.statusCode, {"Content-Type": "application/json"});
     ctx.resp.write(e.message);
   }
+};
+
+exports.setLogBefore = function(yn) {
+  logBefore = yn;
+};
+
+exports.setLogAfter = function(yn) {
+  logAfter = yn;
 };
