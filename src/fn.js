@@ -1,7 +1,6 @@
 //---------------------------------------------------------------------------------
 //- functions
 //---------------------------------------------------------------------------------
-'use strict;'
 var R = require('ramda');
 exports.compose = R.compose;
 exports.contains = R.contains;
@@ -22,12 +21,12 @@ function getTokens(url) {
 exports.atob = function(str) {
   var res = new Buffer(str, 'ascii').toString('base64');
   return res.replace('+', '-').replace('/', '_').replace('=', ',');
-}
+};
 
 exports.btoa = function(str) {
   var res = new Buffer(str, 'base64').toString('ascii');
   return res.replace('-', '+').replace('_', '/').replace(',', '=');
-}
+};
 
 //- api/apples || api/apples/abc3b4=1
 exports.getId = function(url) {
@@ -35,10 +34,10 @@ exports.getId = function(url) {
   var id = exports.btoa(tokens[tokens.length - 1]);
   if (isNaN(id)) return 0;
   return id;
-}
+};
 
 exports.getLinks = function(entity) {
-  var states = R.filter(function(m) { return m.startsWith('state_') }, Object.keys(entity));
+  var states = R.filter(function(m) { return m.startsWith('state_'); }, Object.keys(entity));
   for (var i = 0; i < states.length; i++) {
     var links = entity[states[i]]();
     if (links !== false) {
@@ -46,7 +45,7 @@ exports.getLinks = function(entity) {
     }
   }
   throw { statusCode: 500, message: 'Internal Server Error (invalid links?'};
-}
+};
 
 //- api/apples/123456/create
 exports.getIdAndRel = function(url) {
@@ -61,11 +60,11 @@ exports.getIdAndRel = function(url) {
     idAndRel.rel = tokens[0];
   }
   return idAndRel;
-}
+};
 
 exports.trimLeftAndRight = function(str, ch) {
   return str.replace(new RegExp("^[" + ch + "]+"), "").replace(new RegExp("[" + ch + "]+$"), "");
-}
+};
 
 //- api/apples/123456/create
 exports.getTypeFromPath = function(url) {
@@ -74,11 +73,11 @@ exports.getTypeFromPath = function(url) {
     return tokens[1].slice(0, -1);
   }
   throw { statusCode: 500, message: 'Internal Server Error', log: 'Not an API call: ' + path };
-}
+};
 
-exports.isApiCall = function(request) { return request.url.indexOf('/api') !== -1; }
+exports.isApiCall = function(request) { return request.url.indexOf('/api') !== -1; };
 
-function hasBody(method) { return method === 'POST' || method === 'PUT' || method === 'PATCH' }
+function hasBody(method) { return method === 'POST' || method === 'PUT' || method === 'PATCH'; }
 
 exports.processApi = function(request, response, pipeline) {
   if (hasBody(request.method)) {
@@ -92,4 +91,4 @@ exports.processApi = function(request, response, pipeline) {
   else {
     pipeline({ req: request, resp: response });
   }
-}
+};

@@ -1,5 +1,5 @@
 //note: taken from: https://github.com/vojtajina/node-mocks
-function Request(method, url, body, headers) {
+exports.Request = function(method, url, body, headers) {
   this.method = method;
   this.url = url;
   this.body = body || {};
@@ -10,7 +10,7 @@ function Request(method, url, body, headers) {
   };
 };
 
-function Response() {
+exports.Response = function() {
   var bodySent = false;
 
   this.headers = {};
@@ -64,6 +64,3 @@ function Response() {
     // this.emit('end');
   };
 };
-
-module.exports.Request = Request;
-module.exports.Response = Response;

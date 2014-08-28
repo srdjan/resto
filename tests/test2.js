@@ -1,7 +1,6 @@
 //---------------------------------------------------------------------------------
 //- tests
 //---------------------------------------------------------------------------------
-'use strict;'
 var halson = require('halson');
 var expect = require('expect.js');
 var Request = require('./httpmock.js').Request;

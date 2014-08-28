@@ -1,7 +1,6 @@
 //---------------------------------------------------------------------------------
 //- resource
 //---------------------------------------------------------------------------------
-'use strict;'
 var fn = require('./fn.js');
 var db = require('./db.js');
 var log = console.log;
@@ -16,14 +15,14 @@ function validateApiCall(reqRel, entity) {
 function validatePropsExist(body, entity) {
   var diff = fn.diff(Object.keys(body), Object.keys(entity));
   if (diff.length > 0) {
-    throw { statusCode: 400, message: 'Bad Request - validate props exist:\n' + JSON.stringify(entity) }
+    throw { statusCode: 400, message: 'Bad Request - validate props exist:\n' + JSON.stringify(entity) };
   }
 }
 
 function validatePropsMatch(body, entity) {
   var diff = fn.diff(Object.keys(body), Object.keys(entity));
   if (diff.length > 0) {
-    throw { statusCode: 400, message: 'Bad Request - validate props match:\n' + JSON.stringify(entity) }
+    throw { statusCode: 400, message: 'Bad Request - validate props match:\n' + JSON.stringify(entity) };
   }
 }
 
@@ -33,7 +32,7 @@ function getAll(typeName) {
     entities = fn.filterEmpty(entities);
   }
   return { name: typeName, data: entities, statusCode: 200 };
-};
+}
 
 function getById(id, typeName, typeCtor) {
   var entity = db.get(id);
@@ -43,7 +42,7 @@ function getById(id, typeName, typeCtor) {
   var newEntity = new typeCtor();
   fn.each(function(key) { newEntity[key] = entity[key]; }, Object.keys(entity));
   return { name: typeName, data: newEntity, statusCode: 200 };
-};
+}
 
 function create(body, typeCtor) {
   var entity = new typeCtor();
@@ -53,8 +52,25 @@ function create(body, typeCtor) {
   return entity;
 }
 
-exports.Resource = function(typeCtor) {
-  var typeCtor = typeCtor;
+function processPostWithId(typeName, idAndRel, body) {
+  var entity = db.get(idAndRel.id);
+  validateApiCall(idAndRel.rel, entity);
+  var result = entity[idAndRel.rel](body);
+  if (result) {
+    db.save(entity);
+    return { name: typeName, data: entity, statusCode: 200 };
+  }
+  throw { statusCode: 422, message: 'Unprocessable Entity' };
+}
+
+function processPostWithoutId(typeName, typeCtor, body) {
+  var entity = create(body, typeCtor);
+  db.save(entity);
+  return { name: typeName, data: entity, statusCode: 201 };
+}
+
+exports.Resource = function(typeConstructor) {
+  var typeCtor = typeConstructor;
   var typeName = typeCtor.toString().match(/function ([^\(]+)/)[1].toLowerCase();
 
   this.get = function(request) {
@@ -79,7 +95,7 @@ exports.Resource = function(typeCtor) {
     if (result) {
       fn.each(function(key) { entity[key] = request.body[key]; }, Object.keys(request.body));
       db.save(entity);
-      return { name: typeName, data: entity, statusCode: 200, message: {} };
+      return { name: typeName, data: entity, statusCode: 200 };
     }
     throw { statusCode: 422, message: 'Unprocessable Entity'};
   };
@@ -87,19 +103,9 @@ exports.Resource = function(typeCtor) {
   this.post = function(request) {
     var idAndRel = fn.getIdAndRel(request.url);
     if(idAndRel.id === 0) {
-      var entity = create(request.body, typeCtor);
-      db.save(entity);
-      return { name: typeName, data: entity, statusCode: 201, message: {} };
+      return processPostWithoutId(typeName, typeCtor, request.body);
     }
-    //- else: process post message id !== 0 and body.props don't have to exist on entity
-    var entity = db.get(idAndRel.id);
-    validateApiCall(idAndRel.rel, entity);
-    var result = entity[idAndRel.rel](request.body);
-    if (result) {
-      db.save(entity);
-      return { name: typeName, data: entity, statusCode: 200, message: {} };
-    }
-    throw { statusCode: 422, message: 'Unprocessable Entity' };
+    return processPostWithId(typeName, idAndRel, request.body);
   };
 
   this.patch = function(request) {
@@ -121,6 +127,6 @@ exports.Resource = function(typeCtor) {
     var idAndRel = fn.getIdAndRel(request.url);
     var entity = db.get(idAndRel.id);
     db.remove(idAndRel.id);
-    return { name: typeName, data: {}, statusCode: 200, message: {} };
+    return { name: typeName, data: {}, statusCode: 200 };
   };
 };

@@ -1,7 +1,6 @@
 //---------------------------------------------------------------------------------
 //- db api
 //---------------------------------------------------------------------------------
-'use strict;'
 var datastore = require('node-persist');
 var log = console.log;
 
@@ -19,11 +18,11 @@ var milis = 0;
 function createId() {
   milis = new Date().getTime();
   return (milis += 1).toString();
-};
+}
 
 function clear() {
   datastore.clear();
-};
+}
 
 function save(obj) {
   datastore.setItem(obj.id, obj);

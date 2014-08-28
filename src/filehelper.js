@@ -1,4 +1,6 @@
-'use strict;'
+//---------------------------------------------------------------------------------
+//- file helper
+//---------------------------------------------------------------------------------
 var path = require("path");
 var fs = require("fs");
 var url = require("url");
@@ -17,7 +19,7 @@ function getFile(fileName, response) {
     }
     response.end();
   });
-};
+}
 
 exports.get = function(request, response) {
   var hostname = url.parse(request.url, false, true).hostname;
@@ -42,4 +44,4 @@ exports.get = function(request, response) {
     response.writeHead(404, {"Content-Type": "application/json"});
     response.end();
   });
-}
+};

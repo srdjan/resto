@@ -1,16 +1,15 @@
 //---------------------------------------------------------------------------------
 //- hal parsing
 //---------------------------------------------------------------------------------
-'use strict;'
 var fn = require('./fn.js');
 var halson = require('halson');
 var log = console.log;
 
 var getPropNames = fn.filter(function(p) { return !p.startsWith('state_') && p !== 'id'; });
 
-function addSelfLink(hal, href) { hal.addLink('self', href) };
+function addSelfLink(hal, href) { hal.addLink('self', href); }
 
-function addLink(hal, rel, href, method) { hal.addLink(rel, { href: href, method: method }); };
+function addLink(hal, rel, href, method) { hal.addLink(rel, { href: href, method: method }); }
 
 function addLinks(halRep, result) {
   var links = fn.getLinks(result.data);
@@ -34,7 +33,7 @@ function createFull(result) {
 
 function createRoot(typeName) {
   var root = halson({});
-  addSelfLink(root, '/api/' + typeName + 's')
+  addSelfLink(root, '/api/' + typeName + 's');
   addLink(root, 'create', '/api/' + typeName + 's/' + fn.atob('create'), 'POST');
   return root;
 }
@@ -68,4 +67,3 @@ exports.toHal = function(ctx) {
   ctx.resp.end();
   return ctx;
 };
-

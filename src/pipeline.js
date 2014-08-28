@@ -1,7 +1,6 @@
 //---------------------------------------------------------------------------------
 //- pipeline
 //---------------------------------------------------------------------------------
-'use strict;'
 var fn = require('../src/fn.js');
 var handler = require('../src/resolver.js').handle;
 var toHal = require('../src/hal.js').toHal;
@@ -23,5 +22,4 @@ exports.pipeline = function(ctx) {
     ctx.resp.writeHead(e.statusCode, {"Content-Type": "application/json"});
     ctx.resp.write(e.message);
   }
-}
-
+};
