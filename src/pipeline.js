@@ -6,13 +6,35 @@ var handler = require('../src/resolver.js').handle;
 var toHal = require('../src/hal.js').toHal;
 var log = console.log;
 
-//todo:  var pipelineFn = fn.compose(toHal, handler, jsonSanitizer, auth);
+var pipe = function pipeline() {
+  var queue = [];
+  var logBefore = false;
+  var logAfter = false;
 
-var pipelineFn = fn.compose(toHal, handler);
+  return {
+    setLog: function(before, after) {
+      logBefore = before || false;
+      logafter = after || false;
+    },
+    use: function(fn) {
+      queue.push(fn);
+    },
+    run: function(ctx) {
+      fn.each(function(job) {
+          if(logBefore) log(ctx);
+          job(ctx);
+          if(logAfter) log(ctx);
+        }, queue); }
+  };
+}();
+
+pipe.use(handler);
+pipe.use(toHal);
+pipe.setLog(true);
 
 exports.pipeline = function(ctx) {
   try {
-    pipelineFn(ctx);
+    pipe.run(ctx);
   }
   catch (e) {
     if ( ! e.hasOwnProperty('statusCode')) {

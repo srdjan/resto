@@ -9,6 +9,7 @@ exports.each = R.each;
 exports.some = R.some;
 exports.diff = R.difference;
 exports.map = R.map;
+exports.chain = R.chain;
 var log = console.log;
 
 exports.filterEmpty = R.filter(function(e) { return Object.getOwnPropertyNames(e).length > 0; });
