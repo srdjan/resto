@@ -1,9 +1,10 @@
 //---------------------------------------------------------------------------------
 //- pipeline
 //---------------------------------------------------------------------------------
-var fn = require('../src/fn.js');
-var handler = require('../src/resolver.js').handle;
-var toHal = require('../src/hal.js').toHal;
+var fn = require('./fn.js');
+var handler = require('./resolver.js').handle;
+var toHal = require('./hal.js').toHal;
+var proxy = require('./proxy-logger.js');
 var log = console.log;
 
 var pipe = function pipeline() {
@@ -12,25 +13,27 @@ var pipe = function pipeline() {
   var logAfter = false;
 
   return {
-    setLog: function(before, after) {
-      logBefore = before || false;
-      logafter = after || false;
+    setLogBefore: function(yn) {
+      logBefore = yn;
+    },
+    setLogAfter: function(yn) {
+      logAfter = yn;
     },
     use: function(fn) {
       queue.push(fn);
     },
     run: function(ctx) {
       fn.each(function(job) {
-          if(logBefore) log(ctx);
+          if(logBefore) log(JSON.stringify(ctx));
           job(ctx);
-          if(logAfter) log(ctx);
+          if(logAfter) log(JSON.stringify(ctx));
         }, queue); }
   };
 }();
 
 pipe.use(handler);
 pipe.use(toHal);
-pipe.setLog(true);
+pipe.setLogBefore(true);
 
 exports.pipeline = function(ctx) {
   try {
