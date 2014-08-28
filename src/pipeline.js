@@ -19,21 +19,27 @@ var pipe = function pipeline() {
     setLogAfter: function(yn) {
       logAfter = yn;
     },
-    use: function(fn) {
-      queue.push(fn);
+    use: function(f) {
+      queue.push(f);
     },
     run: function(ctx) {
-      fn.each(function(job) {
-          if(logBefore) log(JSON.stringify(ctx));
-          job(ctx);
-          if(logAfter) log(JSON.stringify(ctx));
+      fn.each(function(f) {
+          if(logBefore) {
+            log(fn.getFnName(f) + ', before: ' + JSON.stringify(ctx) + '\r\n');
+          }
+
+          f(ctx);
+
+          if(logAfter) {
+            log(fn.getFnName(f) + ', after: ' + JSON.stringify(ctx) + '\r\n');
+          }
         }, queue); }
   };
 }();
 
 pipe.use(handler);
 pipe.use(toHal);
-pipe.setLogBefore(true);
+// pipe.setLogBefore(true);
 
 exports.pipeline = function(ctx) {
   try {

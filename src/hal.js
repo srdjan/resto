@@ -60,7 +60,7 @@ function convert(result) {
   return convertObject(result);
 }
 
-exports.toHal = function(ctx) {
+exports.toHal = function toHal(ctx) {
   var halRep = convert(ctx.result);
   ctx.resp.writeHead(ctx.result.statusCode, {"Content-Type": "application/json"});
   ctx.resp.write(JSON.stringify(halRep));
