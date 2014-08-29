@@ -1,4 +1,3 @@
-var Resource = require('./resource.js').Resource;
 var log = console.log;
 
 exports.Apple = function() {

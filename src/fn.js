@@ -14,11 +14,6 @@ var log = console.log;
 
 exports.filterEmpty = R.filter(function(e) { return Object.getOwnPropertyNames(e).length > 0; });
 
-exports.getTokens = function(url) {
-  var path = url.substring(url.indexOf('api'), url.length);
-  return exports.trimLeftAndRight(path, '/').split('/');
-};
-
 exports.atob = function(str) {
   var res = new Buffer(str, 'ascii').toString('base64');
   return res.replace('+', '-').replace('/', '_').replace('=', ',');
@@ -58,37 +53,6 @@ exports.getLinks = function(entity) {
     }
   }
   throw { statusCode: 500, message: 'Internal Server Error (invalid links?'};
-};
-
-//- api/apples || api/apples/abc3b4=1
-function getId(tokens) {
-  var id = exports.btoa(tokens[tokens.length - 1]);
-  if (isNaN(id)) {
-    return { id: 0, rel: ''};
-  }
-  return { id: id, rel: ''};
-}
-
-//- api/apples/123456/create
-exports.getIdAndRel = function(url) {
-  var tokens = exports.getTokens(url);
-  var idAndRel = getId(tokens);
-  if(idAndRel.id !== 0) {
-    return idAndRel;
-  }
-  tokens = exports.btoa(tokens[tokens.length - 1]).split('/');
-  if (tokens.length === 2) {
-    idAndRel.id = tokens[0];
-    idAndRel.rel = tokens[1];
-  }
-  else {
-    idAndRel.rel = tokens[0];
-  }
-  return idAndRel;
-};
-
-exports.trimLeftAndRight = function(str, ch) {
-  return str.replace(new RegExp("^[" + ch + "]+"), "").replace(new RegExp("[" + ch + "]+$"), "");
 };
 
 exports.isApiCall = function(request) { return request.url.indexOf('/api') !== -1; };

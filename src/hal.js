@@ -50,7 +50,7 @@ function createOne(result) {
   return halRep;
 }
 
-exports.toHal = function toHal(ctx) {
+function toHal(ctx) {
   var halRep;
   if (ctx.result.data instanceof Array) {
       halRep = createList(ctx.result);
@@ -62,7 +62,8 @@ exports.toHal = function toHal(ctx) {
   ctx.resp.write(JSON.stringify(halRep));
   ctx.resp.end();
   return ctx;
-};
+}
+module.exports.toHal = toHal;
 
 
 //- tests
