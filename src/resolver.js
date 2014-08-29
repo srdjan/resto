@@ -10,6 +10,8 @@ exports.handle = function handle(ctx) {
   var requestedType = fn.getTypeFromPath(ctx.req.url);
   var resource = app[requestedType + 'Resource'];
   var handler = resource[ctx.req.method.toLowerCase()];
+
+  ctx.req.idAndRel = fn.getIdAndRel(ctx.req.url);
   ctx.result = handler(ctx.req);
   return ctx;
 };
