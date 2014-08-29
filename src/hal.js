@@ -5,9 +5,9 @@ var fn = require('./fn.js');
 var halson = require('halson');
 var log = console.log;
 
-var getPropNames = fn.filter(function(p) { return !p.startsWith('state_') && p !== 'id'; });
-
-function addSelfLink(hal, href) { hal.addLink('self', href); }
+function addSelfLink(hal, href) {
+  return hal.addLink('self', href);
+}
 
 function addLink(hal, rel, href, method) { hal.addLink(rel, { href: href, method: method }); }
 
@@ -18,52 +18,90 @@ function addLinks(halRep, result) {
     }, links);
 }
 
-function addProperties(full, result) {
-  var propNames = getPropNames(Object.keys(result.data));
-  return fn.each(function(p) { full[p] = result.data[p]; }, propNames);
-}
-
-function createFull(result) {
-  var full = halson({});
-  addSelfLink(full, '/api/' + result.name + 's/' + fn.atob(result.data.id));
-  addProperties(full, result);
-  addLinks(full, result);
-  return full;
+function addProperties(halRep, result) {
+  var propNames = fn.filter(function(p) { return !p.startsWith('state_') && p !== 'id'; }, Object.keys(result.data));
+  return fn.each(function(p) { halRep[p] = result.data[p]; }, propNames);
 }
 
 function createRoot(typeName) {
-  var root = halson({});
-  addSelfLink(root, '/api/' + typeName + 's');
-  addLink(root, 'create', '/api/' + typeName + 's/' + fn.atob('create'), 'POST');
-  return root;
-}
-
-function convertArray(result) {
-  var halRep = createRoot(result.name);
-  var embeds = fn.map(function(e) {
-      return addSelfLink(halson({}), '/api/' + result.name + 's/' + fn.atob(e.id)); }, result.data);
-  fn.each(function(el, index, array) { halRep.addEmbed(result.name + 's', el); }, embeds);
+  var halRep = halson({});
+  addSelfLink(halRep, '/api/' + typeName + 's');
+  addLink(halRep, 'create', '/api/' + typeName + 's/' + fn.atob('create'), 'POST');
   return halRep;
 }
 
-function convertObject(result) {
-  if (Object.keys(result.data).length === 0) {
-    return createRoot(result.name);
+function createList(result) {
+  var halRep = createRoot(result.name.toLowerCase());
+  if (result.data.length > 0) {
+    result.data.forEach(function(el, index, array) {
+      var link = addSelfLink(halson({}), '/api/' + result.name.toLowerCase() + 's/' + fn.atob(el.id));
+      halRep.addEmbed(result.name.toLowerCase() + 's', link);
+    }
+    );
   }
-  return createFull(result);
+  return halRep;
 }
 
-function convert(result) {
-  if (result.data instanceof Array) {
-    return convertArray(result);
-  }
-  return convertObject(result);
+function createOne(result) {
+  var halRep = halson({});
+  addProperties(halRep, result);
+  addSelfLink(halRep, '/api/' + result.name + 's/' + fn.atob(result.data.id));
+  addLinks(halRep, result);
+  return halRep;
 }
 
 exports.toHal = function toHal(ctx) {
-  var halRep = convert(ctx.result);
+  var halRep;
+  if (ctx.result.data instanceof Array) {
+      halRep = createList(ctx.result);
+  }
+  else {
+    halRep = createOne(ctx.result);
+  }
   ctx.resp.writeHead(ctx.result.statusCode, {"Content-Type": "application/json"});
   ctx.resp.write(JSON.stringify(halRep));
   ctx.resp.end();
   return ctx;
 };
+
+
+//- tests
+
+//- get all - when result empty set
+//-----------------------------------
+// var ctx = {
+//   result: { name: 'Apple', data: [] },
+//   resp: {
+//     data: '',
+//     writeHead: function() {},
+//     write: function(hal) { this.data = hal;},
+//     end: function() {}
+//   }
+// };
+// var res = exports.toHal(ctx);
+// log(res);
+
+//- get all - when result on obj
+//-----------------------------------
+// var ctx = {
+//   result: { name: 'Apple', data: {
+//                                   weight: 10,
+//                                   color: "red",
+//                                   state_growing: function() {
+//                                                     if (this.weight > 0.0 && this.weight < 200.0) {
+//                                                       return [{ rel: 'grow', method: "POST" },
+//                                                               { rel: 'toss', method: "DELETE"}];
+//                                                     }
+//                                                     return false;
+//                                                   }
+//                                   }
+//                               },
+//   resp: {
+//     data: '',
+//     writeHead: function() {},
+//     write: function(hal) { this.data = hal;},
+//     end: function() {}
+//   }
+// };
+// var res = exports.toHal(ctx);
+// log(res);

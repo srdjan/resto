@@ -50,54 +50,49 @@ function processApi(request, entity, shouldUpdate) {
   return entity;
 }
 
-exports.Resource = function(typeConstructor) {
-  var typeCtor = typeConstructor;
-  var typeName = typeCtor.toString().match(/function ([^\(]+)/)[1].toLowerCase();
+exports.get = function(request) {
+  if (request.id === 0) {
+    var entities = db.getAll();
+    return { name: request.typeName, data: entities };
+  }
+  var entity = getById(request.id);
+  return { name: request.typeName, data: entity };
+};
 
-  this.get = function(request) {
-    if (request.id === 0) {
-      var entities = db.getAll();
-      return { name: typeName, data: entities };
-    }
-    var entity = getById(request.id);
-    return { name: typeName, data: entity };
-  };
+exports.put = function(request) {
+  var entity = getById(request.id);
 
-  this.put = function(request) {
-    var entity = getById(request.id);
+  validatePropsMatch(request.body, entity);
+  entity = processApi(request, entity, true);
+  return { name: request.typeName, data: entity };
+};
 
+exports.post = function(request) {
+  var entity = new request.typeCtor();
+  if(request.id === 0) {
     validatePropsMatch(request.body, entity);
-    entity = processApi(request, entity, true);
-    return { name: typeName, data: entity };
-  };
+    entity.id = db.createId();
+    update(entity, request.body);
+    db.save(entity);
+    return { name: request.typeName, data: entity, statusCode: 201 };
+  }
+  var entityFromDb = getById(request.id);
+  update(entity, entityFromDb);
+  entity = processApi(request, entity, false);
+  return { name: request.typeName, data: entity };
+};
 
-  this.post = function(request) {
-    var entity = new typeCtor();
-    if(request.id === 0) {
-      validatePropsMatch(request.body, entity);
-      entity.id = db.createId();
-      update(entity, request.body);
-      db.save(entity);
-      return { name: typeName, data: entity, statusCode: 201 };
-    }
-    var entityFromDb = getById(request.id);
-    update(entity, entityFromDb);
-    entity = processApi(request, entity, false);
-    return { name: typeName, data: entity };
-  };
+exports.patch = function(request) {
+  var entity = getById(request.id);
 
-  this.patch = function(request) {
-    var entity = getById(request.id);
+  validatePropsExist(request.body, entity);
+  entity = processApi(request, entity, true);
+  return { name: request.typeName, data: entity };
+};
 
-    validatePropsExist(request.body, entity);
-    entity = processApi(request, entity, true);
-    return { name: typeName, data: entity };
-  };
+exports.delete = function(request) {
+  var entity = getById(request.id);
 
-  this.delete = function(request) {
-    var entity = getById(request.id);
-
-    db.remove(request.id);
-    return { name: typeName, data: {} };
-  };
+  db.remove(request.id);
+  return { name: request.typeName, data: entity };
 };

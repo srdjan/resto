@@ -1,3 +1,4 @@
+-todo: extract datastore into middleware?
 -todo: handle entity without states
 -todo: handle embedded entities
 -todo: add paging

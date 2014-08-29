@@ -1,7 +1,7 @@
 var Resource = require('./resource.js').Resource;
 var log = console.log;
 
-function Apple() {
+exports.Apple = function() {
   this.weight = 0.1;
   this.color = 'green';
 
@@ -45,6 +45,4 @@ function Apple() {
     }
     return false;
   };
-}
-
-exports.appleResource = new Resource(Apple);
+};

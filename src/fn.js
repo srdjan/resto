@@ -14,10 +14,10 @@ var log = console.log;
 
 exports.filterEmpty = R.filter(function(e) { return Object.getOwnPropertyNames(e).length > 0; });
 
-function getTokens(url) {
+exports.getTokens = function(url) {
   var path = url.substring(url.indexOf('api'), url.length);
   return exports.trimLeftAndRight(path, '/').split('/');
-}
+};
 
 exports.atob = function(str) {
   var res = new Buffer(str, 'ascii').toString('base64');
@@ -71,7 +71,7 @@ function getId(tokens) {
 
 //- api/apples/123456/create
 exports.getIdAndRel = function(url) {
-  var tokens = getTokens(url);
+  var tokens = exports.getTokens(url);
   var idAndRel = getId(tokens);
   if(idAndRel.id !== 0) {
     return idAndRel;
@@ -89,15 +89,6 @@ exports.getIdAndRel = function(url) {
 
 exports.trimLeftAndRight = function(str, ch) {
   return str.replace(new RegExp("^[" + ch + "]+"), "").replace(new RegExp("[" + ch + "]+$"), "");
-};
-
-//- api/apples/123456/create
-exports.getTypeFromPath = function(url) {
-  var tokens = getTokens(url);
-  if (tokens.length > 1) {
-    return tokens[1].slice(0, -1);
-  }
-  throw { statusCode: 500, message: 'Internal Server Error', log: 'Not an API call: ' + path };
 };
 
 exports.isApiCall = function(request) { return request.url.indexOf('/api') !== -1; };

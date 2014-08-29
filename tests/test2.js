@@ -123,5 +123,3 @@ db.clear();
 
 //- clean
 db.clear();
-
-log('\nPASSED !\n');
