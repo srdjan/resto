@@ -2,7 +2,6 @@
 //- resolver
 //---------------------------------------------------------------------------------
 var fn = require('./fn.js');
-var hal = require('./hal.js');
 var app = require('./app.js');
 var log = console.log;
 
