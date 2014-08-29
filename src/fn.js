@@ -45,6 +45,10 @@ exports.propsDontExist = function (obj1, obj2) {
   return ! propsExist(obj1, obj2);
 };
 
+exports.hasProp = function (obj, prop) {
+  return obj.hasOwnProperty(prop);
+};
+
 exports.getLinks = function(entity) {
   var states = R.filter(function(m) { return m.startsWith('state_'); }, Object.keys(entity));
   for (var i = 0; i < states.length; i++) {

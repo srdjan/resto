@@ -16,6 +16,9 @@ exports.handle = function handle(ctx) {
   ctx.req.rel = idAndRel.rel;
 
   ctx.result = handler(ctx.req);
+  if (! fn.hasProp(ctx.result, 'statusCode')) {
+    ctx.result.statusCode = 200;
+  }
   return ctx;
 };
 

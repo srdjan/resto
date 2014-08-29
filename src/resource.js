@@ -57,10 +57,10 @@ exports.Resource = function(typeConstructor) {
   this.get = function(request) {
     if (request.id === 0) {
       var entities = db.getAll();
-      return { name: typeName, data: entities, statusCode: 200 };
+      return { name: typeName, data: entities };
     }
     var entity = getById(request.id);
-    return { name: typeName, data: entity, statusCode: 200 };
+    return { name: typeName, data: entity };
   };
 
   this.put = function(request) {
@@ -68,7 +68,7 @@ exports.Resource = function(typeConstructor) {
 
     validatePropsMatch(request.body, entity);
     entity = processApi(request, entity, true);
-    return { name: typeName, data: entity, statusCode: 200 };
+    return { name: typeName, data: entity };
   };
 
   this.post = function(request) {
@@ -83,7 +83,7 @@ exports.Resource = function(typeConstructor) {
     var entityFromDb = getById(request.id);
     update(entity, entityFromDb);
     entity = processApi(request, entity, false);
-    return { name: typeName, data: entity, statusCode: 200 };
+    return { name: typeName, data: entity };
   };
 
   this.patch = function(request) {
@@ -91,13 +91,13 @@ exports.Resource = function(typeConstructor) {
 
     validatePropsExist(request.body, entity);
     entity = processApi(request, entity, true);
-    return { name: typeName, data: entity, statusCode: 200 };
+    return { name: typeName, data: entity };
   };
 
   this.delete = function(request) {
     var entity = getById(request.id);
 
     db.remove(request.id);
-    return { name: typeName, data: {}, statusCode: 200 };
+    return { name: typeName, data: {} };
   };
 };
