@@ -52,19 +52,16 @@ function processApi(request, entity, shouldUpdate) {
 
 exports.get = function(request) {
   if (request.id === 0) {
-    var entities = db.getAll();
-    return { name: request.typeName, data: entities };
+    return db.getAll();
   }
-  var entity = getById(request.id);
-  return { name: request.typeName, data: entity };
+  return getById(request.id);
 };
 
 exports.put = function(request) {
   var entity = getById(request.id);
 
   validatePropsMatch(request.body, entity);
-  entity = processApi(request, entity, true);
-  return { name: request.typeName, data: entity };
+  return processApi(request, entity, true);
 };
 
 exports.post = function(request) {
@@ -73,25 +70,24 @@ exports.post = function(request) {
     validatePropsMatch(request.body, entity);
     update(entity, request.body);
     db.add(entity);
-    return { name: request.typeName, data: entity, statusCode: 201 };
+    return entity;
   }
   var entityFromDb = getById(request.id);
   update(entity, entityFromDb);
   entity = processApi(request, entity, false);
-  return { name: request.typeName, data: entity };
+  return entity;
 };
 
 exports.patch = function(request) {
   var entity = getById(request.id);
 
   validatePropsExist(request.body, entity);
-  entity = processApi(request, entity, true);
-  return { name: request.typeName, data: entity };
+  return processApi(request, entity, true);
 };
 
 exports.delete = function(request) {
   var entity = getById(request.id);
 
   db.remove(request.id);
-  return { name: request.typeName, data: entity };
+  return entity;
 };

@@ -27,7 +27,7 @@ function clear() {
 
 function add(obj) {
   obj.id = createId();
-  save(obj)
+  save(obj);
 }
 
 function save(obj) {

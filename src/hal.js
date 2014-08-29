@@ -5,22 +5,20 @@ var fn = require('./fn.js');
 var halson = require('halson');
 var log = console.log;
 
-function addSelfLink(hal, href) {
-  return hal.addLink('self', href);
-}
+function addSelfLink(hal, href) {  return hal.addLink('self', href); }
 
 function addLink(hal, rel, href, method) { hal.addLink(rel, { href: href, method: method }); }
 
-function addLinks(halRep, result) {
-  var links = fn.getLinks(result.data);
+function addLinks(halRep, ctx) {
+  var links = fn.getLinks(ctx.result);
   fn.each(function(l) {
-      addLink(halRep, l.rel, '/api/' + result.name + 's/' + fn.atob(result.data.id + '/' + l.rel), l.method);
+      addLink(halRep, l.rel, '/api/' + ctx.req.typeName + 's/' + fn.atob(ctx.result.id + '/' + l.rel), l.method);
     }, links);
 }
 
 function addProperties(halRep, result) {
-  var propNames = fn.filter(function(p) { return !p.startsWith('state_') && p !== 'id'; }, Object.keys(result.data));
-  return fn.each(function(p) { halRep[p] = result.data[p]; }, propNames);
+  var propNames = fn.filter(function(p) { return !p.startsWith('state_') && p !== 'id'; }, Object.keys(result));
+  return fn.each(function(p) { halRep[p] = result[p]; }, propNames);
 }
 
 function createRoot(typeName) {
@@ -30,33 +28,33 @@ function createRoot(typeName) {
   return halRep;
 }
 
-function createList(result) {
-  var halRep = createRoot(result.name.toLowerCase());
-  if (result.data.length > 0) {
-    result.data.forEach(function(el, index, array) {
-      var link = addSelfLink(halson({}), '/api/' + result.name.toLowerCase() + 's/' + fn.atob(el.id));
-      halRep.addEmbed(result.name.toLowerCase() + 's', link);
-    }
+function createList(ctx) {
+  var halRep = createRoot(ctx.req.typeName.toLowerCase());
+  if (ctx.result.length > 0) {
+    ctx.result.forEach(function(el, index, array) {
+        var link = addSelfLink(halson({}), '/api/' + ctx.req.typeName.toLowerCase() + 's/' + fn.atob(el.id));
+        halRep.addEmbed(ctx.req.typeName.toLowerCase() + 's', link);
+      }
     );
   }
   return halRep;
 }
 
-function createOne(result) {
+function createOne(ctx) {
   var halRep = halson({});
-  addProperties(halRep, result);
-  addSelfLink(halRep, '/api/' + result.name + 's/' + fn.atob(result.data.id));
-  addLinks(halRep, result);
+  addProperties(halRep, ctx.result);
+  addSelfLink(halRep, '/api/' + ctx.req.typeName.toLowerCase() + 's/' + fn.atob(ctx.result.id));
+  addLinks(halRep, ctx);
   return halRep;
 }
 
 function toHal(ctx) {
   var halRep;
-  if (ctx.result.data instanceof Array) {
-      halRep = createList(ctx.result);
+  if (ctx.result instanceof Array) {
+      halRep = createList(ctx);
   }
   else {
-    halRep = createOne(ctx.result);
+    halRep = createOne(ctx);
   }
   ctx.resp.writeHead(ctx.result.statusCode, {"Content-Type": "application/json"});
   ctx.resp.write(JSON.stringify(halRep));
