@@ -34,14 +34,12 @@ function getAll(typeName) {
   return { name: typeName, data: entities, statusCode: 200 };
 }
 
-function getById(id, typeName, typeCtor) {
+function getById(id, typeName) {
   var entity = db.get(id);
   if (typeof entity === 'undefined') {
     throw { statusCode: 404, message: 'Not Found'};
   }
-  var newEntity = new typeCtor();
-  fn.each(function(key) { newEntity[key] = entity[key]; }, Object.keys(entity));
-  return { name: typeName, data: newEntity, statusCode: 200 };
+  return { name: typeName, data: entity, statusCode: 200 };
 }
 
 function create(body, typeCtor) {
@@ -78,7 +76,7 @@ exports.Resource = function(typeConstructor) {
     if (id === 0) {
       return getAll(typeName);
     }
-    return getById(id, typeName, typeCtor);
+    return getById(id, typeName);
   };
 
   this.put = function(request) {

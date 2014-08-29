@@ -94,6 +94,11 @@ exports.processApi = function(request, response, pipeline) {
   }
 };
 
+exports.getObjType = function(obj){
+  var text = Function.prototype.toString.call(obj.constructor);
+  return text.match(/function (.*)\(/)[1];
+};
+
 exports.getFnName = function(fn) {
   var f = typeof fn == 'function';
   var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/));
