@@ -15,18 +15,16 @@ function use(f) {
   stash.push(f);
 }
 
-function trace(f, ctx) {
-  log(fn.getFnName(f) + ', before: ' + JSON.stringify(ctx) + '\r\n');
+function trace(f, ctx, when) {
+  log(fn.getFnName(f) + ', ' + when + ': ' + JSON.stringify(ctx) + '\r\n');
 }
 
 function run(ctx) {
   fn.each(function(f) {
-      if(logBefore) { trace(f, ctx); }
-
-      f(ctx);
-
-      if(logBefore) { trace(f, ctx); }
-    }, stash);
+    if(logBefore) { trace(f, ctx, 'before'); }
+    f(ctx);
+    if(logAfter) { trace(f, ctx, 'after'); }
+  }, stash);
 }
 
 use(handler);

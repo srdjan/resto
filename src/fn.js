@@ -29,12 +29,20 @@ exports.btoa = function(str) {
   return res.replace('-', '+').replace('_', '/').replace(',', '=');
 };
 
-//- api/apples || api/apples/abc3b4=1
-exports.getId = function(url) {
-  var tokens = getTokens(url);
-  var id = exports.btoa(tokens[tokens.length - 1]);
-  if (isNaN(id)) return 0;
-  return id;
+exports.propsMatch = function (obj1, obj2) {
+  return R.difference(Object.keys(obj1), Object.keys(obj2)).length === 0;
+};
+
+exports.propsDontMatch = function (obj1, obj2) {
+  return ! exports.propsMatch(obj1, obj2);
+};
+
+exports.propsExist = function (obj1, obj2) {
+  return R.difference(Object.keys(obj1), Object.keys(obj2)).length > 0;
+};
+
+exports.propsDontExist = function (obj1, obj2) {
+  return ! propsExist(obj1, obj2);
 };
 
 exports.getLinks = function(entity) {
@@ -48,10 +56,22 @@ exports.getLinks = function(entity) {
   throw { statusCode: 500, message: 'Internal Server Error (invalid links?'};
 };
 
+//- api/apples || api/apples/abc3b4=1
+function getId(tokens) {
+  var id = exports.btoa(tokens[tokens.length - 1]);
+  if (isNaN(id)) {
+    return { id: 0, rel: ''};
+  }
+  return { id: id, rel: ''};
+}
+
 //- api/apples/123456/create
 exports.getIdAndRel = function(url) {
   var tokens = getTokens(url);
-  var idAndRel = { id: 0, rel: ''};
+  var idAndRel = getId(tokens);
+  if(idAndRel.id !== 0) {
+    return idAndRel;
+  }
   tokens = exports.btoa(tokens[tokens.length - 1]).split('/');
   if (tokens.length === 2) {
     idAndRel.id = tokens[0];

@@ -13,58 +13,50 @@ function validateApiCall(reqRel, entity) {
 }
 
 function validatePropsExist(body, entity) {
-  var diff = fn.diff(Object.keys(body), Object.keys(entity));
-  if (diff.length > 0) {
-    throw { statusCode: 400, message: 'Bad Request - validate props exist:\n' + JSON.stringify(entity) };
+  if (fn.propsDontExist(body, entity)) {
+    throw { statusCode: 400, message: 'Bad Request - props do not exist' };
   }
 }
 
 function validatePropsMatch(body, entity) {
-  var diff = fn.diff(Object.keys(body), Object.keys(entity));
-  if (diff.length > 0) {
-    throw { statusCode: 400, message: 'Bad Request - validate props match:\n' + JSON.stringify(entity) };
+  if (fn.propsDontMatch(body, entity)) {
+    throw { statusCode: 400, message: 'Bad Request - props do not match' };
   }
 }
 
-function getAll(typeName) {
+function getAll() {
   var entities = db.getAll();
   if (entities.length >= 1) {
     entities = fn.filterEmpty(entities);
   }
-  return { name: typeName, data: entities, statusCode: 200 };
+  return entities;
 }
 
-function getById(id, typeName) {
-  var entity = db.get(id);
+function getById(url) {
+  var idAndRel = fn.getIdAndRel(url);
+  var entity = db.get(idAndRel.id);
   if (typeof entity === 'undefined') {
     throw { statusCode: 404, message: 'Not Found'};
   }
-  return { name: typeName, data: entity, statusCode: 200 };
+  return entity;
 }
 
-function create(body, typeCtor) {
-  var entity = new typeCtor();
-  entity.id = db.createId();
-  validatePropsMatch(body, entity);
+function update(entity, body) {
   fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
   return entity;
 }
 
-function processPostWithId(typeName, idAndRel, body) {
-  var entity = db.get(idAndRel.id);
-  validateApiCall(idAndRel.rel, entity);
-  var result = entity[idAndRel.rel](body);
+function processApi(rel, entity, body, shouldUpdate) {
+  validateApiCall(rel, entity);
+  var result = entity[rel](body);
   if (result) {
+    if (shouldUpdate) {
+      update(entity, body);
+    }
     db.save(entity);
-    return { name: typeName, data: entity, statusCode: 200 };
+    return entity;
   }
-  throw { statusCode: 422, message: 'Unprocessable Entity' };
-}
-
-function processPostWithoutId(typeName, typeCtor, body) {
-  var entity = create(body, typeCtor);
-  db.save(entity);
-  return { name: typeName, data: entity, statusCode: 201 };
+  throw { statusCode: 422, message: 'Error: ' + result };
 }
 
 exports.Resource = function(typeConstructor) {
@@ -72,58 +64,52 @@ exports.Resource = function(typeConstructor) {
   var typeName = typeCtor.toString().match(/function ([^\(]+)/)[1].toLowerCase();
 
   this.get = function(request) {
-    var id = fn.getId(request.url);
-    if (id === 0) {
-      return getAll(typeName);
+    var idAndRel = fn.getIdAndRel(request.url);
+    if (idAndRel.id === 0) {
+      var entities = getAll();
+      return { name: typeName, data: entities, statusCode: 200 };
     }
-    return getById(id, typeName);
+    var entity = getById(request.url);
+    return { name: typeName, data: entity, statusCode: 200 };
   };
 
   this.put = function(request) {
+    var entity = getById(request.url);
     var idAndRel = fn.getIdAndRel(request.url);
-    if (idAndRel.id === 0) {
-      throw { statusCode: 400, message: 'Bad Request'};
-    }
 
-    var entity = db.get(idAndRel.id);
-    validateApiCall(idAndRel.rel, entity);
     validatePropsMatch(request.body, entity);
-
-    var result = entity[idAndRel.rel](request.body);
-    if (result) {
-      fn.each(function(key) { entity[key] = request.body[key]; }, Object.keys(request.body));
-      db.save(entity);
-      return { name: typeName, data: entity, statusCode: 200 };
-    }
-    throw { statusCode: 422, message: 'Unprocessable Entity'};
+    entity = processApi(idAndRel.rel, entity, request.body, true);
+    return { name: typeName, data: entity, statusCode: 200 };
   };
 
   this.post = function(request) {
+    var entity = new typeCtor();
     var idAndRel = fn.getIdAndRel(request.url);
     if(idAndRel.id === 0) {
-      return processPostWithoutId(typeName, typeCtor, request.body);
+      validatePropsMatch(request.body, entity);
+      entity.id = db.createId();
+      update(entity, request.body);
+      db.save(entity);
+      return { name: typeName, data: entity, statusCode: 201 };
     }
-    return processPostWithId(typeName, idAndRel, request.body);
+    var entityFromDb = getById(request.url);
+    update(entity, entityFromDb);
+    entity = processApi(idAndRel.rel, entity, request.body, false);
+    return { name: typeName, data: entity, statusCode: 200 };
   };
 
   this.patch = function(request) {
+    var entity = getById(request.url);
     var idAndRel = fn.getIdAndRel(request.url);
-    var entity = getById(idAndRel.id);
-    validateApiCall(idAndRel.rel, entity);
-    validatePropsExist(request.body, entity);
 
-    var result = entity[idAndRel.rel](request.body);
-    if (result) {
-      fn.each(function(key) { entity[key] = request.body[key]; }, Object.keys(request.body));
-      db.save(entity);
-      return { name: typeName, data: entity };
-    }
-    throw { statusCode: 422, message: 'Unprocessable Entity' };
+    validatePropsExist(request.body, entity);
+    entity = processApi(idAndRel.rel, entity, request.body, true);
+    return { name: typeName, data: entity, statusCode: 200 };
   };
 
   this.delete = function(request) {
+    var entity = getById(request.url);
     var idAndRel = fn.getIdAndRel(request.url);
-    var entity = db.get(idAndRel.id);
     db.remove(idAndRel.id);
     return { name: typeName, data: {}, statusCode: 200 };
   };

@@ -1,4 +1,3 @@
-'use strict;'
 var Resource = require('./resource.js').Resource;
 var log = console.log;
 
@@ -46,6 +45,6 @@ function Apple() {
     }
     return false;
   };
-};
+}
 
 exports.appleResource = new Resource(Apple);

@@ -123,3 +123,4 @@ db.clear();
 
 //- clean
 db.clear();
+log('passed!');
