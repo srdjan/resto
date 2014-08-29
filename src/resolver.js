@@ -11,7 +11,10 @@ exports.handle = function handle(ctx) {
   var resource = app[requestedType + 'Resource'];
   var handler = resource[ctx.req.method.toLowerCase()];
 
-  ctx.req.idAndRel = fn.getIdAndRel(ctx.req.url);
+  var idAndRel = fn.getIdAndRel(ctx.req.url);
+  ctx.req.id = idAndRel.id;
+  ctx.req.rel = idAndRel.rel;
+
   ctx.result = handler(ctx.req);
   return ctx;
 };
