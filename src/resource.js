@@ -71,9 +71,8 @@ exports.post = function(request) {
   var entity = new request.typeCtor();
   if(request.id === 0) {
     validatePropsMatch(request.body, entity);
-    entity.id = db.createId();
     update(entity, request.body);
-    db.save(entity);
+    db.add(entity);
     return { name: request.typeName, data: entity, statusCode: 201 };
   }
   var entityFromDb = getById(request.id);

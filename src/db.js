@@ -25,6 +25,11 @@ function clear() {
   datastore.clear();
 }
 
+function add(obj) {
+  obj.id = createId();
+  save(obj)
+}
+
 function save(obj) {
   datastore.setItem(obj.id, obj);
   datastore.getItem(obj.id);
@@ -49,8 +54,8 @@ function remove(id) {
   datastore.removeItem(id);
 }
 
-module.exports.createId = createId;
 module.exports.clear = clear;
+module.exports.add = add;
 module.exports.save = save;
 module.exports.get = get;
 module.exports.getAll = getAll;
