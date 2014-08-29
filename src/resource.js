@@ -5,9 +5,9 @@ var fn = require('./fn.js');
 var db = require('./db.js');
 var log = console.log;
 
-function validateApiCall(reqRel, entity) {
+function validateApiCall(rel, entity) {
   var links = fn.getLinks(entity);
-  if ( ! fn.some(function(link) { return link.rel === reqRel; }, links)) {
+  if ( ! fn.some(function(link) { return link.rel === rel; }, links)) {
     throw { statusCode: 404, message: 'Conflict - API call not allowed' };
   }
 }
@@ -22,14 +22,6 @@ function validatePropsMatch(body, entity) {
   if (fn.propsDontMatch(body, entity)) {
     throw { statusCode: 400, message: 'Bad Request - props do not match' };
   }
-}
-
-function getAll() {
-  var entities = db.getAll();
-  if (entities.length >= 1) {
-    entities = fn.filterEmpty(entities);
-  }
-  return entities;
 }
 
 function getById(url) {
@@ -66,7 +58,7 @@ exports.Resource = function(typeConstructor) {
   this.get = function(request) {
     var idAndRel = fn.getIdAndRel(request.url);
     if (idAndRel.id === 0) {
-      var entities = getAll();
+      var entities = db.getAll();
       return { name: typeName, data: entities, statusCode: 200 };
     }
     var entity = getById(request.url);

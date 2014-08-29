@@ -2,6 +2,7 @@
 //- db api
 //---------------------------------------------------------------------------------
 var datastore = require('node-persist');
+var fn = require('./fn.js');
 var log = console.log;
 
 datastore.initSync({
@@ -38,6 +39,9 @@ function getAll() {
   datastore.values(function(vals) {
     objs = vals;
   });
+  if (objs.length >= 1) {
+    objs = fn.filterEmpty(objs);
+  }
   return objs;
 }
 
