@@ -22,7 +22,7 @@ function trace(f, ctx, when) {
 function run(ctx) {
   fn.each(function(f) {
     if(logBefore) { trace(f, ctx, 'before'); }
-    f(ctx);
+    ctx = f(ctx);
     if(logAfter) { trace(f, ctx, 'after'); }
   }, stash);
 }

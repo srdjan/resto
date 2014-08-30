@@ -30,8 +30,7 @@ function update(entity, body) {
 }
 
 function processApi(rel, body, entity) {
-  if(rel === 'put' || rel === 'post' || rel === 'patch' || rel === 'delete')
-    return entity;
+  // if(rel === 'put' || rel === 'post' || rel === 'patch' || rel === 'delete') return entity;
 
   validateApiCall(rel, entity);
   var result = entity[rel](body);

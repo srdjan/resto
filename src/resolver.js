@@ -22,6 +22,9 @@ function getId(tokens) {
 
 function getIdAndRel(url) {
   var tokens = getTokens(url);
+  if(tokens.length === 2) {
+    return {id: 0, rel: ''};
+  }
   var idAndRel = getId(tokens);
   if(idAndRel.id !== 0) {
     return idAndRel;
@@ -49,17 +52,14 @@ function getTypeName(url) {
 exports.handle = function handle(ctx) {
   var idAndRel = getIdAndRel(ctx.req.url);
   ctx.id = idAndRel.id;
-  ctx.rel = idAndRel.rel;
+  ctx.rel = (idAndRel.rel === '') ? ctx.req.method.toLowerCase() : idAndRel.rel;
   ctx.body = ctx.req.body;
   ctx.typeName = getTypeName(ctx.req.url);
   ctx.typeCtor = app[ctx.typeName];
+  ctx.statusCode = 200;
 
   var handler = resource[ctx.req.method.toLowerCase()];
-
   ctx.result = handler(ctx);
-  if (! fn.hasProp(ctx.result, 'statusCode')) {
-    ctx.result.statusCode = 200;
-  }
   return ctx;
 };
 
@@ -71,7 +71,7 @@ if (config.shouldTest) {
   log('testing: resolver.js');
 
   //test: getTokens(url):- api/apples/
-  var url = 'api/apples/';
+  var url = '/api/apples/';
   var tokens = getTokens(url);
   expect(tokens.length).to.be(2);
 
@@ -87,6 +87,18 @@ if (config.shouldTest) {
   //test: getId(tokens):- api/apples || api/apples/abc3b4=1
   idAndRel = getId(tokens);
   expect(idAndRel.id).to.be('123456');
+
+  //test: getIdAndRel(url):- api/apples/
+  url = 'api/apples/';
+  idAndRel = getIdAndRel(url);
+  expect(idAndRel.id).to.be(0);
+  expect(idAndRel.rel).to.be('');
+
+  //test: getTokens(url):- api/apples/123456
+  url = 'api/apples/' + fn.atob('123456');
+  idAndRel = getIdAndRel(url);
+  expect(idAndRel.id).to.be('123456');
+  expect(idAndRel.rel).to.be('');
 
   //test: getIdAndRel(url):- api/apples/123456/create
   url = 'api/apples/' + fn.atob(123456 + '/' + 'create');
