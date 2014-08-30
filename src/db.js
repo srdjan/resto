@@ -28,11 +28,12 @@ function clear() {
 function add(obj) {
   obj.id = createId();
   save(obj);
+  return obj;
 }
 
 function save(obj) {
   datastore.setItem(obj.id, obj);
-  datastore.getItem(obj.id);
+  return datastore.getItem(obj.id);
 }
 
 function get(id) {
@@ -51,7 +52,11 @@ function getAll() {
 }
 
 function remove(id) {
-  datastore.removeItem(id);
+  var entity = get(id);
+  // if(typeof entity !== 'undefined') {
+    datastore.removeItem(id);
+  // }
+  return entity;
 }
 
 module.exports.clear = clear;

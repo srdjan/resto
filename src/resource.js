@@ -51,8 +51,7 @@ function postWithoutId(ctx) {
   validatePropsMatch(ctx.body, entity);
   update(entity, ctx.body);
 
-  db.add(entity);
-  return entity;
+  return db.add(entity);
 }
 
 function postWithId(ctx) {
@@ -61,8 +60,7 @@ function postWithId(ctx) {
   update(entity, entityFromDb);
   entity = processApi(ctx.rel, ctx.body, entity);
 
-  db.save(entity);
-  return entity;
+  return db.save(entity);
 }
 
 exports.get = function(ctx) {
@@ -86,8 +84,7 @@ exports.put = function(ctx) {
   entity = processApi(ctx.rel, ctx.body, entity);
   update(entity, ctx.body);
 
-  db.save(entity);
-  return entity;
+  return db.save(entity);
 };
 
 exports.patch = function(ctx) {
@@ -97,14 +94,13 @@ exports.patch = function(ctx) {
   entity = processApi(ctx.rel, ctx.body, entity);
   update(entity, ctx.body);
 
-  db.save(entity);
-  return entity;
+  return db.save(entity);
 };
 
+// exports.delete = function(entity, rel, body) {
 exports.delete = function(ctx) {
   var entity = getById(ctx.id);
-  entity = processApi(ctx.rel, ctx.body, entity);
 
-  db.remove(ctx.id);
-  return entity;
+  entity = processApi(ctx.rel, ctx.body, entity);
+  return db.remove(ctx.id);
 };
