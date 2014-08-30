@@ -1,6 +1,7 @@
 //---------------------------------------------------------------------------------
 //- resolver
 //---------------------------------------------------------------------------------
+var config = require('./config.json');
 var fn = require('./fn.js');
 var app = require('./app.js');
 var resource = require('./resource.js');
@@ -11,7 +12,6 @@ function getTokens(url) {
   return fn.trimLeftAndRight(path, '/').split('/');
 }
 
-//- api/apples || api/apples/abc3b4=1
 function getId(tokens) {
   var id = fn.btoa(tokens[tokens.length - 1]);
   if (isNaN(id)) {
@@ -20,7 +20,6 @@ function getId(tokens) {
   return { id: id, rel: ''};
 }
 
-//- api/apples/123456/create
 function getIdAndRel(url) {
   var tokens = getTokens(url);
   var idAndRel = getId(tokens);
@@ -38,8 +37,7 @@ function getIdAndRel(url) {
   return idAndRel;
 }
 
-//- api/apples/123456/create
-function getTypeFromPath(url) {
+function getTypeName(url) {
   var tokens = getTokens(url);
   if (tokens.length > 1) {
     var typeName = tokens[1].slice(0, -1);
@@ -48,12 +46,12 @@ function getTypeFromPath(url) {
   throw { statusCode: 500, message: 'Internal Server Error', log: 'Not an API call: ' + path };
 }
 
-function handle(ctx) {
+exports.handle = function handle(ctx) {
   var idAndRel = getIdAndRel(ctx.req.url);
   ctx.id = idAndRel.id;
   ctx.rel = idAndRel.rel;
   ctx.body = ctx.req.body;
-  ctx.typeName = getTypeFromPath(ctx.req.url);
+  ctx.typeName = getTypeName(ctx.req.url);
   ctx.typeCtor = app[ctx.typeName];
 
   var handler = resource[ctx.req.method.toLowerCase()];
@@ -63,6 +61,40 @@ function handle(ctx) {
     ctx.result.statusCode = 200;
   }
   return ctx;
-}
+};
 
-module.exports.handle = handle;
+//---------------------------------------------------------------------------------
+//@tests
+//---------------------------------------------------------------------------------
+if (config.shouldTest) {
+  var expect = require('expect.js');
+  log('testing: resolver.js');
+
+  //test: getTokens(url):- api/apples/
+  var url = 'api/apples/';
+  var tokens = getTokens(url);
+  expect(tokens.length).to.be(2);
+
+  //test: getId(tokens):- api/apples
+  var idAndRel = getId(tokens);
+  expect(idAndRel.id).to.be(0);
+
+  //test: getTokens(url):- api/apples/123456
+  url = 'api/apples/' + fn.atob('123456');
+  tokens = getTokens(url);
+  expect(tokens.length).to.be(3);
+
+  //test: getId(tokens):- api/apples || api/apples/abc3b4=1
+  idAndRel = getId(tokens);
+  expect(idAndRel.id).to.be('123456');
+
+  //test: getIdAndRel(url):- api/apples/123456/create
+  url = 'api/apples/' + fn.atob(123456 + '/' + 'create');
+  idAndRel = getIdAndRel(url);
+  expect(idAndRel.id).to.be('123456');
+  expect(idAndRel.rel).to.be('create');
+
+  //test: getTypeName(url):- api/apples/123456/create
+  var typeName = getTypeName(url);
+  expect(typeName).to.be('Apple');
+}
