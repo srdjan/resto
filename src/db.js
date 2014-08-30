@@ -37,7 +37,11 @@ function save(obj) {
 }
 
 function get(id) {
-  return datastore.getItem(id);
+  var entity = datastore.getItem(id);
+  if (typeof entity === 'undefined') {
+    throw { statusCode: 404, message: 'Not Found'};
+  }
+  return entity;
 }
 
 function getAll() {

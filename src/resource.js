@@ -24,14 +24,6 @@ function validatePropsMatch(body, entity) {
   }
 }
 
-function getById(id) {
-  var entity = db.get(id);
-  if (typeof entity === 'undefined') {
-    throw { statusCode: 404, message: 'Not Found'};
-  }
-  return entity;
-}
-
 function update(entity, body) {
   fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
   return entity;
@@ -55,9 +47,7 @@ function postWithoutId(ctx) {
 }
 
 function postWithId(ctx) {
-  var entity = new ctx.typeCtor();
-  var entityFromDb = getById(ctx.id);
-  update(entity, entityFromDb);
+  var entity = db.get(ctx.id);
   entity = processApi(ctx.rel, ctx.body, entity);
 
   return db.save(entity);
@@ -67,7 +57,7 @@ exports.get = function(ctx) {
   if (ctx.id === 0) {
     return db.getAll();
   }
-  return getById(ctx.id);
+  return db.get(ctx.id);
 };
 
 exports.post = function(ctx) {
@@ -78,7 +68,7 @@ exports.post = function(ctx) {
 };
 
 exports.put = function(ctx) {
-  var entity = getById(ctx.id);
+  var entity = db.get(ctx.id);
 
   validatePropsMatch(ctx.body, entity);
   entity = processApi(ctx.rel, ctx.body, entity);
@@ -88,7 +78,7 @@ exports.put = function(ctx) {
 };
 
 exports.patch = function(ctx) {
-  var entity = getById(ctx.id);
+  var entity = db.get(ctx.id);
 
   validatePropsExist(ctx.body, entity);
   entity = processApi(ctx.rel, ctx.body, entity);
@@ -99,8 +89,9 @@ exports.patch = function(ctx) {
 
 // exports.delete = function(entity, rel, body) {
 exports.delete = function(ctx) {
-  var entity = getById(ctx.id);
+  var entity = db.get(ctx.id);
 
   entity = processApi(ctx.rel, ctx.body, entity);
+
   return db.remove(ctx.id);
 };
