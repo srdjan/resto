@@ -30,6 +30,9 @@ function update(entity, body) {
 }
 
 function processApi(rel, body, entity) {
+  if(rel === 'put' || rel === 'post' || rel === 'patch' || rel === 'delete')
+    return entity;
+
   validateApiCall(rel, entity);
   var result = entity[rel](body);
   if ( ! result) {
@@ -42,7 +45,6 @@ function postWithoutId(ctx) {
   var entity = new ctx.typeCtor();
   validatePropsMatch(ctx.body, entity);
   update(entity, ctx.body);
-
   return db.add(entity);
 }
 

@@ -51,8 +51,16 @@ exports.hasProp = function (obj, prop) {
 
 exports.getLinks = function(entity) {
   var states = R.filter(function(m) { return m.startsWith('state_'); }, Object.keys(entity));
+  var links= [];
+  if(states.length === 0) {
+    links.push({ rel: 'post', method: "post" });
+    links.push({ rel: 'put', method: "put" });
+    links.push({ rel: 'patch', method: "patch" });
+    links.push({ rel: 'delete', method: "delete"});
+    return links;
+  }
   for (var i = 0; i < states.length; i++) {
-    var links = entity[states[i]]();
+    links = entity[states[i]]();
     if (links !== false) {
       return links;
     }

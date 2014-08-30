@@ -45,3 +45,8 @@ exports.Apple = function() {
     return false;
   };
 };
+
+exports.Todo = function() {
+  this.content = 'empty';
+  this.status = '?';
+};

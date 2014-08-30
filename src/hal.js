@@ -11,7 +11,7 @@ function addSelfLink(hal, href) {
 }
 
 function addLink(hal, rel, href, method) {
-  hal.addLink(rel, { href: href, method: method });
+  return hal.addLink(rel, { href: href, method: method });
 }
 
 function addLinks(halRep, ctx) {
@@ -19,6 +19,7 @@ function addLinks(halRep, ctx) {
   fn.each(function(l) {
       addLink(halRep, l.rel, '/api/' + ctx.typeName + 's/' + fn.atob(ctx.result.id + '/' + l.rel), l.method);
     }, links);
+  return halRep;
 }
 
 function addProperties(halRep, result) {
