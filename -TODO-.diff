@@ -2,7 +2,8 @@
 -todo: handle entity without states
 -todo: handle embedded entities
 -todo: add paging
--todo: add href to hypermedia type
+-todo: add query
+-todo: add href to hypermedia type (meta)
 -todo: add services (non-persisting api) ?
 -todo: add contracts.js
 -todo: make client up (http://sennajs.com/docs/,  https://github.com/giann/zappa, https://github.com/Raynos/http-framework...

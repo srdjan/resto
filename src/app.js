@@ -31,7 +31,7 @@ exports.Apple = function() {
     }
     return false;
   };
-  this.state_ready_to_eat = function() {
+  this.state_readyToEat = function() {
     if (this.weight >= 200.0 && this.weight < 300.0) {
       return [{ rel: 'eat', method: "PUT" },
               { rel: 'toss', method: "DELETE" }];

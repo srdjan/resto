@@ -37,15 +37,30 @@ function update(entity, body) {
   return entity;
 }
 
-function processApi(rel, body, entity, shouldUpdate) {
+function processApi(rel, body, entity) {
   validateApiCall(rel, entity);
   var result = entity[rel](body);
   if ( ! result) {
     throw { statusCode: 422, message: 'Error: ' + result };
   }
-  if (shouldUpdate) {
-    update(entity, body);
-  }
+  return entity;
+}
+
+function postWithoutId(ctx) {
+  var entity = new ctx.typeCtor();
+  validatePropsMatch(ctx.body, entity);
+  update(entity, ctx.body);
+
+  db.add(entity);
+  return entity;
+}
+
+function postWithId(ctx) {
+  var entity = new ctx.typeCtor();
+  var entityFromDb = getById(ctx.id);
+  update(entity, entityFromDb);
+  entity = processApi(ctx.rel, ctx.body, entity);
+
   db.save(entity);
   return entity;
 }
@@ -57,24 +72,21 @@ exports.get = function(ctx) {
   return getById(ctx.id);
 };
 
+exports.post = function(ctx) {
+  if(ctx.id === 0) {
+    return postWithoutId(ctx);
+  }
+  return postWithId(ctx);
+};
+
 exports.put = function(ctx) {
   var entity = getById(ctx.id);
 
   validatePropsMatch(ctx.body, entity);
-  return processApi(ctx.rel, ctx.body, entity, true);
-};
+  entity = processApi(ctx.rel, ctx.body, entity);
+  update(entity, ctx.body);
 
-exports.post = function(ctx) {
-  var entity = new ctx.typeCtor();
-  if(ctx.id === 0) {
-    validatePropsMatch(ctx.body, entity);
-    update(entity, ctx.body);
-    db.add(entity);
-    return entity;
-  }
-  var entityFromDb = getById(ctx.id);
-  update(entity, entityFromDb);
-  entity = processApi(ctx.rel, ctx.body, entity, false);
+  db.save(entity);
   return entity;
 };
 
@@ -82,11 +94,16 @@ exports.patch = function(ctx) {
   var entity = getById(ctx.id);
 
   validatePropsExist(ctx.body, entity);
-  return processApi(ctx.rel, ctx.body, entity, true);
+  entity = processApi(ctx.rel, ctx.body, entity);
+  update(entity, ctx.body);
+
+  db.save(entity);
+  return entity;
 };
 
 exports.delete = function(ctx) {
   var entity = getById(ctx.id);
+  entity = processApi(ctx.rel, ctx.body, entity);
 
   db.remove(ctx.id);
   return entity;
