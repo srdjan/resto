@@ -2,7 +2,8 @@
 -todo: handle entity without states
 -todo: handle embedded entities
 -todo: add paging
--todo: add services
+-todo: add href to hypermedia type
+-todo: add services (non-persisting api) ?
 -todo: add contracts.js
 -todo: make client up (http://sennajs.com/docs/,  https://github.com/giann/zappa, https://github.com/Raynos/http-framework...
 -todo: add meta links to display, validation...
@@ -10,7 +11,9 @@
       https://stormpath.com/blog/node-api-client-part-one/
       http://appdevelopermagazine.com/1718/2014/7/31/StrongLoop-Node.js-API-Server-Released-for-Developing,-Securing-and-Scaling-REST-APIs/
       http://avoidwork.github.io/tenso/rest.html
--todo: add orchestrator
+-todo: add orchestrator: http://www.chorusjs.com/
+-todo: process control: http://tech.pro/tutorial/2074/nodejs-managing-child-processes
+-todo: find the self contained app with searchable database and reuse as a default HAL based UI?
 
 +todo: make video and blog twit about it
 +todo: publish slides
@@ -29,3 +32,4 @@
   !use: https://github.com/ericelliott/cuid
   !#use: http://timelessrepo.com/haters-gonna-hateoas for RESTful APIs talk
   !#use: Mixins, Forwarding, and Delegation in JavaScript ()http://raganwald.com/2014/04/10/mixins-forwarding-delegation.html
+

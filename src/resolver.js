@@ -54,15 +54,15 @@ function getTypeFromPath(url) {
 
 function handle(ctx) {
   var idAndRel = getIdAndRel(ctx.req.url);
-  ctx.req.id = idAndRel.id;
-  ctx.req.rel = idAndRel.rel;
-
-  var requestedType = getTypeFromPath(ctx.req.url);
-  ctx.req.typeName = requestedType;
-  ctx.req.typeCtor = app[requestedType];
+  ctx.id = idAndRel.id;
+  ctx.rel = idAndRel.rel;
+  ctx.body = ctx.req.body;
+  ctx.typeName = getTypeFromPath(ctx.req.url);
+  ctx.typeCtor = app[ctx.typeName];
 
   var handler = resource[ctx.req.method.toLowerCase()];
-  ctx.result = handler(ctx.req);
+
+  ctx.result = handler(ctx);
   if (! fn.hasProp(ctx.result, 'statusCode')) {
     ctx.result.statusCode = 200;
   }

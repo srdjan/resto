@@ -37,57 +37,57 @@ function update(entity, body) {
   return entity;
 }
 
-function processApi(request, entity, shouldUpdate) {
-  validateApiCall(request.rel, entity);
-  var result = entity[request.rel](request.body);
+function processApi(rel, body, entity, shouldUpdate) {
+  validateApiCall(rel, entity);
+  var result = entity[rel](body);
   if ( ! result) {
     throw { statusCode: 422, message: 'Error: ' + result };
   }
   if (shouldUpdate) {
-    update(entity, request.body);
+    update(entity, body);
   }
   db.save(entity);
   return entity;
 }
 
-exports.get = function(request) {
-  if (request.id === 0) {
+exports.get = function(ctx) {
+  if (ctx.id === 0) {
     return db.getAll();
   }
-  return getById(request.id);
+  return getById(ctx.id);
 };
 
-exports.put = function(request) {
-  var entity = getById(request.id);
+exports.put = function(ctx) {
+  var entity = getById(ctx.id);
 
-  validatePropsMatch(request.body, entity);
-  return processApi(request, entity, true);
+  validatePropsMatch(ctx.body, entity);
+  return processApi(ctx.rel, ctx.body, entity, true);
 };
 
-exports.post = function(request) {
-  var entity = new request.typeCtor();
-  if(request.id === 0) {
-    validatePropsMatch(request.body, entity);
-    update(entity, request.body);
+exports.post = function(ctx) {
+  var entity = new ctx.typeCtor();
+  if(ctx.id === 0) {
+    validatePropsMatch(ctx.body, entity);
+    update(entity, ctx.body);
     db.add(entity);
     return entity;
   }
-  var entityFromDb = getById(request.id);
+  var entityFromDb = getById(ctx.id);
   update(entity, entityFromDb);
-  entity = processApi(request, entity, false);
+  entity = processApi(ctx.rel, ctx.body, entity, false);
   return entity;
 };
 
-exports.patch = function(request) {
-  var entity = getById(request.id);
+exports.patch = function(ctx) {
+  var entity = getById(ctx.id);
 
-  validatePropsExist(request.body, entity);
-  return processApi(request, entity, true);
+  validatePropsExist(ctx.body, entity);
+  return processApi(ctx.rel, ctx.body, entity, true);
 };
 
-exports.delete = function(request) {
-  var entity = getById(request.id);
+exports.delete = function(ctx) {
+  var entity = getById(ctx.id);
 
-  db.remove(request.id);
+  db.remove(ctx.id);
   return entity;
 };

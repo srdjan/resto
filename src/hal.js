@@ -1,6 +1,7 @@
 //---------------------------------------------------------------------------------
 //- hal parsing
 //---------------------------------------------------------------------------------
+var config = require('./config.json');
 var fn = require('./fn.js');
 var halson = require('halson');
 var log = console.log;
@@ -12,7 +13,7 @@ function addLink(hal, rel, href, method) { hal.addLink(rel, { href: href, method
 function addLinks(halRep, ctx) {
   var links = fn.getLinks(ctx.result);
   fn.each(function(l) {
-      addLink(halRep, l.rel, '/api/' + ctx.req.typeName + 's/' + fn.atob(ctx.result.id + '/' + l.rel), l.method);
+      addLink(halRep, l.rel, '/api/' + ctx.typeName + 's/' + fn.atob(ctx.result.id + '/' + l.rel), l.method);
     }, links);
 }
 
@@ -29,11 +30,11 @@ function createRoot(typeName) {
 }
 
 function createList(ctx) {
-  var halRep = createRoot(ctx.req.typeName.toLowerCase());
+  var halRep = createRoot(ctx.typeName.toLowerCase());
   if (ctx.result.length > 0) {
     ctx.result.forEach(function(el, index, array) {
-        var link = addSelfLink(halson({}), '/api/' + ctx.req.typeName.toLowerCase() + 's/' + fn.atob(el.id));
-        halRep.addEmbed(ctx.req.typeName.toLowerCase() + 's', link);
+        var link = addSelfLink(halson({}), '/api/' + ctx.typeName.toLowerCase() + 's/' + fn.atob(el.id));
+        halRep.addEmbed(ctx.typeName.toLowerCase() + 's', link);
       }
     );
   }
@@ -43,7 +44,7 @@ function createList(ctx) {
 function createOne(ctx) {
   var halRep = halson({});
   addProperties(halRep, ctx.result);
-  addSelfLink(halRep, '/api/' + ctx.req.typeName.toLowerCase() + 's/' + fn.atob(ctx.result.id));
+  addSelfLink(halRep, '/api/' + ctx.typeName.toLowerCase() + 's/' + fn.atob(ctx.result.id));
   addLinks(halRep, ctx);
   return halRep;
 }
@@ -61,46 +62,52 @@ function toHal(ctx) {
   ctx.resp.end();
   return ctx;
 }
+
 module.exports.toHal = toHal;
 
+//@start-testing ---------------------
+// -----------------------------------
+if (config.shouldTest) {
+  var expect = require('expect.js');
+  log('testing: hal.js');
 
-//- tests
+  expect(10 > 2).to.be(true);
+  //- get all - when result empty set
+  //-----------------------------------
+  // var ctx = {
+  //   result: { name: 'Apple', data: [] },
+  //   resp: {
+  //     data: '',
+  //     writeHead: function() {},
+  //     write: function(hal) { this.data = hal;},
+  //     end: function() {}
+  //   }
+  // };
+  // var res = exports.toHal(ctx);
+  // log(res);
 
-//- get all - when result empty set
-//-----------------------------------
-// var ctx = {
-//   result: { name: 'Apple', data: [] },
-//   resp: {
-//     data: '',
-//     writeHead: function() {},
-//     write: function(hal) { this.data = hal;},
-//     end: function() {}
-//   }
-// };
-// var res = exports.toHal(ctx);
-// log(res);
-
-//- get all - when result on obj
-//-----------------------------------
-// var ctx = {
-//   result: { name: 'Apple', data: {
-//                                   weight: 10,
-//                                   color: "red",
-//                                   state_growing: function() {
-//                                                     if (this.weight > 0.0 && this.weight < 200.0) {
-//                                                       return [{ rel: 'grow', method: "POST" },
-//                                                               { rel: 'toss', method: "DELETE"}];
-//                                                     }
-//                                                     return false;
-//                                                   }
-//                                   }
-//                               },
-//   resp: {
-//     data: '',
-//     writeHead: function() {},
-//     write: function(hal) { this.data = hal;},
-//     end: function() {}
-//   }
-// };
-// var res = exports.toHal(ctx);
-// log(res);
+  //- get all - when result on obj
+  //-----------------------------------
+  // var ctx = {
+  //   result: { name: 'Apple', data: {
+  //                                   weight: 10,
+  //                                   color: "red",
+  //                                   state_growing: function() {
+  //                                                     if (this.weight > 0.0 && this.weight < 200.0) {
+  //                                                       return [{ rel: 'grow', method: "POST" },
+  //                                                               { rel: 'toss', method: "DELETE"}];
+  //                                                     }
+  //                                                     return false;
+  //                                                   }
+  //                                   }
+  //                               },
+  //   resp: {
+  //     data: '',
+  //     writeHead: function() {},
+  //     write: function(hal) { this.data = hal;},
+  //     end: function() {}
+  //   }
+  // };
+  // var res = exports.toHal(ctx);
+  // log(res);
+}
