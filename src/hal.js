@@ -2,13 +2,17 @@
 //- hal parsing
 //---------------------------------------------------------------------------------
 var config = require('./config.json');
-var fn = require('./fn.js');
 var halson = require('halson');
+var fn = require('./fn.js');
 var log = console.log;
 
-function addSelfLink(hal, href) {  return hal.addLink('self', href); }
+function addSelfLink(hal, href) {
+  return hal.addLink('self', href);
+}
 
-function addLink(hal, rel, href, method) { hal.addLink(rel, { href: href, method: method }); }
+function addLink(hal, rel, href, method) {
+  hal.addLink(rel, { href: href, method: method });
+}
 
 function addLinks(halRep, ctx) {
   var links = fn.getLinks(ctx.result);
@@ -52,7 +56,7 @@ function createOne(ctx) {
 function toHal(ctx) {
   var halRep;
   if (ctx.result instanceof Array) {
-      halRep = createList(ctx);
+    halRep = createList(ctx);
   }
   else {
     halRep = createOne(ctx);
@@ -65,8 +69,9 @@ function toHal(ctx) {
 
 module.exports.toHal = toHal;
 
-//@start-testing ---------------------
-// -----------------------------------
+//---------------------------------------------------------------------------------
+//@tests
+//---------------------------------------------------------------------------------
 if (config.shouldTest) {
   var expect = require('expect.js');
   log('testing: hal.js');

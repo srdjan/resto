@@ -15,6 +15,10 @@ var log = console.log;
 
 exports.filterEmpty = R.filter(function(e) { return Object.getOwnPropertyNames(e).length > 0; });
 
+exports.trimLeftAndRight = function(str, ch) {
+  return str.replace(new RegExp("^[" + ch + "]+"), "").replace(new RegExp("[" + ch + "]+$"), "");
+};
+
 exports.atob = function(str) {
   var res = new Buffer(str, 'ascii').toString('base64');
   return res.replace('+', '-').replace('/', '_').replace('=', ',');
@@ -85,8 +89,9 @@ exports.getFnName = function(fn) {
   return (!f && 'not a function') || (s && s[1] || 'anonymous');
 };
 
-//@start-testing ---------------------
-// -----------------------------------
+//---------------------------------------------------------------------------------
+//@tests
+//---------------------------------------------------------------------------------
 if (config.shouldTest) {
   var expect = require('expect.js');
   log('testing: fn.js');

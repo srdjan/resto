@@ -6,13 +6,9 @@ var app = require('./app.js');
 var resource = require('./resource.js');
 var log = console.log;
 
-function trimLeftAndRight(str, ch) {
-  return str.replace(new RegExp("^[" + ch + "]+"), "").replace(new RegExp("[" + ch + "]+$"), "");
-}
-
 function getTokens(url) {
   var path = url.substring(url.indexOf('api'), url.length);
-  return trimLeftAndRight(path, '/').split('/');
+  return fn.trimLeftAndRight(path, '/').split('/');
 }
 
 //- api/apples || api/apples/abc3b4=1
