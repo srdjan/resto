@@ -1,7 +1,6 @@
 //---------------------------------------------------------------------------------
 //- functions
 //---------------------------------------------------------------------------------
-var config = require('./config.json');
 var R = require('ramda');
 exports.compose = R.compose;
 exports.contains = R.contains;
@@ -78,9 +77,7 @@ exports.getFnName = function(fn) {
 //---------------------------------------------------------------------------------
 //@tests
 //---------------------------------------------------------------------------------
-if (config.shouldTest) {
   var expect = require('expect.js');
   log('testing: fn.js');
 
   expect(10 > 2).to.be(true);
-}

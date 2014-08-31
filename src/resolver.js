@@ -1,7 +1,6 @@
 //---------------------------------------------------------------------------------
 //- resolver
 //---------------------------------------------------------------------------------
-var config = require('./config.json');
 var fn = require('./fn.js');
 var app = require('./app.js');
 var resource = require('./resource.js');
@@ -66,7 +65,6 @@ exports.handle = function handle(ctx) {
 //---------------------------------------------------------------------------------
 //@tests
 //---------------------------------------------------------------------------------
-if (config.shouldTest) {
   var expect = require('expect.js');
   log('testing: resolver.js');
 
@@ -109,4 +107,3 @@ if (config.shouldTest) {
   //test: getTypeName(url):- api/apples/123456/create
   var typeName = getTypeName(url);
   expect(typeName).to.be('Apple');
-}

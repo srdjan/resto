@@ -1,7 +1,6 @@
 //---------------------------------------------------------------------------------
 //- hal parsing
 //---------------------------------------------------------------------------------
-var config = require('./config.json');
 var halson = require('halson');
 var fn = require('./fn.js');
 var log = console.log;
@@ -79,7 +78,6 @@ exports.toHal = function toHal(ctx) {
 //---------------------------------------------------------------------------------
 //@tests
 //---------------------------------------------------------------------------------
-if (config.shouldTest) {
   var expect = require('expect.js');
   log('testing: hal.js');
 
@@ -122,4 +120,3 @@ if (config.shouldTest) {
   // };
   // var res = exports.toHal(ctx);
   // log(res);
-}
