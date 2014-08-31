@@ -15,6 +15,7 @@
 -todo: add orchestrator: http://www.chorusjs.com/
 -todo: process control: http://tech.pro/tutorial/2074/nodejs-managing-child-processes
 -todo: find the self contained app with searchable database and reuse as a default HAL based UI?
+-todo: use jsfmt to rewrite(remove) tests: http://rdio.github.io/jsfmt/
 
 +todo: make video and blog twit about it
 +todo: publish slides
