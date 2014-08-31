@@ -4,13 +4,18 @@
 var http = require("http");
 var file = require("./src/filehelper.js");
 var fn = require('./src/fn.js');
-var pipeline = require('./src/pipeline.js').pipeline;
+var pipeline = require('./src/pipeline.js');
+var handler = require('./src/resolver.js').handle;
+var toHal = require('./src/hal.js').toHal;
 var log = console.log;
 var port = 8080;
 
+pipeline.use(true, handler);
+pipeline.use(true, toHal);
+
 http.createServer(function(request, response) {
   if (fn.isApiCall(request)) {
-    fn.processApi(request, response, pipeline);
+    fn.processApi(request, response);
   }
   else {
     file.get(request, response);
@@ -18,3 +23,17 @@ http.createServer(function(request, response) {
 }).listen(port);
 
 log("Server running at port: " + port + "\nCTRL + SHIFT + C to shutdown");
+
+function processApi(request, response) {
+  if (hasBody(request.method)) {
+    var body = '';
+    request.on('data', function(chunk) { body += chunk.toString(); });
+    request.on('end', function() {
+      request.body = JSON.parse(body);
+      pipeline.go({ req: request, resp: response });
+    });
+  }
+  else {
+    pipeline.go({ req: request, resp: response });
+  }
+}

@@ -64,20 +64,6 @@ exports.isApiCall = function(request) { return request.url.indexOf('/api') !== -
 exports.plainJsonObj = function(rel) { return (rel === 'get' || rel === 'put' || rel === 'post' || rel === 'patch' || rel === 'delete');};
 function hasBody(method) { return method === 'POST' || method === 'PUT' || method === 'PATCH'; }
 
-exports.processApi = function(request, response, pipeline) {
-  if (hasBody(request.method)) {
-    var body = '';
-    request.on('data', function(chunk) { body += chunk.toString(); });
-    request.on('end', function() {
-      request.body = JSON.parse(body);
-      pipeline({ req: request, resp: response });
-    });
-  }
-  else {
-    pipeline({ req: request, resp: response });
-  }
-};
-
 exports.getObjType = function(obj){
   var text = Function.prototype.toString.call(obj.constructor);
   return text.match(/function (.*)\(/)[1];
