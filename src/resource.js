@@ -30,10 +30,6 @@ function update(entity, body) {
 }
 
 function processApi(rel, body, entity) {
-  //if (fn.plainJsonObj(ctx.rel)) {
-  //  return entity;
-  //}
-
   validateApiCall(rel, entity);
   var result = entity[rel](body);
   if ( ! result) {

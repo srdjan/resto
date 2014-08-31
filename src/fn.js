@@ -60,7 +60,6 @@ exports.getLinks = function(entity) {
 };
 
 exports.isApiCall = function(request) { return request.url.indexOf('/api') !== -1; };
-exports.plainJsonObj = function(rel) { return (rel === 'get' || rel === 'put' || rel === 'post' || rel === 'patch' || rel === 'delete');};
 exports.hasBody = function(method) { return method === 'POST' || method === 'PUT' || method === 'PATCH'; };
 
 exports.getObjType = function(obj){
