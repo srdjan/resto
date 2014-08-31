@@ -62,7 +62,7 @@ exports.getLinks = function(entity) {
 
 exports.isApiCall = function(request) { return request.url.indexOf('/api') !== -1; };
 exports.plainJsonObj = function(rel) { return (rel === 'get' || rel === 'put' || rel === 'post' || rel === 'patch' || rel === 'delete');};
-function hasBody(method) { return method === 'POST' || method === 'PUT' || method === 'PATCH'; }
+exports.hasBody = function(method) { return method === 'POST' || method === 'PUT' || method === 'PATCH'; };
 
 exports.getObjType = function(obj){
   var text = Function.prototype.toString.call(obj.constructor);

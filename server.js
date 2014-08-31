@@ -8,14 +8,14 @@ var pipeline = require('./src/pipeline.js');
 var handler = require('./src/resolver.js').handle;
 var toHal = require('./src/hal.js').toHal;
 var log = console.log;
-var port = 8080;
+var port = 8070;
 
 pipeline.use(true, handler);
 pipeline.use(true, toHal);
 
 http.createServer(function(request, response) {
   if (fn.isApiCall(request)) {
-    fn.processApi(request, response);
+    processApi(request, response);
   }
   else {
     file.get(request, response);
@@ -25,7 +25,7 @@ http.createServer(function(request, response) {
 log("Server running at port: " + port + "\nCTRL + SHIFT + C to shutdown");
 
 function processApi(request, response) {
-  if (hasBody(request.method)) {
+  if (fn.hasBody(request.method)) {
     var body = '';
     request.on('data', function(chunk) { body += chunk.toString(); });
     request.on('end', function() {
