@@ -1,12 +1,13 @@
--todo: handle plain application/json vs application/hal+json
--todo: extract datastore into middleware?
 -todo: handle embedded entities
 -todo: add paging
 -todo: add query
--todo: add href to hypermedia type (meta)
+-todo: add links to hypermedia type (meta) or via header?
 -todo: add services (non-persisting api) ?
 -todo: add contracts.js
--todo: make client up (http://sennajs.com/docs/,  https://github.com/giann/zappa, https://github.com/Raynos/http-framework...
+-todo: make client up (
+                        http://sennajs.com/docs/,
+                        https://github.com/giann/zappa,
+                        https://github.com/velveteer/mithril-boilerplate
 -todo: add meta links to display, validation...
 -todo: use Express (better server error handling (invalid json.!!..)
       https://stormpath.com/blog/node-api-client-part-one/
@@ -23,6 +24,8 @@
 +todo: hal-browser:don't show non get link for GET
 +todo: fx should return plain js objects - add wrapper to convert to hal
 +todo: hal-browser: fix not showing root props
+-notdoing: handle plain application/json vs application/hal+json
+-notdoing: extract datastore into middleware?
 
 !idea
   !idea: test in production [http://bahmutov.calepin.co/test-in-production.html]
@@ -32,6 +35,6 @@
   !use: https://github.com/xyncro/frost
   !use: http://www.rackspace.com/blog/objectrocket-adds-fully-managed-redis-service/?cm_mmc=managed-_-cloud-_-contentnam-_-dbweekly-ORredis
   !use: https://github.com/ericelliott/cuid
-  !#use: http://timelessrepo.com/haters-gonna-hateoas for RESTful APIs talk
-  !#use: Mixins, Forwarding, and Delegation in JavaScript ()http://raganwald.com/2014/04/10/mixins-forwarding-delegation.html
-
+  !use: http://timelessrepo.com/haters-gonna-hateoas for RESTful APIs talk
+  !use: Mixins, Forwarding, and Delegation in JavaScript ()http://raganwald.com/2014/04/10/mixins-forwarding-delegation.html
+  !use: https://github.com/Raynos/http-framework...
