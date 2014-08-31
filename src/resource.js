@@ -30,7 +30,9 @@ function update(entity, body) {
 }
 
 function processApi(rel, body, entity) {
-  // if(rel === 'put' || rel === 'post' || rel === 'patch' || rel === 'delete') return entity;
+  //if (fn.plainJsonObj(ctx.rel)) {
+  //  return entity;
+  //}
 
   validateApiCall(rel, entity);
   var result = entity[rel](body);
@@ -88,7 +90,6 @@ exports.patch = function(ctx) {
   return db.save(entity);
 };
 
-// exports.delete = function(entity, rel, body) {
 exports.delete = function(ctx) {
   var entity = db.get(ctx.id);
 

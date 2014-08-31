@@ -55,7 +55,7 @@ function createOne(ctx) {
 }
 
 exports.toHal = function toHal(ctx) {
-  // if(ctx.rel === 'get' || ctx.rel === 'put' || ctx.rel === 'post' || ctx.rel === 'patch' || ctx.rel === 'delete') {
+  // if (fn.plainJsonObj(ctx.rel)) {
   //   ctx.resp.writeHead(ctx.result.statusCode, {"Content-Type": "application/json"});
   //   ctx.resp.write(JSON.stringify(ctx.result));
   //   ctx.resp.end();
@@ -69,7 +69,8 @@ exports.toHal = function toHal(ctx) {
   else {
     halRep = createOne(ctx);
   }
-  ctx.resp.writeHead(ctx.statusCode, {"Content-Type": "application/json"});
+
+  ctx.resp.writeHead(ctx.statusCode, {"Content-Type": "application/hal+json"});
   ctx.resp.write(JSON.stringify(halRep));
   ctx.resp.end();
   return ctx;

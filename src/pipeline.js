@@ -4,7 +4,6 @@
 var fn = require('./fn.js');
 var handler = require('./resolver.js').handle;
 var toHal = require('./hal.js').toHal;
-var proxy = require('./proxy-logger.js');
 var log = console.log;
 
 var stash = [];

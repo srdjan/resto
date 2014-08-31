@@ -1,5 +1,10 @@
 var log = console.log;
 
+exports.Todo = function() {
+  this.content = 'empty';
+  this.status = '?';
+};
+
 exports.Apple = function() {
   this.weight = 0.1;
   this.color = 'green';
@@ -44,9 +49,4 @@ exports.Apple = function() {
     }
     return false;
   };
-};
-
-exports.Todo = function() {
-  this.content = 'empty';
-  this.status = '?';
 };
