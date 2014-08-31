@@ -1,5 +1,5 @@
+-todo: handle plain application/json vs application/hal+json
 -todo: extract datastore into middleware?
--todo: handle entity without states
 -todo: handle embedded entities
 -todo: add paging
 -todo: add query
