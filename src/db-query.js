@@ -7,6 +7,9 @@ var log = console.log;
 
 exports.query = function query(ctx) {
   if (ctx.req.method.toLowerCase() !== 'get') {
+    if(ctx.id > 0) {
+      ctx.entity = db.get(ctx.id);
+    }
     return ctx;
   }
 
