@@ -41,15 +41,14 @@ function processApi(rel, body, entity) {
 function postWithoutId(ctx) {
   var entity = new ctx.typeCtor();
   validatePropsMatch(ctx.req.body, entity);
-  update(entity, ctx.req.body);
-  return db.add(entity);
+  ctx.entity = update(entity, ctx.req.body);
+  return ctx;
 }
 
 function postWithId(ctx) {
   var entity = db.get(ctx.id);
-  entity = processApi(ctx.rel, ctx.req.body, entity);
-
-  return db.save(entity);
+  ctx.entity = processApi(ctx.rel, ctx.req.body, entity);
+  return ctx;
 }
 
 exports.post = function(ctx) {
@@ -64,9 +63,8 @@ exports.put = function(ctx) {
 
   validatePropsMatch(ctx.req.body, entity);
   entity = processApi(ctx.rel, ctx.req.body, entity);
-  update(entity, ctx.req.body);
-
-  return db.save(entity);
+  ctx.entity = update(entity, ctx.req.body);
+  return ctx;
 };
 
 exports.patch = function(ctx) {
@@ -74,15 +72,13 @@ exports.patch = function(ctx) {
 
   validatePropsExist(ctx.req.body, entity);
   entity = processApi(ctx.rel, ctx.req.body, entity);
-  update(entity, ctx.req.body);
-
-  return db.save(entity);
+  ctx.entity = update(entity, ctx.req.body);
+  return ctx;
 };
 
 exports.delete = function(ctx) {
   var entity = db.get(ctx.id);
 
-  entity = processApi(ctx.rel, ctx.req.body, entity);
-
-  return db.remove(ctx.id);
+  ctx.entity = processApi(ctx.rel, ctx.req.body, entity);
+  return ctx;
 };

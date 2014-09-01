@@ -99,7 +99,7 @@ pipeline.use(convert);
   expect(fn.contains('self', all.data.listLinkRels())).to.be(true);
   expect(fn.contains('create', all.data.listLinkRels())).to.be(true);
 
-// //- test create
+//- test create
   var apple = create(all.data);
   expect(apple.data.listLinkRels().length).to.be(3);
   expect(apple.data.weight).to.be(10.0);
