@@ -8,7 +8,7 @@ var pipeline = require('./src/pipeline.js');
 var handler = require('./src/resolver.js').handle;
 var toHal = require('./src/hal.js').toHal;
 var log = console.log;
-var port = 8070;
+var port = 8060;
 
 pipeline.use(true, handler);
 pipeline.use(true, toHal);

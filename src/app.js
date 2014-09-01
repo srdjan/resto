@@ -1,12 +1,5 @@
 var log = console.log;
 
-//----
-exports.Todo = function() {
-  this.content = 'empty';
-  this.status = '?';
-};
-
-//----
 exports.Apple = function() {
   this.weight = 0.1;
   this.color = 'green';
@@ -25,10 +18,8 @@ exports.Apple = function() {
     return false;
   };
   this.toss = function(msg) {
-    if (this.weight === 0.0) {
-      return true;
-    }
-    return false;
+    log('tossed apple: ' + JSON.stringify(this));
+    return true;
   };
 
   this.state_growing = function() {
@@ -45,7 +36,7 @@ exports.Apple = function() {
     }
     return false;
   };
-  this.state_done = function() {
+  this.state_eaten = function() {
     if (this.weight === 0.0) {
       return [{ rel: 'toss', method: "DELETE"}];
     }

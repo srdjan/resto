@@ -54,13 +54,6 @@ function createOne(ctx) {
 }
 
 exports.toHal = function toHal(ctx) {
-  // if (fn.plainJsonObj(ctx.rel)) {
-  //   ctx.resp.writeHead(ctx.result.statusCode, {"Content-Type": "application/json"});
-  //   ctx.resp.write(JSON.stringify(ctx.result));
-  //   ctx.resp.end();
-  //   return ctx;
-  // }
-
   var halRep;
   if (ctx.result instanceof Array) {
     halRep = createList(ctx);

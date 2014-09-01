@@ -32,9 +32,10 @@
   !idea: create web app for todos with !,@,# and keywords, rules, actions, messaies
 
 !use
-  !use: https://github.com/xyncro/frost
-  !use: http://www.rackspace.com/blog/objectrocket-adds-fully-managed-redis-service/?cm_mmc=managed-_-cloud-_-contentnam-_-dbweekly-ORredis
-  !use: https://github.com/ericelliott/cuid
-  !use: http://timelessrepo.com/haters-gonna-hateoas for RESTful APIs talk
-  !use: Mixins, Forwarding, and Delegation in JavaScript ()http://raganwald.com/2014/04/10/mixins-forwarding-delegation.html
-  !use: https://github.com/Raynos/http-framework...
+  https://github.com/xyncro/frost
+  http://www.rackspace.com/blog/objectrocket-adds-fully-managed-redis-service/?cm_mmc=managed-_-cloud-_-contentnam-_-dbweekly-ORredis
+  https://github.com/ericelliott/cuid
+  http://timelessrepo.com/haters-gonna-hateoas for RESTful APIs talk
+  Mixins, Forwarding, and Delegation in JavaScript ()http://raganwald.com/2014/04/10/mixins-forwarding-delegation.html
+  https://github.com/Raynos/http-framework...
+  https://bitbucket.org/gdamore/mangos/src/f2844c375d81/examples/?at=master
