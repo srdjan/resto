@@ -7,9 +7,12 @@ var http = require('./httpmock.js');
 var fn = require('../src/fn.js');
 var db = require('../src/db.js');
 var pipeline = require('../src/pipeline.js');
+var auth = require('../src/auth.js').auth;
 var resolve = require('../src/resolver.js').resolve;
+var query = require('../src/db-query.js').query;
+var persist = require('../src/db-cmd.js').persist;
 var invoke = require('../src/invoker.js').invoke;
-var convert = require('../src/hal.js').toHal;
+var convert = require('../src/hal.js').convert;
 var log = console.log;
 
 function getAll() {
@@ -82,8 +85,11 @@ function toss(apple) {
 
 //- prepare
 db.clear();
+pipeline.use(auth);
 pipeline.use(resolve);
+pipeline.use(query);
 pipeline.use(invoke);
+pipeline.use(persist);
 pipeline.use(convert);
 
 //-  test get all

@@ -52,13 +52,6 @@ function postWithId(ctx) {
   return db.save(entity);
 }
 
-exports.get = function(ctx) {
-  if (ctx.id === 0) {
-    return db.getAll();
-  }
-  return db.get(ctx.id);
-};
-
 exports.post = function(ctx) {
   if(ctx.id === 0) {
     return postWithoutId(ctx);

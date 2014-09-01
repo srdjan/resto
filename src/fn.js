@@ -69,9 +69,9 @@ exports.getObjType = function(obj){
 };
 
 exports.getFnName = function(func) {
-  var f = typeof func == 'function';
-  var s = f && ((func.name && ['', func.name]) || func.toString().match(/function ([^\(]+)/));
-  return (!f && 'not a function') || (s && s[1] || 'anonymous');
+  var isFunc = typeof func == 'function';
+  var s = isFunc && ((func.name && ['', func.name]) || func.toString().match(/function ([^\(]+)/));
+  return (!isFunc && 'not a function') || (s && s[1] || 'anonymous');
 };
 
 exports.getTokens = function(url) {

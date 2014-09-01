@@ -8,8 +8,8 @@ var stash = [];
 var logBefore = false;
 var logAfter = false;
 
-function trace(f, ctx, when) {
-  log(fn.getFnName(f) + ', ' + when + ': ' + JSON.stringify(ctx) + '\r\n');
+function trace(func, ctx, when) {
+  log(fn.getFnName(func) + ', ' + when + ': ' + JSON.stringify(ctx) + '\r\n');
 }
 
 function run(ctx) {

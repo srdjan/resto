@@ -53,7 +53,7 @@ function createOne(ctx) {
   return halRep;
 }
 
-exports.toHal = function toHal(ctx) {
+exports.convert = function convert(ctx) {
   var halRep;
   if (ctx.result instanceof Array) {
     halRep = createList(ctx);
