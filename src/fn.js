@@ -14,9 +14,10 @@ var log = console.log;
 
 exports.filterEmpty = R.filter(function(e) { return Object.getOwnPropertyNames(e).length > 0; });
 
-exports.trimLeftAndRight = function(str, ch) {
+trimLeftAndRight = function(str, ch) {
   return str.replace(new RegExp("^[" + ch + "]+"), "").replace(new RegExp("[" + ch + "]+$"), "");
 };
+exports.trimLeftAndRight = trimLeftAndRight;
 
 exports.atob = function(str) {
   var res = new Buffer(str, 'ascii').toString('base64');
@@ -67,10 +68,15 @@ exports.getObjType = function(obj){
   return text.match(/function (.*)\(/)[1];
 };
 
-exports.getFnName = function(fn) {
-  var f = typeof fn == 'function';
-  var s = f && ((fn.name && ['', fn.name]) || fn.toString().match(/function ([^\(]+)/));
+exports.getFnName = function(func) {
+  var f = typeof func == 'function';
+  var s = f && ((func.name && ['', func.name]) || func.toString().match(/function ([^\(]+)/));
   return (!f && 'not a function') || (s && s[1] || 'anonymous');
+};
+
+exports.getTokens = function(url) {
+  var path = url.substring(url.indexOf('api'), url.length);
+  return trimLeftAndRight(path, '/').split('/');
 };
 
 //---------------------------------------------------------------------------------

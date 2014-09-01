@@ -7,8 +7,9 @@ var http = require('./httpmock.js');
 var fn = require('../src/fn.js');
 var db = require('../src/db.js');
 var pipeline = require('../src/pipeline.js');
-var resolver = require('../src/resolver.js').handle;
-var toHal = require('../src/hal.js').toHal;
+var resolve = require('../src/resolver.js').resolve;
+var invoke = require('../src/invoker.js').invoke;
+var convert = require('../src/hal.js').toHal;
 var log = console.log;
 
 function getAll() {
@@ -81,8 +82,9 @@ function toss(apple) {
 
 //- prepare
 db.clear();
-pipeline.use(resolver);
-pipeline.use(toHal, true);
+pipeline.use(resolve);
+pipeline.use(invoke);
+pipeline.use(convert);
 
 //-  test get all
   var all = getAll();

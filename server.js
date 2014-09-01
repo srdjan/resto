@@ -5,13 +5,14 @@ var http = require("http");
 var file = require("./src/filehelper.js");
 var fn = require('./src/fn.js');
 var pipeline = require('./src/pipeline.js');
-var handler = require('./src/resolver.js').handle;
-var toHal = require('./src/hal.js').toHal;
+var resolve = require('./src/resolver.js').resolve;
+var convert = require('./src/hal.js').toHal;
 var log = console.log;
 var port = 8060;
 
-pipeline.use(handler);
-pipeline.use(toHal);
+pipeline.use(resolve);
+pipeline.use(invoke);
+pipeline.use(convert);
 
 http.createServer(function(request, response) {
   if (fn.isApiCall(request)) {

@@ -40,14 +40,14 @@ function processApi(rel, body, entity) {
 
 function postWithoutId(ctx) {
   var entity = new ctx.typeCtor();
-  validatePropsMatch(ctx.body, entity);
-  update(entity, ctx.body);
+  validatePropsMatch(ctx.req.body, entity);
+  update(entity, ctx.req.body);
   return db.add(entity);
 }
 
 function postWithId(ctx) {
   var entity = db.get(ctx.id);
-  entity = processApi(ctx.rel, ctx.body, entity);
+  entity = processApi(ctx.rel, ctx.req.body, entity);
 
   return db.save(entity);
 }
@@ -69,9 +69,9 @@ exports.post = function(ctx) {
 exports.put = function(ctx) {
   var entity = db.get(ctx.id);
 
-  validatePropsMatch(ctx.body, entity);
-  entity = processApi(ctx.rel, ctx.body, entity);
-  update(entity, ctx.body);
+  validatePropsMatch(ctx.req.body, entity);
+  entity = processApi(ctx.rel, ctx.req.body, entity);
+  update(entity, ctx.req.body);
 
   return db.save(entity);
 };
@@ -79,9 +79,9 @@ exports.put = function(ctx) {
 exports.patch = function(ctx) {
   var entity = db.get(ctx.id);
 
-  validatePropsExist(ctx.body, entity);
-  entity = processApi(ctx.rel, ctx.body, entity);
-  update(entity, ctx.body);
+  validatePropsExist(ctx.req.body, entity);
+  entity = processApi(ctx.rel, ctx.req.body, entity);
+  update(entity, ctx.req.body);
 
   return db.save(entity);
 };
@@ -89,7 +89,7 @@ exports.patch = function(ctx) {
 exports.delete = function(ctx) {
   var entity = db.get(ctx.id);
 
-  entity = processApi(ctx.rel, ctx.body, entity);
+  entity = processApi(ctx.rel, ctx.req.body, entity);
 
   return db.remove(ctx.id);
 };
