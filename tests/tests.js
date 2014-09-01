@@ -12,127 +12,129 @@ var resolver = require('../src/resolver.js').handle;
 var toHal = require('../src/hal.js').toHal;
 var log = console.log;
 
+function getAll() {
+  var reqGetAll = new Request('GET', '/api/apples/');
+  var response = new Response();
+  var ctx = { req: reqGetAll, resp: response };
+  ctx = pipeline.go(ctx);
+  all = halson(ctx.resp.body);
+  return { data: all, statusCode: ctx.resp.statusCode };
+}
+
+function create(all) {
+  var createLink = all.getLink('create');
+  var reqCreate = new Request(createLink.method, createLink.href, {weight: 10.0, color: "red"});
+  var response = new Response();
+  var ctx = { req: reqCreate, resp: response };
+  ctx = pipeline.go(ctx);
+  var apple = halson(ctx.resp.body);
+  return { data: apple, statusCode: ctx.resp.statusCode };
+}
+
+function getSelf(resource) {
+  var selfLink = resource.getLink('self');
+  var reqSelf = new Request('GET', selfLink.href);
+  var response = new Response();
+  var ctx = { req: reqSelf, resp: response };
+  ctx = pipeline.go(ctx);
+  var apple = halson(ctx.resp.body);
+  return { data: apple, statusCode: ctx.statusCode };
+}
+
+function grow(apple) {
+  var growLink = apple.getLink('grow');
+  var reqGrow = new Request(growLink.method, growLink.href, { weightIncr: 230.0});
+  var response = new Response();
+  var ctx = { req: reqGrow, resp: response };
+  ctx = pipeline.go(ctx);
+  apple = halson(ctx.resp.body);
+  return { data: apple, statusCode: ctx.resp.statusCode };
+}
+
+function eat(apple) {
+  var eatLink = apple.getLink('eat');
+  var reqEat = new Request(eatLink.method, eatLink.href, { weight: 0.0, color: 'orange'});
+  var response = new Response();
+  var ctx = { req: reqEat, resp: response };
+  ctx = pipeline.go(ctx);
+  apple = typeof ctx.resp.body === 'undefined' ? {} : halson(ctx.resp.body);
+  return { data: apple, statusCode: ctx.resp.statusCode };
+}
+
+function eatNotAllowed(apple) {
+  var eatLink = apple.getLink('eat');
+  var reqEat = new Request(eatLink.method, eatLink.href, { weight: 0.0, color: 'orange'});
+  var response = new Response();
+  var ctx = { req: reqEat, resp: response };
+  ctx = pipeline.go(ctx);
+  return { data: {}, statusCode: ctx.resp.statusCode };
+}
+
+function toss(apple) {
+  var tossLink = apple.getLink('toss');
+  var reqToss = new Request(tossLink.method, tossLink.href, {});
+  var response = new Response();
+  var ctx = { req: reqToss, resp: response };
+  ctx = pipeline.go(ctx);
+  apple = halson(ctx.resp.body);
+  return { data: {}, statusCode: ctx.resp.statusCode };
+}
+
 //- prepare
 db.clear();
 pipeline.use(true, resolver);
 pipeline.use(true, toHal);
 
 //-  test get all
-  var reqGetAll = new Request('GET', '/api/apples/');
-  var response = new Response();
-  var ctx = { req: reqGetAll, resp: response };
-  ctx = pipeline.go(ctx);
-  var all = halson(ctx.resp.body);
-  expect(ctx.resp.statusCode).to.be(200);
-  expect(all.listLinkRels().length).to.be(2);
-  expect(fn.contains('self', all.listLinkRels())).to.be(true);
-  expect(fn.contains('create', all.listLinkRels())).to.be(true);
+  var all = getAll();
+  expect(all.statusCode).to.be(200);
+  expect(all.data.listLinkRels().length).to.be(2);
+  expect(fn.contains('self', all.data.listLinkRels())).to.be(true);
+  expect(fn.contains('create', all.data.listLinkRels())).to.be(true);
 
-//- test create
-  var createLink = all.getLink('create');
-  var reqCreate = new Request(createLink.method, createLink.href, {weight: 10.0, color: "red"});
-  response = new Response();
-  ctx = { req: reqCreate, resp: response };
-  ctx = pipeline.go(ctx);
-  var apple = halson(ctx.resp.body);
-  expect(apple.listLinkRels().length).to.be(3);
-  expect(apple.weight).to.be(10.0);
-  expect(fn.contains('self', apple.listLinkRels())).to.be(true);
-  expect(fn.contains('grow', apple.listLinkRels())).to.be(true);
-  expect(fn.contains('toss', apple.listLinkRels())).to.be(true);
+// //- test create
+  var apple = create(all.data);
+  expect(apple.data.listLinkRels().length).to.be(3);
+  expect(apple.data.weight).to.be(10.0);
+  expect(fn.contains('self', apple.data.listLinkRels())).to.be(true);
+  expect(fn.contains('grow', apple.data.listLinkRels())).to.be(true);
+  expect(fn.contains('toss', apple.data.listLinkRels())).to.be(true);
 
-  var response = new Response();
-  ctx = { req: reqGetAll, resp: response };
-  ctx = pipeline.go(ctx);
-  all = halson(ctx.resp.body);
-  var embeds = all.getEmbeds('apples');
-  expect(embeds.length).to.be(1);
-
-//- test invariants
-  var selfLink = apple.getLink('self');
-  var reqSelf = new Request('GET', selfLink.href);
-  response = new Response();
-  ctx = { req: reqSelf, resp: response };
-  ctx = pipeline.go(ctx);
-  apple = halson(ctx.resp.body);
-  expect(apple.weight).to.be(10.0);
-  expect(apple.listLinkRels().length).to.be(3);
-  expect(fn.contains('self', apple.listLinkRels())).to.be(true);
-  expect(fn.contains('grow', apple.listLinkRels())).to.be(true);
-  expect(fn.contains('toss', apple.listLinkRels())).to.be(true);
+//- test if create sucessful
+  var self = getSelf(apple.data);
+  expect(self.data.weight).to.be(10.0);
+  expect(self.data.listLinkRels().length).to.be(3);
+  expect(fn.contains('self', self.data.listLinkRels())).to.be(true);
+  expect(fn.contains('grow', self.data.listLinkRels())).to.be(true);
+  expect(fn.contains('toss', self.data.listLinkRels())).to.be(true);
 
 //- call 'grow' api (post - with id and propertis that don't exist on entity)
-  var growLink = apple.getLink('grow');
-  var reqGrow = new Request(growLink.method, growLink.href, { weightIncr: 230.0});
-  response = new Response();
-  ctx = { req: reqGrow, resp: response };
-  ctx = pipeline.go(ctx);
-  apple = halson(ctx.resp.body);
-  expect(apple.weight).to.be(240.0);
-  expect(apple.listLinkRels().length).to.be(3);
-  expect(fn.contains('self', apple.listLinkRels())).to.be(true);
-  expect(fn.contains('eat', apple.listLinkRels())).to.be(true);
-  expect(fn.contains('toss', apple.listLinkRels())).to.be(true);
+  var appleGrown = grow(self.data);
+  expect(appleGrown.data.weight).to.be(240.0);
+  expect(appleGrown.data.listLinkRels().length).to.be(3);
+  expect(fn.contains('self', appleGrown.data.listLinkRels())).to.be(true);
+  expect(fn.contains('eat', appleGrown.data.listLinkRels())).to.be(true);
+  expect(fn.contains('toss', appleGrown.data.listLinkRels())).to.be(true);
 
 //- call 'eat' api (full put)
-  var eatLink = apple.getLink('eat');
-  var reqEat = new Request(eatLink.method, eatLink.href, { weight: 0.0, color: 'orange'});
-  response = new Response();
-  ctx = { req: reqEat, resp: response };
-  ctx = pipeline.go(ctx);
-  apple = halson(ctx.resp.body);
-  expect(apple.weight).to.be(0.0);
-  expect(apple.listLinkRels().length).to.be(2);
-  expect(fn.contains('self', apple.listLinkRels())).to.be(true);
+  var appleEaten = eat(appleGrown.data);
+  expect(appleEaten.data.weight).to.be(0.0);
+  expect(appleEaten.data.listLinkRels().length).to.be(2);
+  expect(fn.contains('self', appleEaten.data.listLinkRels())).to.be(true);
 
 //- test api whitelisting - should not be able to call 'grow' in tis state
-  response = new Response();
-  ctx = { req: reqEat, resp: response };
-  ctx = pipeline.go(ctx);
-  expect(ctx.resp.statusCode).to.be(404);
+  var notAllowedResult = eatNotAllowed(appleGrown.data);
+  expect(notAllowedResult.statusCode).to.be(404);
 
-//- test GetAll - there shoudl be one apple left :)
-  reqCreate.body = { color: 'brown', weight: 34.0 };
-  response = new Response();
-  ctx = { req: reqCreate, resp: response };
-  ctx = pipeline.go(ctx);
-  var apple = halson(ctx.resp.body);
+//- test getAll before toss
+  var all = getAll();
+  var embeds = all.data.getEmbeds('apples');
+  expect(embeds.length).to.be(1);
 
+  result = toss(appleEaten.data);
 
-  var tossLink = apple.getLink('toss');
-  var reqToss = new Request(tossLink.method, tossLink.href, {});
-  response = new Response();
-  ctx = { req: reqToss, resp: response };
-  ctx = pipeline.go(ctx);
-  // apple = halson(ctx.resp.body);
-//   expect(fn.contains('self', apple.listLinkRels())).to.be(true);
+//- test getAll after toss
+  var all = getAll();
+  var embeds = all.data.getEmbeds('apples');
+  expect(embeds.length).to.be(0);
 
-//   response = new Response();
-//   ctx = { req: reqGetAll, resp: response };
-//   ctx = pipeline.go(ctx);
-//   all = halson(ctx.resp.body);
-//   embeds = all.getEmbeds('apples');
-//   expect(embeds.length).to.be(1);
-
-// // - call toss (delete) api
-//   response = new Response();
-//   ctx = { req: reqSelf, resp: response };
-//   ctx = pipeline.go(ctx);
-//   apple = halson(ctx.resp.body);
-//   var tossLink = apple.getLink('toss');
-//   var reqToss = new Request(tossLink.method, tossLink.href, {});
-//   response = new Response();
-//   ctx = { req: reqToss, resp: response };
-//   ctx = pipeline.go(ctx);
-//   apple = halson(ctx.resp.body);
-//   expect(fn.contains('self', apple.listLinkRels())).to.be(true);
-
-//   var response = new Response();
-//   ctx = { req: reqGetAll, resp: response };
-//   ctx = pipeline.go(ctx);
-//   all = halson(ctx.resp.body);
-//   embeds = all.getEmbeds('apples');
-//   expect(embeds.length).to.be(1);
-
-//- clean
-db.clear();
