@@ -21,7 +21,7 @@ function run(ctx) {
   return ctx;
 }
 
-exports.go = function(ctx) {
+exports.run = function(ctx) {
   try {
     run(ctx);
   }
@@ -38,14 +38,6 @@ exports.go = function(ctx) {
   }
 };
 
-exports.setLogBefore = function(yn) {
-  logBefore = yn;
-};
-
-exports.setLogAfter = function(yn) {
-  logAfter = yn;
-};
-
-exports.use = function(p, f) {
-  stash.push({ pred: p, func: f });
+exports.use = function(f, p) {
+  stash.push({ func: f, pred: p || false});
 };

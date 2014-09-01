@@ -51,7 +51,7 @@ function getTypeName(url) {
 exports.handle = function handle(ctx) {
   var idAndRel = getIdAndRel(ctx.req.url);
   ctx.id = idAndRel.id;
-  ctx.rel = (idAndRel.rel === '') ? ctx.req.method.toLowerCase() : idAndRel.rel;
+  ctx.rel = idAndRel.rel;
   ctx.body = ctx.req.body;
   ctx.typeName = getTypeName(ctx.req.url);
   ctx.typeCtor = app[ctx.typeName];

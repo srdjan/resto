@@ -10,8 +10,8 @@ var toHal = require('./src/hal.js').toHal;
 var log = console.log;
 var port = 8060;
 
-pipeline.use(true, handler);
-pipeline.use(true, toHal);
+pipeline.use(handler);
+pipeline.use(toHal);
 
 http.createServer(function(request, response) {
   if (fn.isApiCall(request)) {
@@ -30,10 +30,10 @@ function processApi(request, response) {
     request.on('data', function(chunk) { body += chunk.toString(); });
     request.on('end', function() {
       request.body = JSON.parse(body);
-      pipeline.go({ req: request, resp: response });
+      pipeline.run({ req: request, resp: response });
     });
   }
   else {
-    pipeline.go({ req: request, resp: response });
+    pipeline.run({ req: request, resp: response });
   }
 }
