@@ -2,28 +2,27 @@
 //- pipeline
 //---------------------------------------------------------------------------------
 var fn = require('./fn.js');
+var Either = require('data.either');
+var Failure = Either.Left;
+var Success = Either.Right;
 var log = console.log;
 
 var stash = [];
 var logBefore = false;
-var logAfter = false;
 
 function trace(func, ctx, when) {
   log(fn.getFnName(func) + ', ' + when + ': ' + JSON.stringify(ctx) + '\r\n');
 }
 
-function run(ctx) {
-  fn.each(function(h) {
-    if(logBefore) { trace(h.func, ctx, 'before'); }
-    ctx = h.func(ctx);
-    if(logAfter) { trace(h.func, ctx, 'after'); }
-  }, stash);
-  return ctx;
-}
-
 exports.run = function(ctx) {
   try {
-    run(ctx);
+    ctx.statusCode = 200;
+    fn.each(function(h) {
+      if(logBefore) { trace(h.func, ctx, 'before'); }
+
+      return ctx.statusCode === 200 ? Success(h.func(ctx))
+                                  : Failure("Error: " + ctx.statusCode);
+    }, stash);
   }
   catch (e) {
     if ( ! e.hasOwnProperty('statusCode')) {
