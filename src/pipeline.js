@@ -14,6 +14,12 @@ function trace(func, ctx, when) {
   log(fn.getFnName(func) + ', ' + when + ': ' + JSON.stringify(ctx) + '\r\n');
 }
 
+function writeToResp(ctx, statusCode, content) {
+  ctx.resp.writeHead(statusCode, {"Content-Type": "application/json"});
+  ctx.resp.write(content);
+  ctx.resp.end();
+}
+
 exports.run = function(ctx) {
   try {
     ctx.statusCode = 200;
@@ -21,7 +27,7 @@ exports.run = function(ctx) {
       if(logBefore) { trace(h.func, ctx, 'before'); }
 
       return ctx.statusCode === 200 ? Success(h.func(ctx))
-                                  : Failure("Error: " + ctx.statusCode);
+                                  : Failure(writeToResp(ctx, statusCode, content));
     }, stash);
   }
   catch (e) {
@@ -29,8 +35,7 @@ exports.run = function(ctx) {
       e.statusCode = 500;
     }
     log('Fx Exception, statusCode: ' + e.statusCode + ' message: ' + e.message);
-    ctx.resp.writeHead(e.statusCode, {"Content-Type": "application/json"});
-    ctx.resp.write(e.message);
+    writeToResp(ctx, e.statusCode, e.message);
   }
   finally {
     return ctx;

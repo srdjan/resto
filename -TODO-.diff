@@ -9,6 +9,7 @@
                         http://sennajs.com/docs/,
                         https://github.com/giann/zappa,
                         https://github.com/velveteer/mithril-boilerplate
+                        http://tympanus.net/Development/TabStylesInspiration/
 -todo: add meta links to display, validation...
 -todo: use Express (better server error handling (invalid json.!!..)
       https://stormpath.com/blog/node-api-client-part-one/
