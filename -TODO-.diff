@@ -1,11 +1,28 @@
+-todo:
+  // http://j201.github.io/posts/2013-06-16-Evil-JS-Macros.html
+  // var dog = {
+  //     mammal : true,
+  //     domestic : true,
+  //     weight : 50,
+  //     speak : function() {
+  //         return "woof";
+  //     }
+  // };
+  // var littleDog = extend(dog, {weight : 10});
+  // littleDog.speak(); // "woof"
+  // littleDog.weight; // 10
+
+
+
 -todo: handle conditional persistance
--todo: handle embedded entities
--todo: add paging
+-todo: handle embedded entities (https://www.readability.com/articles/c4khqjub)
+-todo: add paging (https://www.readability.com/articles/c4khqjub)
 -todo: add query
 -todo: add links to hypermedia type (meta) or via header?
 -todo: add services (non-persisting api) ?
 -todo: add contracts.js
--todo: make client up (
+-todo: make client up ( http://www.smashingmagazine.com/2014/09/02/building-simple-cross-browser-offline-todo-list-indexeddb-websql
+                       http://jdkanani.com/smalleditor
                         http://sennajs.com/docs/,
                         https://github.com/giann/zappa,
                         https://github.com/velveteer/mithril-boilerplate
@@ -38,6 +55,7 @@
   http://www.rackspace.com/blog/objectrocket-adds-fully-managed-redis-service/?cm_mmc=managed-_-cloud-_-contentnam-_-dbweekly-ORredis
   https://github.com/ericelliott/cuid
   http://timelessrepo.com/haters-gonna-hateoas for RESTful APIs talk
-  Mixins, Forwarding, and Delegation in JavaScript ()http://raganwald.com/2014/04/10/mixins-forwarding-delegation.html
+  http://raganwald.com/2014/04/10/mixins-forwarding-delegation.html
   https://github.com/Raynos/http-framework...
   https://bitbucket.org/gdamore/mangos/src/f2844c375d81/examples/?at=master
+  http://www.chorusjs.com/

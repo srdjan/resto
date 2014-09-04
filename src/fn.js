@@ -79,6 +79,14 @@ exports.getTokens = function(url) {
   return trimLeftAndRight(path, '/').split('/');
 };
 
+exports.extend = function(proto, literal) {
+    var result = Object.create(proto);
+    Object.keys(literal).forEach(function(key) {
+        result[key] = literal[key];
+    });
+    return result;
+};
+
 //---------------------------------------------------------------------------------
 //@tests
 //---------------------------------------------------------------------------------
