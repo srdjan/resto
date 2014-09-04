@@ -98,5 +98,6 @@ var res = getState({
   done:  true,
   archived: true
 });
+log(res);
 log(res.state);
 
