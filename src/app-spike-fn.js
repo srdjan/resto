@@ -76,7 +76,7 @@ function state_archived(todo) {
   return Continue(todo);
 }
 
-//exports
+// exports
 function getState(newTodo) {
   return Either.of(newTodo)
           .chain(state_pending)
@@ -93,17 +93,10 @@ function getState(newTodo) {
 var expect = require('expect.js');
 log('testing: app-spike-fn.js');
 
-// var res = done(Todo);
-// log(res);
-// log(res.get());
-
 var res = getState({
   content: 'bla bla bla',
   done:  true,
   archived: true
 });
 log(res.state);
-
-// res = save({content: "1234567890", done: true, archived: false}).orElse(log);
-// log(res);
 
