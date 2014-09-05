@@ -61,10 +61,7 @@ exports.convert = function convert(ctx) {
   else {
     halRep = createOne(ctx);
   }
-
-  ctx.resp.writeHead(ctx.statusCode, {"Content-Type": "application/hal+json"});
-  ctx.resp.write(JSON.stringify(halRep));
-  ctx.resp.end();
+  ctx.result = JSON.stringify(halRep);
   return ctx;
 };
 

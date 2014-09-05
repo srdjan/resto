@@ -15,42 +15,29 @@ var invoke = require('../src/invoker.js').invoke;
 var convert = require('../src/hal.js').convert;
 var log = console.log;
 
-function getAll(path) {
-  var reqGetAll = new http.request('GET', path);
+function get(path) {
+  var request = new http.request('GET', path);
   var response = new http.response();
-  var ctx = { req: reqGetAll, resp: response };
-  ctx = pipeline.run(ctx);
-  var all = halson(ctx.resp.body);
-  return { data: all, statusCode: ctx.resp.statusCode };
-}
-
-function self(resource) {
-  var selfLink = resource.getLink('self');
-  var reqSelf = new http.request('GET', selfLink.href);
-  var response = new http.response();
-  var ctx = { req: reqSelf, resp: response };
-  ctx = pipeline.run(ctx);
-  var apple = halson(ctx.resp.body);
-  return { data: apple, statusCode: ctx.statusCode };
+  pipeline.run(request, response);
+  var result = halson(response.body);
+  return { data: result, statusCode: response.statusCode };
 }
 
 function process(resource, rel, newResource) {
   var link = resource.getLink(rel);
-  var reqGrow = new http.request(link.method, link.href, newResource);
+  var request = new http.request(link.method, link.href, newResource);
   var response = new http.response();
-  var ctx = { req: reqGrow, resp: response };
-  ctx = pipeline.run(ctx);
-  apple = halson(ctx.resp.body);
-  return { data: apple, statusCode: ctx.resp.statusCode };
+  pipeline.run(request, response);
+  apple = halson(response.body);
+  return { data: apple, statusCode: response.statusCode };
 }
 
 function eatNotAllowed(apple) {
   var eatLink = apple.getLink('eat');
-  var reqEat = new http.request(eatLink.method, eatLink.href, { weight: 0.0, color: 'orange'});
+  var request = new http.request(eatLink.method, eatLink.href, { weight: 0.0, color: 'orange'});
   var response = new http.response();
-  var ctx = { req: reqEat, resp: response };
-  ctx = pipeline.run(ctx);
-  return { data: {}, statusCode: ctx.resp.statusCode };
+  pipeline.run(request, response);
+  return { data: {}, statusCode: response.statusCode };
 }
 
 //- prepare
@@ -63,7 +50,7 @@ pipeline.use(persist);
 pipeline.use(convert);
 
 //-  test get all
-  var all = getAll('/api/apples/');
+  var all = get('/api/apples/');
   expect(all.statusCode).to.be(200);
   expect(all.data.listLinkRels().length).to.be(2);
   expect(fn.contains('self', all.data.listLinkRels())).to.be(true);
@@ -78,7 +65,7 @@ pipeline.use(convert);
   expect(fn.contains('toss', apple.data.listLinkRels())).to.be(true);
 
 //- test if create sucessful
-  var self = self(apple.data);
+  var self = get(apple.data.getLink('self').href);
   expect(self.data.weight).to.be(10.0);
   expect(self.data.listLinkRels().length).to.be(3);
   expect(fn.contains('self', self.data.listLinkRels())).to.be(true);
@@ -103,15 +90,15 @@ pipeline.use(convert);
   var notAllowedResult = eatNotAllowed(appleGrown.data);
   expect(notAllowedResult.statusCode).to.be(405);
 
-//- test getAll before toss
-  var all = getAll('/api/apples/');
+//- test get before toss
+  var all = get('/api/apples/');
   var embeds = all.data.getEmbeds('apples');
   expect(embeds.length).to.be(1);
 
   result = process(appleEaten.data, 'toss', { });
 
-//- test getAll after toss
-  var all = getAll('/api/apples/');
+//- test get after toss
+  var all = get('/api/apples/');
   var embeds = all.data.getEmbeds('apples');
   expect(embeds.length).to.be(0);
 

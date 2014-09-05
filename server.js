@@ -6,6 +6,7 @@ var file = require("./src/filehelper.js");
 var fn = require('./src/fn.js');
 var pipeline = require('./src/pipeline.js');
 var resolve = require('./src/resolver.js').resolve;
+var invoke = require('./src/invoker.js').invoke;
 var convert = require('./src/hal.js').toHal;
 var log = console.log;
 var port = 8060;
@@ -31,10 +32,10 @@ function processApi(request, response) {
     request.on('data', function(chunk) { body += chunk.toString(); });
     request.on('end', function() {
       request.body = JSON.parse(body);
-      pipeline.run({ req: request, resp: response });
+      pipeline.run(request, response);
     });
   }
   else {
-    pipeline.run({ req: request, resp: response });
+    pipeline.run(request, response);
   }
 }

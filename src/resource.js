@@ -41,30 +41,30 @@ function processApi(rel, body, entity) {
 exports.post = function(ctx) {
   if(ctx.id === 0) {
     var entity = new ctx.typeCtor();
-    validatePropsMatch(ctx.req.body, entity);
-    ctx.entity = update(entity, ctx.req.body);
+    validatePropsMatch(ctx.body, entity);
+    ctx.entity = update(entity, ctx.body);
   }
   else {
-    ctx.entity = processApi(ctx.rel, ctx.req.body, ctx.entity);
+    ctx.entity = processApi(ctx.rel, ctx.body, ctx.entity);
   }
   return (ctx);
 };
 
 exports.put = function(ctx) {
-  validatePropsMatch(ctx.req.body, ctx.entity);
-  ctx.entity = processApi(ctx.rel, ctx.req.body, ctx.entity);
-  ctx.entity = update(ctx.entity, ctx.req.body);
+  validatePropsMatch(ctx.body, ctx.entity);
+  ctx.entity = processApi(ctx.rel, ctx.body, ctx.entity);
+  ctx.entity = update(ctx.entity, ctx.body);
   return ctx;
 };
 
 exports.patch = function(ctx) {
-  validatePropsExist(ctx.req.body, ctx.entity);
-  entity = processApi(ctx.rel, ctx.req.body, ctx.entity);
-  ctx.entity = update(ctx.entity, ctx.req.body);
+  validatePropsExist(ctx.body, ctx.entity);
+  entity = processApi(ctx.rel, ctx.body, ctx.entity);
+  ctx.entity = update(ctx.entity, ctx.body);
   return ctx;
 };
 
 exports.delete = function(ctx) {
-  ctx.entity = processApi(ctx.rel, ctx.req.body, ctx.entity);
+  ctx.entity = processApi(ctx.rel, ctx.body, ctx.entity);
   return ctx;
 };
