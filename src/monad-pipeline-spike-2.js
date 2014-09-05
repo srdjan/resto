@@ -1,6 +1,7 @@
 var Either = require('data.either');
+var Success = Either.Left;
+var Continue = Either.Right;
 var log = console.log;
-
 var handlers = [];
 
 // Monad(a), (a -> b) -> Monad(b)
@@ -31,25 +32,28 @@ module.exports = {
 //@tests
 //---------------------------------------------------------------------------------
 var expect = require('expect.js');
-log('testing: monad-pipeline-spike-till-fail.js');
+log('testing: monad-pipeline-spike-till-ok.js');
 
 function f1(ctx) {
-  if(ctx.counter > 1) return Either.Left(new Error('f1'));
-  ctx.counter += 1;
-  log('f1: ' + ctx.counter);
-  return Either.Right(ctx);
+  if(ctx.statusCode === 200) {
+    log('f1 ran');
+    return Success(ctx);
+  }
+  return Continue(ctx);
 }
 function f2(ctx) {
-  if(ctx.counter > 1) return Either.Left(new Error('f2'));
-  ctx.counter += 1;
-  log('f2: ' + ctx.counter);
-  return Either.Right(ctx);
+  if(ctx.statusCode === 201) {
+    log('f2 ran');
+    return Success(ctx);
+  }
+  return Continue(ctx);
 }
 function f3(ctx) {
-  if(ctx.counter > 1) return Either.Left(new Error('f3'));
-  ctx.counter += 1;
-  log('f3: ' + ctx.counter);
-  return Either.Right(ctx);
+  if(ctx.statusCode === 404) {
+    log('f3 ran');
+    return Success(ctx);
+  }
+  return Continue(ctx);
 }
 
 // setup
@@ -57,10 +61,11 @@ use(f1);
 use(f2);
 use(f3);
 
-// run until failure
-var result = run({counter: 1, statusCode: 200})
-              .orElse(function(err) {return err;});
+// run until success
+var result = run({counter: 1, statusCode: 201})
+                .orElse(function(ctx) { return ctx; });
 log(result);
 //output:
-//>f1: 2
-//>[Error: f2]
+//>f1 ran, counter: 1
+//>f2 ran, counter: 2
+//>{ counter: 2, statusCode: 200 }
