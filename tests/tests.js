@@ -20,7 +20,7 @@ function getAll(path) {
   var response = new http.response();
   var ctx = { req: reqGetAll, resp: response };
   ctx = pipeline.run(ctx);
-  all = halson(ctx.resp.body);
+  var all = halson(ctx.resp.body);
   return { data: all, statusCode: ctx.resp.statusCode };
 }
 
@@ -101,7 +101,7 @@ pipeline.use(convert);
 
 //- test api whitelisting - should not be able to call 'grow' in tis state
   var notAllowedResult = eatNotAllowed(appleGrown.data);
-  expect(notAllowedResult.statusCode).to.be(404);
+  expect(notAllowedResult.statusCode).to.be(405);
 
 //- test getAll before toss
   var all = getAll('/api/apples/');

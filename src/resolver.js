@@ -44,7 +44,9 @@ function getTypeName(url) {
 }
 
 exports.resolve = function resolve(ctx) {
-  ctx.idAndRel = getIdAndRel(ctx.req.url);
+  var idAndRel = getIdAndRel(ctx.req.url);
+  ctx.id = idAndRel.id;
+  ctx.rel = idAndRel.rel;
   ctx.typeName = getTypeName(ctx.req.url);
   ctx.typeCtor = app[ctx.typeName];
   ctx.handler = resource[ctx.req.method.toLowerCase()];

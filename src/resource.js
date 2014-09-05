@@ -8,7 +8,7 @@ var log = console.log;
 function validateApiCall(rel, entity) {
   var links = fn.getLinks(entity);
   if ( ! fn.some(function(link) { return link.rel === rel; }, links)) {
-    throw { statusCode: 404, message: 'Conflict - API call not allowed' };
+    throw { statusCode: 405, message: 'Conflict - Method call not allowed' };
   }
 }
 

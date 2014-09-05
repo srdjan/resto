@@ -37,11 +37,10 @@ exports.run = function(ctx) {
   try {
     ctx.statusCode = 200;
     fn.each(function(h) {
-      if(h.trace) { trace(h.func, ctx); }
-
-      return ctx.statusCode === 200 ? Success(h.func(ctx))
-                                  : Failure(writeToResp(ctx, statusCode, content));
-    }, stash);
+              if(h.trace) { trace(h.func, ctx); }
+              return ctx.statusCode === 200 ? Success(h.func(ctx))
+                                            : Failure(writeToResp(ctx, statusCode, content));
+            }, stash);
   }
   catch (e) {
     if ( ! e.hasOwnProperty('statusCode')) {
