@@ -22,7 +22,7 @@ function get(path) {
   return { data: result, statusCode: response.statusCode };
 }
 
-function process(resource, rel, newResource) {
+function cmd(resource, rel, newResource) {
   var link = resource.getLink(rel);
   var request = new http.request(link.method, link.href, newResource);
   var response = new http.response();
@@ -54,7 +54,7 @@ pipeline.use(convert);
   expect(fn.contains('create', all.data.listLinkRels())).to.be(true);
 
 //- test create
-  var apple = process(all.data, 'create', {weight: 10.0, color: "red"});
+  var apple = cmd(all.data, 'create', {weight: 10.0, color: "red"});
   expect(apple.data.listLinkRels().length).to.be(3);
   expect(apple.data.weight).to.be(10.0);
   expect(fn.contains('self', apple.data.listLinkRels())).to.be(true);
@@ -70,7 +70,7 @@ pipeline.use(convert);
   expect(fn.contains('toss', self.data.listLinkRels())).to.be(true);
 
 //- call 'grow' api (post - with id and propertis that don't exist on entity)
-  var appleGrown = process(self.data, 'grow', { weightIncr: 230.0});
+  var appleGrown = cmd(self.data, 'grow', { weightIncr: 230.0});
   expect(appleGrown.data.weight).to.be(240.0);
   expect(appleGrown.data.listLinkRels().length).to.be(3);
   expect(fn.contains('self', appleGrown.data.listLinkRels())).to.be(true);
@@ -78,7 +78,7 @@ pipeline.use(convert);
   expect(fn.contains('toss', appleGrown.data.listLinkRels())).to.be(true);
 
 //- call 'eat' api (full put)
-  var appleEaten = process(appleGrown.data, 'eat', { weight: 0.0, color: 'orange'});
+  var appleEaten = cmd(appleGrown.data, 'eat', { weight: 0.0, color: 'orange'});
   expect(appleEaten.data.weight).to.be(0.0);
   expect(appleEaten.data.listLinkRels().length).to.be(2);
   expect(fn.contains('self', appleEaten.data.listLinkRels())).to.be(true);
@@ -92,7 +92,7 @@ pipeline.use(convert);
   var embeds = all.data.getEmbeds('apples');
   expect(embeds.length).to.be(1);
 
-  result = process(appleEaten.data, 'toss', { });
+  result = cmd(appleEaten.data, 'toss', { });
 
 //- test get after toss
   var all = get('/api/apples/');

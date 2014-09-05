@@ -5,7 +5,7 @@ var fn = require('./fn.js');
 var db = require('./db.js');
 var log = console.log;
 
-exports.query = function query(id) {
+exports.query = function(id) {
   if (id === 0) {
     return db.getAll();
   }
