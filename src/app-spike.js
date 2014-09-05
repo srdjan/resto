@@ -35,8 +35,7 @@ function state(todo) {
         name: 'pending',
         links: [
                 { rel: 'save', method: "PUT" },
-                { rel: 'done', method: "PUT" },
-                { rel: 'archive',  method: "PUT" }
+                { rel: 'done', method: "PUT" }
                ]
             };
     return todo;
@@ -45,8 +44,8 @@ function state(todo) {
     todo.state = {
         name: 'done',
         links: [
-                { rel: 'archive', method: "PUT" },
-                { rel: 'notDone', method: "PUT" }
+                { rel: 'notDone', method: "PUT" },
+                { rel: 'archive', method: "PUT" }
                ]
             };
     return todo;
