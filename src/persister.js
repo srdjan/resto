@@ -6,19 +6,19 @@ var db = require('./db.js');
 var log = console.log;
 
 exports.persist = function persist(ctx) {
-  if (ctx.method.toLowerCase() === 'get') {
+  if (ctx.method === 'get') {
     return ctx;
   }
 
-  if (ctx.method.toLowerCase() === 'put' || ctx.method.toLowerCase() === 'patch') {
+  if (ctx.method === 'put' || ctx.method === 'patch') {
     ctx.result = db.save(ctx.entity);
     return ctx;
   }
-  if (ctx.method.toLowerCase() === 'delete') {
+  if (ctx.method === 'delete') {
     ctx.result = db.remove(ctx.id);
     return ctx;
   }
-  if (ctx.method.toLowerCase() === 'post') {
+  if (ctx.method === 'post') {
     if(ctx.id === 0) {
       ctx.result = db.add(ctx.entity);
     }

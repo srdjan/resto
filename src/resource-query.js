@@ -1,20 +1,20 @@
 //---------------------------------------------------------------------------------
-//- invoker
+//- db-query
 //---------------------------------------------------------------------------------
 var fn = require('./fn.js');
+var db = require('./db.js');
 var log = console.log;
 
-exports.invoke = function invoke(ctx) {
-  if(typeof ctx.result !== 'undefined') {
-    return ctx;
+exports.query = function query(id) {
+  if (id === 0) {
+    return db.getAll();
   }
-  ctx.result = ctx.handler(ctx);
-  return ctx;
+  return db.get(id);
 };
 
 //---------------------------------------------------------------------------------
 //@tests
 //---------------------------------------------------------------------------------
   var expect = require('expect.js');
-  log('testing: invoker.js');
+  log('testing: db-query.js');
 

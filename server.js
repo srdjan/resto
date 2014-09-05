@@ -5,14 +5,16 @@ var http = require("http");
 var file = require("./src/filehelper.js");
 var fn = require('./src/fn.js');
 var pipeline = require('./src/pipeline.js');
+var auth = require('./src/auth.js').auth;
 var resolve = require('./src/resolver.js').resolve;
-var invoke = require('./src/invoker.js').invoke;
 var convert = require('./src/hal.js').toHal;
+var persist = require('./src/persister.js').persist;
 var log = console.log;
 var port = 8060;
 
+pipeline.use(auth);
 pipeline.use(resolve);
-pipeline.use(invoke);
+pipeline.use(persist);
 pipeline.use(convert);
 
 http.createServer(function(request, response) {
