@@ -15,6 +15,7 @@ function use(f, p, t) {
   handlers.push({ func: f, pred: p || false, trace: t || false});
 }
 
+// ctx -> ctx
 function run(ctx) {
   var _run = Either.of(ctx);
   handlers.forEach(function(h) { _run = map(_run, h.func); });
@@ -50,10 +51,13 @@ function f3(ctx) {
   log('f3: ' + ctx.counter);
   return Either.Right(ctx);
 }
+
+// setup
 use(f1);
 use(f2);
 use(f3);
 
+// run
 var result = run({counter: 0, statusCode: 200}).orElse(function(err) {return err;});
 log(result);
 
