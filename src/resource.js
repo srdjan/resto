@@ -55,7 +55,7 @@ exports.post = function(ctx) {
     var entity = db.get(ctx.id);
     ctx.entity = processApi(ctx.rel, ctx.body, entity);
   }
-  return (ctx);
+  return ctx;
 };
 
 exports.put = function(ctx) {

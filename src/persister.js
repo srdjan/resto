@@ -3,21 +3,24 @@
 //---------------------------------------------------------------------------------
 var fn = require('./fn.js');
 var db = require('./db.js');
+var Either = require('data.either');
 var log = console.log;
 
 exports.persist = function persist(ctx) {
   if (ctx.method === 'get') {
-    return ctx;
+    return Either.Right(ctx);
   }
 
   if (ctx.method === 'put' || ctx.method === 'patch') {
     ctx.result = db.save(ctx.entity);
-    return ctx;
+    return Either.Right(ctx);
   }
+
   if (ctx.method === 'delete') {
     ctx.result = db.remove(ctx.id);
-    return ctx;
+    return Either.Right(ctx);
   }
+
   if (ctx.method === 'post') {
     if(ctx.id === 0) {
       ctx.result = db.add(ctx.entity);
@@ -25,10 +28,10 @@ exports.persist = function persist(ctx) {
     else {
       ctx.result = db.save(ctx.entity);
     }
-    return ctx;
+    return Either.Right(ctx);
   }
 
-  throw { statusCode: 405, message: 'Method Not Allowed' };
+  return Either.Left({ statusCode: 405, message: 'Method Not Allowed' });
 };
 
 //---------------------------------------------------------------------------------

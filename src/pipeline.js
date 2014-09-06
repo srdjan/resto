@@ -3,19 +3,17 @@
 //---------------------------------------------------------------------------------
 var fn = require('./fn.js');
 var Either = require('data.either');
-var Failure = Either.Left;
-var Success = Either.Right;
 var log = console.log;
 
-var stash = [];
+var handlers = [];
 
 function trace(func, ctx) {
   log(fn.getFnName(func) + ', ' + JSON.stringify(ctx) + '\r\n');
 }
 
-function writeToResp(response, statusCode, content) {
-  response.writeHead(statusCode, {"Content-Type": "application/json"});
-  response.write(content);
+function writeToResp(response, ctx) {
+  response.writeHead(ctx.statusCode, {"Content-Type": "application/json"});
+  response.write(ctx.result);
   response.end();
 }
 
@@ -47,8 +45,15 @@ function getIdAndRel(url) {
   return idAndRel;
 }
 
+// ctx -> (ctx -> ctx)
+function run(ctx) {
+  var _run = Either.of(ctx);
+  handlers.forEach(function(handler) { _run = fn.mapM(_run, handler.func); });
+  return _run;
+}
+
 exports.use = function(f, p, t) {
-  stash.push({ func: f, pred: p || false, trace: t || false});
+  handlers.push({ func: f, pred: p || false, trace: t || false});
 };
 
 exports.run = function(request, response) {
@@ -61,14 +66,9 @@ exports.run = function(request, response) {
     ctx.url = request.url;
     ctx.body = request.body;
     ctx.statusCode = 200;
-
-    fn.each(function(handler) {
-              if(handler.trace) { trace(handler.func, ctx); }
-              return ctx.statusCode === 200 ? Success(handler.func(ctx))
-                                            : Failure(writeToResp(ctx, statusCode, content));
-            }, stash);
-
-    writeToResp(response, ctx.statusCode, ctx.result);
+    var result = run(ctx).orElse(function(err) {return err;});
+    // log(result.get())
+    writeToResp(response, result.get());
   }
   catch (e) {
     if ( ! e.hasOwnProperty('statusCode')) {

@@ -87,6 +87,13 @@ exports.extend = function(proto, literal) {
     return result;
 };
 
+// Monad(a), (a -> b) -> Monad(b)
+exports.mapM = function(monad, transformation) {
+  return monad.chain(function(value) {
+    return transformation(value);
+  });
+};
+
 //---------------------------------------------------------------------------------
 //@tests
 //---------------------------------------------------------------------------------
