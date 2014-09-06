@@ -38,33 +38,44 @@ function processApi(rel, body, entity) {
   return entity;
 }
 
+exports.get = function(ctx) {
+  if (ctx.id === 0) {
+    return db.getAll();
+  }
+  return db.get(ctx.id);
+};
+
 exports.post = function(ctx) {
   if(ctx.id === 0) {
-    var entity = new ctx.typeCtor();
-    validatePropsMatch(ctx.body, entity);
-    ctx.entity = update(entity, ctx.body);
+    var newEntity = new ctx.typeCtor();
+    validatePropsMatch(ctx.body, newEntity);
+    ctx.entity = update(newEntity, ctx.body);
   }
   else {
-    ctx.entity = processApi(ctx.rel, ctx.body, ctx.entity);
+    var entity = db.get(ctx.id);
+    ctx.entity = processApi(ctx.rel, ctx.body, entity);
   }
   return (ctx);
 };
 
 exports.put = function(ctx) {
-  validatePropsMatch(ctx.body, ctx.entity);
-  ctx.entity = processApi(ctx.rel, ctx.body, ctx.entity);
+  var entity = db.get(ctx.id);
+  validatePropsMatch(ctx.body, entity);
+  ctx.entity = processApi(ctx.rel, ctx.body, entity);
   ctx.entity = update(ctx.entity, ctx.body);
   return ctx;
 };
 
 exports.patch = function(ctx) {
-  validatePropsExist(ctx.body, ctx.entity);
-  entity = processApi(ctx.rel, ctx.body, ctx.entity);
+  var entity = db.get(ctx.id);
+  validatePropsExist(ctx.body, entity);
+  entity = processApi(ctx.rel, ctx.body, entity);
   ctx.entity = update(ctx.entity, ctx.body);
   return ctx;
 };
 
 exports.delete = function(ctx) {
-  ctx.entity = processApi(ctx.rel, ctx.body, ctx.entity);
+  var entity = db.get(ctx.id);
+  ctx.entity = processApi(ctx.rel, ctx.body, entity);
   return ctx;
 };

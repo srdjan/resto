@@ -3,8 +3,7 @@
 //---------------------------------------------------------------------------------
 var fn = require('./fn.js');
 var app = require('./app.js');
-var query = require('./resource-query.js').query;
-var cmd = require('./resource-cmd.js');
+var resource = require('./resource.js');
 var db = require('./db.js');
 var log = console.log;
 
@@ -20,16 +19,7 @@ function getTypeName(url) {
 exports.resolve = function resolve(ctx) {
   ctx.typeName = getTypeName(ctx.url);
   ctx.typeCtor = app[ctx.typeName];
-
-  if (ctx.method === 'get') {
-    ctx.result = query(ctx.id);
-    return ctx;
-  }
-
-  if(ctx.id > 0) {
-    ctx.entity = db.get(ctx.id);
-  }
-  var handler = cmd[ctx.method];
+  var handler = resource[ctx.method];
   ctx.result = handler(ctx);
   return ctx;
 };
