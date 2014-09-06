@@ -16,15 +16,16 @@ function getTypeName(url) {
   }
   return Either.Left({ statusCode: 400, message: 'Bad Request' });
 }
+var _try = function(f, data) { return fn.mapM(Either.of(data), f).orElse(function(err) {return err.swap().get();});};
 
 exports.resolve = function resolve(ctx) {
-  var _getTypeName = fn.mapM(Either.of(ctx.url), getTypeName).orElse(function(err) {return err;});
-  if(_getTypeName.isLeft) {
-    ctx.result = _getTypeName.swap().get();
+  var result = _try(getTypeName, ctx.url);
+  if(result.isLeft) {
+    ctx.result = result;
     return ctx;
   }
 
-  ctx.typeName = getTypeName(ctx.url).get();
+  ctx.typeName = result.get();
   ctx.typeCtor = app[ctx.typeName];
   var handler = resource[ctx.method];
   ctx.result = handler(ctx);
@@ -37,29 +38,33 @@ exports.resolve = function resolve(ctx) {
   var expect = require('expect.js');
   log('testing: resolver.js');
 
+  var result = exports.resolve({url: '/api/apples/', method: 'get', id: 0});
+  // expect(result.get().result.length).to.be(0);
+
   //test: getTypeName(url):- api/apples/123456/create
   var url = '/api/apples/';
   var typeName = getTypeName(url);
   expect(typeName.get()).to.be('Apple');
 
-  // url = 'api/apples/' + fn.atob('123456');
-  // typeName = getTypeName(url);
-  // expect(typeName).to.be('Apple');
+  url = 'api/apples/' + fn.atob('123456');
+  typeName = getTypeName(url);
+  expect(typeName.get()).to.be('Apple');
 
-  // url = 'api/apples/';
-  // typeName = getTypeName(url);
-  // expect(typeName).to.be('Apple');
+  url = 'api/apples/';
+  typeName = getTypeName(url);
+  expect(typeName.get()).to.be('Apple');
 
-  // url = 'api/apples/' + fn.atob('123456');
-  // typeName = getTypeName(url);
-  // expect(typeName).to.be('Apple');
+  url = 'api/apples/' + fn.atob('123456');
+  typeName = getTypeName(url);
+  expect(typeName.get()).to.be('Apple');
 
-  // url = 'api/apples/' + fn.atob(123456 + '/' + 'create');
-  // typeName = getTypeName(url);
-  // expect(typeName).to.be('Apple');
+  url = 'api/apples/' + fn.atob(123456 + '/' + 'create');
+  typeName = getTypeName(url);
+  expect(typeName.get()).to.be('Apple');
 
   // should fail
   url = 'apples' + fn.atob(123456 + '/' + 'create');
   typeName = getTypeName(url);
-  log(typeName.swap().get());
+  // log(typeName.swap().get());
   expect(typeName.isLeft).to.be(true);
+

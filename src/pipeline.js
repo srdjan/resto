@@ -67,7 +67,6 @@ exports.run = function(request, response) {
     ctx.body = request.body;
     ctx.statusCode = 200;
     var result = run(ctx).orElse(function(err) {return err;});
-    // log(result.get())
     writeToResp(response, result.get());
   }
   catch (e) {
