@@ -18,9 +18,9 @@ function getTypeName(url) {
 
 exports.resolve = function resolve(ctx) {
   var result = fn.run(getTypeName, ctx.url);
-  if(result.isLeft) {
+  if(result.isLeft) { //todo: need fn.isError(result) ?
     ctx.result = result;
-    return ctx;
+    return fn.Fail(ctx);
   }
 
   ctx.typeName = result.get();
