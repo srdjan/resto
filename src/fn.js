@@ -1,6 +1,11 @@
 //---------------------------------------------------------------------------------
 //- functions
 //---------------------------------------------------------------------------------
+var Either = require('data.either');
+exports.Success = Either.Right;
+exports.Next = Either.Right;
+exports.Fail = Either.Left;
+
 var R = require('ramda');
 exports.compose = R.compose;
 exports.contains = R.contains;
@@ -10,6 +15,7 @@ exports.some = R.some;
 exports.diff = R.difference;
 exports.map = R.map;
 exports.chain = R.chain;
+
 var log = console.log;
 
 exports.filterEmpty = R.filter(function(e) { return Object.getOwnPropertyNames(e).length > 0; });
@@ -88,10 +94,18 @@ exports.extend = function(proto, literal) {
 };
 
 // Monad(a), (a -> b) -> Monad(b)
-exports.mapM = function(monad, transformation) {
+function mapM(monad, transformation) {
   return monad.chain(function(value) {
     return transformation(value);
   });
+}
+
+exports.run = function(f, data) { return mapM(Either.of(data), f).orElse(function(err) {return err.swap().get();});};
+
+exports.runAll = function(ctx, handlers) {
+  var result = Either.of(ctx);
+  handlers.forEach(function(handler) { result = mapM(result, handler.func); });
+  return result.orElse(function(err) {return err;});
 };
 
 //---------------------------------------------------------------------------------

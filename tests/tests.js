@@ -85,9 +85,9 @@ pipeline.use(convert);
   expect(appleEaten.data.listLinkRels().length).to.be(2);
   expect(fn.contains('self', appleEaten.data.listLinkRels())).to.be(true);
 
-//- test api whitelisting - should not be able to call 'grow' in tis state
-  // var notAllowedResult = eatNotAllowed(appleGrown.data);
-  // expect(notAllowedResult.statusCode).to.be(405);
+// //- test api whitelisting - should not be able to call 'grow' in tis state
+//   // var notAllowedResult = eatNotAllowed(appleGrown.data);
+//   // expect(notAllowedResult.statusCode).to.be(405);
 
 //- test get before toss
   var all = get('/api/apples/');

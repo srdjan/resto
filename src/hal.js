@@ -3,7 +3,6 @@
 //---------------------------------------------------------------------------------
 var halson = require('halson');
 var fn = require('./fn.js');
-var Either = require('data.either');
 var log = console.log;
 
 function addSelfLink(hal, href) {
@@ -63,7 +62,7 @@ exports.convert = function convert(ctx) {
     halRep = createOne(ctx);
   }
   ctx.result = JSON.stringify(halRep);
-  return Either.Right(ctx);
+  return fn.Next(ctx);
 };
 
 //---------------------------------------------------------------------------------

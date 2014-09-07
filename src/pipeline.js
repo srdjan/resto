@@ -2,7 +2,6 @@
 //- pipeline
 //---------------------------------------------------------------------------------
 var fn = require('./fn.js');
-var Either = require('data.either');
 var log = console.log;
 
 var handlers = [];
@@ -45,13 +44,6 @@ function getIdAndRel(url) {
   return idAndRel;
 }
 
-// ctx -> (ctx -> ctx)
-function run(ctx) {
-  var _run = Either.of(ctx);
-  handlers.forEach(function(handler) { _run = fn.mapM(_run, handler.func); });
-  return _run;
-}
-
 exports.use = function(f, p, t) {
   handlers.push({ func: f, pred: p || false, trace: t || false});
 };
@@ -66,12 +58,15 @@ exports.run = function(request, response) {
     ctx.url = request.url;
     ctx.body = request.body;
     ctx.statusCode = 200;
-    var result = run(ctx).orElse(function(err) {return err;});
+    var result = fn.runAll(ctx, handlers);
     writeToResp(response, result.get());
   }
   catch (e) {
     if ( ! e.hasOwnProperty('statusCode')) {
       e.statusCode = 500;
+    }
+    if ( ! e.hasOwnProperty('message')) {
+      e.message = '';
     }
     log('Fx Exception, statusCode: ' + e.statusCode + ' message: ' + e.message);
     writeToResp(response, e.statusCode, e.message);
