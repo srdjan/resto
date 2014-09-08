@@ -93,19 +93,31 @@ exports.extend = function(proto, literal) {
     return result;
 };
 
-// Monad(a), (a -> b) -> Monad(b)
-function mapM(monad, transformation) {
-  return monad.chain(function(value) {
-    return transformation(value);
+// // Monad(a), (a -> b) -> Monad(b)
+// function mapM(monad, transformation) {
+//   return monad.chain(function(value) {
+//     return transformation(value);
+//   });
+// }
+
+// exports.runAll = function(ctx, handlers) {
+//   var result = Either.of(ctx);
+//   handlers.forEach(function(handler) { result = mapM(result, handler.func); });
+//   return result.orElse(function(err) {return err;});
+// };
+
+// f, m(a), ep -> m(b)
+function combine(f, ep, m) {
+  return m.chain(function(d) {
+    var r = f(d);
+    return ep(r) ? Either.Left(r) : Either.Right(r);
   });
 }
-
-exports.run = function(f, data) { return mapM(Either.of(data), f).orElse(function(err) {return err.swap().get();});};
-
-exports.runAll = function(ctx, handlers) {
-  var result = Either.of(ctx);
-  handlers.forEach(function(handler) { result = mapM(result, handler.func); });
-  return result.orElse(function(err) {return err;});
+// hs, a, ep -> m(b)
+exports.combineAll = function(hs, ep, d) {
+  var m = Either.of(d);
+  hs.forEach(function(h) { m = combine(h.func, ep, m); });
+  return m.orElse(function(e) { return e;});
 };
 
 //---------------------------------------------------------------------------------

@@ -40,9 +40,12 @@ function processApi(rel, body, entity) {
 
 exports.get = function(ctx) {
   if (ctx.id === 0) {
-    return db.getAll();
+    ctx.result = db.getAll();
   }
-  return db.get(ctx.id);
+  else {
+    ctx.result = db.get(ctx.id);
+  }
+  return ctx;
 };
 
 exports.post = function(ctx) {

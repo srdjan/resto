@@ -7,16 +7,17 @@ var http = require('./httpmock.js');
 var fn = require('../src/fn.js');
 var db = require('../src/db.js');
 var pipeline = require('../src/pipeline.js');
-var auth = require('../src/auth.js').auth;
-var resolve = require('../src/resolver.js').resolve;
-var query = require('../src/resource.js').get;
-var persist = require('../src/persister.js').persist;
-var convert = require('../src/hal.js').convert;
+var authenticator = require('../src/auth.js').auth;
+var authorizer = require('../src/auth.js').auth;
+var typeResolver = require('../src/type-resolver.js').resolve;
+var methodResolver = require('../src/method-resolver.js').resolve;
+var invoker = require('../src/invoker.js').invoke;
+var persister = require('../src/persister.js').persist;
+var converter = require('../src/hal.js').convert;
 var log = console.log;
 
 function get(path) {
   var request = new http.request('GET', path);
-  //todo: var request = new http.request('GET', 'bad-path');
   var response = new http.response();
   pipeline.run(request, response);
   var result = halson(response.body);
@@ -42,20 +43,27 @@ function eatNotAllowed(apple) {
 
 //- prepare
 db.clear();
-pipeline.use(auth);
-pipeline.use(resolve);
-pipeline.use(persist);
-pipeline.use(convert);
+log('------ starting integration tests --------');
+// pipeline.use(authenticator);
+// pipeline.use(authorizer);
+pipeline.use(typeResolver);
+pipeline.use(methodResolver);
+pipeline.use(invoker);
+pipeline.use(persister);
+pipeline.use(converter);
+
+//-  test bad get all
+  var all = get('bad');
+  expect(all.statusCode).to.be(500);
 
 //-  test get all
-  var all = get('/api/apples/');
-// log(all)
+  all = get('/api/apples/');
   expect(all.statusCode).to.be(200);
   expect(all.data.listLinkRels().length).to.be(2);
   expect(fn.contains('self', all.data.listLinkRels())).to.be(true);
   expect(fn.contains('create', all.data.listLinkRels())).to.be(true);
 
-// //- test create
+//- test create
   var apple = cmd(all.data, 'create', {weight: 10.0, color: "red"});
   expect(apple.data.listLinkRels().length).to.be(3);
   expect(apple.data.weight).to.be(10.0);
@@ -85,9 +93,10 @@ pipeline.use(convert);
   expect(appleEaten.data.listLinkRels().length).to.be(2);
   expect(fn.contains('self', appleEaten.data.listLinkRels())).to.be(true);
 
-// //- test api whitelisting - should not be able to call 'grow' in tis state
-//   // var notAllowedResult = eatNotAllowed(appleGrown.data);
-//   // expect(notAllowedResult.statusCode).to.be(405);
+//todo: need to remove exception throwing in resource before this test is back...
+// // - test api whitelisting - should not be able to call 'grow' in tis state
+//   var notAllowedResult = eatNotAllowed(appleGrown.data);
+//   expect(notAllowedResult.statusCode).to.be(405);
 
 //- test get before toss
   var all = get('/api/apples/');

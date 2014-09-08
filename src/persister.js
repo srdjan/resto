@@ -6,18 +6,19 @@ var db = require('./db.js');
 var log = console.log;
 
 exports.persist = function persist(ctx) {
+  log('persister');
   if (ctx.method === 'get') {
-    return fn.Next(ctx);
+    return ctx;
   }
 
   if (ctx.method === 'put' || ctx.method === 'patch') {
     ctx.result = db.save(ctx.entity);
-    return fn.Next(ctx);
+    return ctx;
   }
 
   if (ctx.method === 'delete') {
     ctx.result = db.remove(ctx.id);
-    return fn.Next(ctx);
+    return ctx;
   }
 
   if (ctx.method === 'post') {
@@ -27,15 +28,16 @@ exports.persist = function persist(ctx) {
     else {
       ctx.result = db.save(ctx.entity);
     }
-    return fn.Next(ctx);
+    return ctx;
   }
-
-  return fn.Fail({ statusCode: 405, message: 'Method Not Allowed' });
+  ctx.statusCode = 405;
+  ctx.result = {message: 'Method Not Allowed'};
+  return ctx;
 };
 
 //---------------------------------------------------------------------------------
 //@tests
 //---------------------------------------------------------------------------------
   var expect = require('expect.js');
-  log('testing: db-cmd.js');
+  log('testing: persister.js');
 

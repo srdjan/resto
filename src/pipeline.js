@@ -12,7 +12,7 @@ function trace(func, ctx) {
 
 function writeToResp(response, ctx) {
   response.writeHead(ctx.statusCode, {"Content-Type": "application/json"});
-  response.write(ctx.result);
+  response.write(JSON.stringify(ctx.result));
   response.end();
 }
 
@@ -58,8 +58,8 @@ exports.run = function(request, response) {
     ctx.url = request.url;
     ctx.body = request.body;
     ctx.statusCode = 200;
-    var result = fn.runAll(ctx, handlers);
-    writeToResp(response, result.get());
+    ctx = fn.combineAll(handlers, function(d) {return d.statusCode !== 200;}, ctx);
+    writeToResp(response, ctx.isRight ? ctx.get() : ctx);
   }
   catch (e) {
     if ( ! e.hasOwnProperty('statusCode')) {

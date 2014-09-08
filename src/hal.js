@@ -46,6 +46,7 @@ function createOne(ctx) {
 }
 
 exports.convert = function convert(ctx) {
+  log('converter');
   var halRep;
   if (ctx.result instanceof Array) {
     halRep = createList(ctx);
@@ -53,8 +54,8 @@ exports.convert = function convert(ctx) {
   else {
     halRep = createOne(ctx);
   }
-  ctx.result = JSON.stringify(halRep);
-  return fn.Next(ctx);
+  ctx.result = halRep;
+  return ctx;
 };
 
 //---------------------------------------------------------------------------------
