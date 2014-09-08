@@ -48,12 +48,6 @@ function processApi(ctx) {
   return Either.Left(ctx);
 }
 
-function map(m, f) {
-  return m.chain(function(value) {
-    return f(value);
-  });
-}
-
 exports.get = function(ctx) {
   if (ctx.id === 0) {
     ctx.result = db.getAll();
@@ -67,25 +61,25 @@ exports.get = function(ctx) {
 exports.post = function(ctx) {
   if(ctx.id === 0) {
     ctx.entity = new ctx.typeCtor();
-    return map(Either.of(ctx), validatePropsMatch).chain(update).merge();
+    return fn.map2M(Either.of(ctx), validatePropsMatch).chain(update).merge();
   }
   ctx.entity = db.get(ctx.id);
-  return map(Either.of(ctx), validateApiCall).chain(processApi).merge();
+  return fn.map2M(Either.of(ctx), validateApiCall).chain(processApi).merge();
 };
 
 exports.put = function(ctx) {
   ctx.entity = db.get(ctx.id);
-  return map(Either.of(ctx), validatePropsMatch).chain(validateApiCall).chain(processApi).chain(update).merge();
+  return fn.map2M(Either.of(ctx), validatePropsMatch).chain(validateApiCall).chain(processApi).chain(update).merge();
 };
 
 exports.patch = function(ctx) {
   ctx.entity = db.get(ctx.id);
-  return map(Either.of(ctx), validatePropsExist).chain(validateApiCall).chain(processApi).chain(update).merge();
+  return fn.map2M(Either.of(ctx), validatePropsExist).chain(validateApiCall).chain(processApi).chain(update).merge();
 };
 
 exports.delete = function(ctx) {
   ctx.entity = db.get(ctx.id);
-  return map(Either.of(ctx), validateApiCall).chain(processApi).merge();
+  return fn.map2M(Either.of(ctx), validateApiCall).chain(processApi).merge();
 };
 
 //---------------------------------------------------------------------------------

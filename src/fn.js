@@ -89,6 +89,13 @@ exports.extend = function(proto, literal) {
     return result;
 };
 
+// m(a), f -> m(b)
+exports.map2M = function map(m, f) {
+  return m.chain(function(value) {
+    return f(value);
+  });
+};
+
 // f, m(a), ep -> m(b)
 function combine(f, ep, m) {
   return m.chain(function(d) {
