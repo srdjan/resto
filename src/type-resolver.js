@@ -6,7 +6,7 @@ var app = require('./app.js');
 var log = console.log;
 
 function resolveType(ctx) {
-  log('type-resolver');
+  // log('type-resolver');
   var tokens = fn.getTokens(ctx.url);
   if (tokens.length > 1) {
     var typeName = tokens[1].slice(0, -1);

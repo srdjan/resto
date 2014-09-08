@@ -9,37 +9,48 @@ var log = console.log;
 function validateApiCall(ctx) {
   var links = fn.getLinks(ctx.entity);
   if ( ! fn.some(function(link) { return link.rel === ctx.rel; }, links)) {
-    throw { statusCode: 405, message: 'Conflict - Method call not allowed' };
+    ctx.statusCode = 405;
+    ctx.result = 'Conflict - Method call not allowed';
+    return Either.Left(ctx);
   }
+  return Either.Right(ctx);
 }
 
 function validatePropsExist(ctx) {
   if (fn.propsDontExist(ctx.body, ctx.entity)) {
-    throw { statusCode: 400, message: 'Bad Request - props do not exist' };
+    ctx.statusCode = 400;
+    ctx.result = 'Bad Request - props do not exist';
+    return Either.Left(ctx);
   }
+  return Either.Right(ctx);
 }
 
 function validatePropsMatch(ctx) {
   if (fn.propsDontMatch(ctx.body, ctx.entity)) {
-    throw { statusCode: 400, message: 'Bad Request - props do not match' };
+    ctx.statusCode = 400;
+    ctx.result = 'Bad Request - props do not match';
+    return Either.Left(ctx);
   }
+  return Either.Right(ctx);
 }
 
 function update(ctx) {
   fn.each(function(key) { ctx.entity[key] = ctx.body[key]; }, Object.keys(ctx.body));
-  return ctx;
+  return Either.Right(ctx);
 }
 
 function processApi(ctx) {
   if(ctx.entity[ctx.rel](ctx.body)) {
-    return ctx;
+    return Either.Right(ctx);
   }
-  throw { statusCode: 422, message: 'Error: ' + result };
+  ctx.statusCode = 422;
+  ctx.result = 'Error: ' + result;
+  return Either.Left(ctx);
 }
 
 function map(m, f) {
   return m.chain(function(value) {
-    return m.of(f(value));
+    return f(value);
   });
 }
 
@@ -56,37 +67,70 @@ exports.get = function(ctx) {
 exports.post = function(ctx) {
   if(ctx.id === 0) {
     ctx.entity = new ctx.typeCtor();
-    validatePropsMatch(ctx);
-    update(ctx);
+    return map(Either.of(ctx), validatePropsMatch).chain(update).merge();
   }
-  else {
-    ctx.entity = db.get(ctx.id);
-    validateApiCall(ctx);
-    processApi(ctx);
-  }
-  return ctx;
+  ctx.entity = db.get(ctx.id);
+  return map(Either.of(ctx), validateApiCall).chain(processApi).merge();
 };
 
 exports.put = function(ctx) {
   ctx.entity = db.get(ctx.id);
-  validatePropsMatch(ctx);
-  validateApiCall(ctx);
-  processApi(ctx);
-  update(ctx);
-  return ctx;
+  return map(Either.of(ctx), validatePropsMatch).chain(validateApiCall).chain(processApi).chain(update).merge();
 };
 
 exports.patch = function(ctx) {
   ctx.entity = db.get(ctx.id);
-  validatePropsExist(ctx);
-  validateApiCall(ctx);
-  processApi(ctx);
-  update(ctx);
-  return ctx;
+  return map(Either.of(ctx), validatePropsExist).chain(validateApiCall).chain(processApi).chain(update).merge();
 };
 
 exports.delete = function(ctx) {
   ctx.entity = db.get(ctx.id);
-  validateApiCall(ctx);
-  return processApi(ctx);
+  return map(Either.of(ctx), validateApiCall).chain(processApi).merge();
 };
+
+//---------------------------------------------------------------------------------
+//@tests
+//---------------------------------------------------------------------------------
+  var expect = require('expect.js');
+  log('testing: resource.js');
+
+  // test post, id = 0
+  var ctx = {
+    id: 0,
+    typeCtor: function() { this.name = '';},
+    body: {name: 'sam'}
+  };
+  var result = exports.post(ctx);
+  expect(result.body.name).to.be.equal(result.entity.name);
+
+  var ctx = {
+    id: 0,
+    typeCtor: function() { this.name = '';},
+    body: {nammmme: 'sam'},
+    entity: {name: ''}
+  };
+  var result = exports.post(ctx);
+  expect(result.statusCode).to.be(400);
+
+  // test post, id != 0
+  // prepare db:
+  var ctx = {
+    id: 0,
+    typeCtor: function() { this.name = '';},
+    body: {name: 'sam'},
+    entity: { name: '?'}
+  };
+  var fromDb = db.add(ctx.entity);
+  ctx.id = fromDb.id;
+
+  var result = exports.post(ctx);
+  expect(result.statusCode).to.be(405);
+
+  // var ctx = {
+  //   id: 0,
+  //   typeCtor: function() { this.name = '';},
+  //   body: {nammmme: 'sam'},
+  //   entity: {name: ''}
+  // };
+  // var result = exports.post(ctx);
+  // expect(result.statusCode).to.be(400);

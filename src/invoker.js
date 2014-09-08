@@ -5,7 +5,7 @@ var fn = require('./fn.js');
 var log = console.log;
 
 exports.invoke = function invoke(ctx) {
-  log('invoker');
+  // log('invoker');
   //todo: create a diff path, query vs cmd
   ctx = ctx.handler(ctx);
   return ctx;

@@ -46,7 +46,7 @@ function createOne(ctx) {
 }
 
 exports.convert = function convert(ctx) {
-  log('converter');
+  // log('converter');
   if (ctx.result instanceof Array) {
     ctx.result = createList(ctx);
   }

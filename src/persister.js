@@ -6,7 +6,7 @@ var db = require('./db.js');
 var log = console.log;
 
 exports.persist = function persist(ctx) {
-  log('persister');
+  // log('persister');
   if (ctx.method === 'get') {
     return ctx;
   }

@@ -6,7 +6,7 @@ var resource = require('./resource.js');
 var log = console.log;
 
 function resolveMethod(ctx) {
-  log('method-resolver');
+  // log('method-resolver');
   ctx.handler = resource[ctx.method];
   if (typeof ctx.handler === 'undefined') {
     ctx.result = {Error: 'method resolver error'};
