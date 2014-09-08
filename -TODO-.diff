@@ -14,7 +14,7 @@
   // littleDog.weight; // 10
 
 
-
+-todo: token auth: https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
 -todo: handle conditional persistance
 -todo: handle embedded entities (https://www.readability.com/articles/c4khqjub)
 -todo: add paging (https://www.readability.com/articles/c4khqjub)

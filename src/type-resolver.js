@@ -14,7 +14,7 @@ function resolveType(ctx) {
     ctx.typeCtor = app[ctx.typeName];
     return ctx;
   }
-  ctx.result = {message: 'type resolver error'};
+  ctx.result = {Error: 'type resolver error'};
   ctx.statusCode = 500;
   return ctx;
 }

@@ -2,40 +2,45 @@
 //- resource
 //---------------------------------------------------------------------------------
 var fn = require('./fn.js');
+var Either = require('data.either');
 var db = require('./db.js');
 var log = console.log;
 
-function validateApiCall(rel, entity) {
-  var links = fn.getLinks(entity);
-  if ( ! fn.some(function(link) { return link.rel === rel; }, links)) {
+function validateApiCall(ctx) {
+  var links = fn.getLinks(ctx.entity);
+  if ( ! fn.some(function(link) { return link.rel === ctx.rel; }, links)) {
     throw { statusCode: 405, message: 'Conflict - Method call not allowed' };
   }
 }
 
-function validatePropsExist(body, entity) {
-  if (fn.propsDontExist(body, entity)) {
+function validatePropsExist(ctx) {
+  if (fn.propsDontExist(ctx.body, ctx.entity)) {
     throw { statusCode: 400, message: 'Bad Request - props do not exist' };
   }
 }
 
-function validatePropsMatch(body, entity) {
-  if (fn.propsDontMatch(body, entity)) {
+function validatePropsMatch(ctx) {
+  if (fn.propsDontMatch(ctx.body, ctx.entity)) {
     throw { statusCode: 400, message: 'Bad Request - props do not match' };
   }
 }
 
-function update(entity, body) {
-  fn.each(function(key) { entity[key] = body[key]; }, Object.keys(body));
-  return entity;
+function update(ctx) {
+  fn.each(function(key) { ctx.entity[key] = ctx.body[key]; }, Object.keys(ctx.body));
+  return ctx;
 }
 
-function processApi(rel, body, entity) {
-  validateApiCall(rel, entity);
-  var result = entity[rel](body);
-  if ( ! result) {
-    throw { statusCode: 422, message: 'Error: ' + result };
+function processApi(ctx) {
+  if(ctx.entity[ctx.rel](ctx.body)) {
+    return ctx;
   }
-  return entity;
+  throw { statusCode: 422, message: 'Error: ' + result };
+}
+
+function map(m, f) {
+  return m.chain(function(value) {
+    return m.of(f(value));
+  });
 }
 
 exports.get = function(ctx) {
@@ -50,35 +55,38 @@ exports.get = function(ctx) {
 
 exports.post = function(ctx) {
   if(ctx.id === 0) {
-    var newEntity = new ctx.typeCtor();
-    validatePropsMatch(ctx.body, newEntity);
-    ctx.entity = update(newEntity, ctx.body);
+    ctx.entity = new ctx.typeCtor();
+    validatePropsMatch(ctx);
+    update(ctx);
   }
   else {
-    var entity = db.get(ctx.id);
-    ctx.entity = processApi(ctx.rel, ctx.body, entity);
+    ctx.entity = db.get(ctx.id);
+    validateApiCall(ctx);
+    processApi(ctx);
   }
   return ctx;
 };
 
 exports.put = function(ctx) {
-  var entity = db.get(ctx.id);
-  validatePropsMatch(ctx.body, entity);
-  ctx.entity = processApi(ctx.rel, ctx.body, entity);
-  ctx.entity = update(ctx.entity, ctx.body);
+  ctx.entity = db.get(ctx.id);
+  validatePropsMatch(ctx);
+  validateApiCall(ctx);
+  processApi(ctx);
+  update(ctx);
   return ctx;
 };
 
 exports.patch = function(ctx) {
-  var entity = db.get(ctx.id);
-  validatePropsExist(ctx.body, entity);
-  entity = processApi(ctx.rel, ctx.body, entity);
-  ctx.entity = update(ctx.entity, ctx.body);
+  ctx.entity = db.get(ctx.id);
+  validatePropsExist(ctx);
+  validateApiCall(ctx);
+  processApi(ctx);
+  update(ctx);
   return ctx;
 };
 
 exports.delete = function(ctx) {
-  var entity = db.get(ctx.id);
-  ctx.entity = processApi(ctx.rel, ctx.body, entity);
-  return ctx;
+  ctx.entity = db.get(ctx.id);
+  validateApiCall(ctx);
+  return processApi(ctx);
 };

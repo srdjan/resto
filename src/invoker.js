@@ -6,6 +6,7 @@ var log = console.log;
 
 exports.invoke = function invoke(ctx) {
   log('invoker');
+  //todo: create a diff path, query vs cmd
   ctx = ctx.handler(ctx);
   return ctx;
 };

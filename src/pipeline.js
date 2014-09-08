@@ -10,9 +10,9 @@ function trace(func, ctx) {
   log(fn.getFnName(func) + ', ' + JSON.stringify(ctx) + '\r\n');
 }
 
-function writeToResp(response, ctx) {
-  response.writeHead(ctx.statusCode, {"Content-Type": "application/json"});
-  response.write(JSON.stringify(ctx.result));
+function writeToResp(response, statusCode, result) {
+  response.writeHead(statusCode, {"Content-Type": "application/json"});
+  response.write(JSON.stringify(result));
   response.end();
 }
 
@@ -59,7 +59,7 @@ exports.run = function(request, response) {
     ctx.body = request.body;
     ctx.statusCode = 200;
     ctx = fn.combineAll(handlers, function(d) {return d.statusCode !== 200;}, ctx);
-    writeToResp(response, ctx);
+    writeToResp(response, ctx.statusCode, ctx.result);
   }
   catch (e) {
     if ( ! e.hasOwnProperty('statusCode')) {

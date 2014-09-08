@@ -32,7 +32,7 @@ exports.persist = function persist(ctx) {
   }
 
   ctx.statusCode = 405;
-  ctx.result = {message: 'Method Not Allowed'};
+  ctx.result = {Error: 'Method Not Allowed'};
   return ctx;
 };
 

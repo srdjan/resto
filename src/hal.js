@@ -47,14 +47,12 @@ function createOne(ctx) {
 
 exports.convert = function convert(ctx) {
   log('converter');
-  var halRep;
   if (ctx.result instanceof Array) {
-    halRep = createList(ctx);
+    ctx.result = createList(ctx);
   }
   else {
-    halRep = createOne(ctx);
+    ctx.result = createOne(ctx);
   }
-  ctx.result = halRep;
   return ctx;
 };
 

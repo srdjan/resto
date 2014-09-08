@@ -2,10 +2,6 @@
 //- functions
 //---------------------------------------------------------------------------------
 var Either = require('data.either');
-exports.Success = Either.Right;
-exports.Next = Either.Right;
-exports.Fail = Either.Left;
-
 var R = require('ramda');
 exports.compose = R.compose;
 exports.contains = R.contains;
@@ -63,7 +59,7 @@ exports.getLinks = function(entity) {
       return links;
     }
   }
-  throw { statusCode: 500, message: 'Internal Server Error (invalid links?'};
+  return [];
 };
 
 exports.isApiCall = function(request) { return request.url.indexOf('/api') !== -1; };
@@ -93,19 +89,6 @@ exports.extend = function(proto, literal) {
     return result;
 };
 
-// // Monad(a), (a -> b) -> Monad(b)
-// function mapM(monad, transformation) {
-//   return monad.chain(function(value) {
-//     return transformation(value);
-//   });
-// }
-
-// exports.runAll = function(ctx, handlers) {
-//   var result = Either.of(ctx);
-//   handlers.forEach(function(handler) { result = mapM(result, handler.func); });
-//   return result.orElse(function(err) {return err;});
-// };
-
 // f, m(a), ep -> m(b)
 function combine(f, ep, m) {
   return m.chain(function(d) {
@@ -113,10 +96,14 @@ function combine(f, ep, m) {
     return ep(r) ? Either.Left(r) : Either.Right(r);
   });
 }
-// hs, a, ep -> m(b)
+// hs, a, ep -> b
 exports.combineAll = function(hs, ep, d) {
   var m = Either.of(d);
-  hs.forEach(function(h) { m = combine(h.func, ep, m); });
+  hs.forEach(function(h) {
+        m = combine(h.func, ep, m);
+        return m;
+      }
+  );
   if(m.isRight) {
     return m.get();
   }

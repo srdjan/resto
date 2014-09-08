@@ -9,7 +9,7 @@ function resolveMethod(ctx) {
   log('method-resolver');
   ctx.handler = resource[ctx.method];
   if (typeof ctx.handler === 'undefined') {
-    ctx.result = {message: 'method resolver error'};
+    ctx.result = {Error: 'method resolver error'};
     ctx.statusCode = 500;
     return ctx;
   }

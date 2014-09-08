@@ -55,6 +55,7 @@ pipeline.use(converter);
 //-  test bad get all
   var all = get('bad');
   expect(all.statusCode).to.be(500);
+  expect(all.data.Error).to.be('type resolver error');
 
 // //-  test get all
   all = get('/api/apples/');
