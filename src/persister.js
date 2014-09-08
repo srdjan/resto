@@ -30,6 +30,7 @@ exports.persist = function persist(ctx) {
     }
     return ctx;
   }
+
   ctx.statusCode = 405;
   ctx.result = {message: 'Method Not Allowed'};
   return ctx;

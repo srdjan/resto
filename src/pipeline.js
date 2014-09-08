@@ -59,7 +59,7 @@ exports.run = function(request, response) {
     ctx.body = request.body;
     ctx.statusCode = 200;
     ctx = fn.combineAll(handlers, function(d) {return d.statusCode !== 200;}, ctx);
-    writeToResp(response, ctx.isRight ? ctx.get() : ctx);
+    writeToResp(response, ctx);
   }
   catch (e) {
     if ( ! e.hasOwnProperty('statusCode')) {

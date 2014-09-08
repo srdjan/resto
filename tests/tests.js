@@ -56,7 +56,7 @@ pipeline.use(converter);
   var all = get('bad');
   expect(all.statusCode).to.be(500);
 
-//-  test get all
+// //-  test get all
   all = get('/api/apples/');
   expect(all.statusCode).to.be(200);
   expect(all.data.listLinkRels().length).to.be(2);

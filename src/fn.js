@@ -117,6 +117,9 @@ function combine(f, ep, m) {
 exports.combineAll = function(hs, ep, d) {
   var m = Either.of(d);
   hs.forEach(function(h) { m = combine(h.func, ep, m); });
+  if(m.isRight) {
+    return m.get();
+  }
   return m.orElse(function(e) { return e;});
 };
 
@@ -126,4 +129,41 @@ exports.combineAll = function(hs, ep, d) {
   var expect = require('expect.js');
   log('testing: fn.js');
 
-  expect(10 > 2).to.be(true);
+  function f1(ctx) {
+    log('f1, counter before: ' + ctx.counter);
+    if(ctx.counter > 1) {
+      ctx.statusCode = 500;
+      return ctx;
+    }
+    ctx.counter += 1;
+    return ctx;
+  }
+  function f2(ctx) {
+    log('f2, counter before: ' + ctx.counter);
+    if(ctx.counter > 1) {
+      ctx.statusCode = 500;
+      return ctx;
+    }
+    ctx.counter += 1;
+    return ctx;
+  }
+  function f3(ctx) {
+    log('f3, counter before: ' + ctx.counter);
+    // if(ctx.counter > 1) {
+    //   ctx.statusCode = 500;
+    //   return ctx;
+    // }
+    ctx.counter += 1;
+    return ctx;
+  }
+
+  // setup
+  var handlers = [];
+  handlers.push({ func: f1, pred: false, trace: false});
+  handlers.push({ func: f2, pred: false, trace: false});
+  handlers.push({ func: f3, pred: false, trace: false});
+
+  // run until failure
+  var ctx = {counter: 1, statusCode: 200};
+  ctx = exports.combineAll(handlers, function(d) {return d.statusCode !== 200;}, ctx);
+  log(ctx);
