@@ -39,12 +39,35 @@ function update(ctx) {
   return Either.Right(ctx);
 }
 
+function persist(ctx) {
+  if (ctx.method === 'put' || ctx.method === 'patch') {
+    ctx.result = db.save(ctx.entity);
+  }
+  else if (ctx.method === 'delete') {
+    ctx.result = db.remove(ctx.id);
+  }
+  else if (ctx.method === 'post') {
+    if (ctx.id === 0) {
+      ctx.result = db.add(ctx.entity);
+    }
+    else {
+      ctx.result = db.save(ctx.entity);
+    }
+  }
+  else {
+    ctx.statusCode = 405;
+    ctx.result = 'Method Not Allowed';
+    return Either.Left(ctx);
+  }
+
+  return Either.Right(ctx);
+}
+
 function processApi(ctx) {
   if(ctx.entity[ctx.rel](ctx.body)) {
     return Either.Right(ctx);
   }
-  ctx.statusCode = 422;
-  ctx.result = 'Error: ' + result;
+  log('domain API returned false - no changes to entity - no need to persist');
   return Either.Left(ctx);
 }
 
@@ -61,25 +84,25 @@ exports.get = function(ctx) {
 exports.post = function(ctx) {
   if(ctx.id === 0) {
     ctx.entity = new ctx.typeCtor();
-    return validatePropsMatch(ctx).chain(update).merge();
+    return validatePropsMatch(ctx).chain(update).chain(persist).merge();
   }
   ctx.entity = db.get(ctx.id);
-  return validateApiCall(ctx).chain(processApi).merge();
+  return validateApiCall(ctx).chain(processApi).chain(persist).merge();
 };
 
 exports.put = function(ctx) {
   ctx.entity = db.get(ctx.id);
-  return validatePropsMatch(ctx).chain(validateApiCall).chain(processApi).chain(update).merge();
+  return validatePropsMatch(ctx).chain(validateApiCall).chain(processApi).chain(update).chain(persist).merge();
 };
 
 exports.patch = function(ctx) {
   ctx.entity = db.get(ctx.id);
-  return validatePropsExist(ctx).chain(validateApiCall).chain(processApi).chain(update).merge();
+  return validatePropsExist(ctx).chain(validateApiCall).chain(processApi).chain(update).chain(persist).merge();
 };
 
 exports.delete = function(ctx) {
   ctx.entity = db.get(ctx.id);
-  return validateApiCall(ctx).chain(processApi).merge();
+  return validateApiCall(ctx).chain(processApi).chain(persist).merge();
 };
 
 //---------------------------------------------------------------------------------

@@ -12,7 +12,6 @@ var authorizer = require('../src/auth.js').auth;
 var typeResolver = require('../src/type-resolver.js').resolve;
 var methodResolver = require('../src/method-resolver.js').resolve;
 var invoker = require('../src/invoker.js').invoke;
-var persister = require('../src/persister.js').persist;
 var converter = require('../src/hal.js').convert;
 var log = console.log;
 
@@ -49,7 +48,6 @@ log('------ starting integration tests --------');
 pipeline.use(typeResolver);
 pipeline.use(methodResolver);
 pipeline.use(invoker);
-pipeline.use(persister);
 pipeline.use(converter);
 
 //-  test bad get all
