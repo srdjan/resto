@@ -61,25 +61,25 @@ exports.get = function(ctx) {
 exports.post = function(ctx) {
   if(ctx.id === 0) {
     ctx.entity = new ctx.typeCtor();
-    return fn.map2M(Either.of(ctx), validatePropsMatch).chain(update).merge();
+    return validatePropsMatch(ctx).chain(update).merge();
   }
   ctx.entity = db.get(ctx.id);
-  return fn.map2M(Either.of(ctx), validateApiCall).chain(processApi).merge();
+  return validateApiCall(ctx).chain(processApi).merge();
 };
 
 exports.put = function(ctx) {
   ctx.entity = db.get(ctx.id);
-  return fn.map2M(Either.of(ctx), validatePropsMatch).chain(validateApiCall).chain(processApi).chain(update).merge();
+  return validatePropsMatch(ctx).chain(validateApiCall).chain(processApi).chain(update).merge();
 };
 
 exports.patch = function(ctx) {
   ctx.entity = db.get(ctx.id);
-  return fn.map2M(Either.of(ctx), validatePropsExist).chain(validateApiCall).chain(processApi).chain(update).merge();
+  return validatePropsExist(ctx).chain(validateApiCall).chain(processApi).chain(update).merge();
 };
 
 exports.delete = function(ctx) {
   ctx.entity = db.get(ctx.id);
-  return fn.map2M(Either.of(ctx), validateApiCall).chain(processApi).merge();
+  return validateApiCall(ctx).chain(processApi).merge();
 };
 
 //---------------------------------------------------------------------------------

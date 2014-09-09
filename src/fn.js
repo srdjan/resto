@@ -89,32 +89,18 @@ exports.extend = function(proto, literal) {
     return result;
 };
 
-// m(a), f -> m(b)
-exports.map2M = function map(m, f) {
-  return m.chain(function(value) {
-    return f(value);
-  });
-};
-
-// f, m(a), ep -> m(b)
-function combine(f, ep, m) {
+// f, ep, m(a) -> m(b)
+function run(f, ep, m) {
   return m.chain(function(d) {
     var r = f(d);
     return ep(r) ? Either.Left(r) : Either.Right(r);
   });
 }
-// hs, a, ep -> b
-exports.combineAll = function(hs, ep, d) {
+// hs, ep, a -> b | err
+exports.runAll = function(hs, ep, d) {
   var m = Either.of(d);
-  hs.forEach(function(h) {
-        m = combine(h.func, ep, m);
-        return m;
-      }
-  );
-  if(m.isRight) {
-    return m.get();
-  }
-  return m.orElse(function(e) { return e;});
+  hs.forEach(function(h) { m = run(h.func, ep, m); });
+  return m.merge();
 };
 
 //---------------------------------------------------------------------------------
@@ -159,5 +145,5 @@ exports.combineAll = function(hs, ep, d) {
 
   // run until failure
   var ctx = {counter: 1, statusCode: 200};
-  ctx = exports.combineAll(handlers, function(d) {return d.statusCode !== 200;}, ctx);
+  ctx = exports.runAll(handlers, function(d) {return d.statusCode !== 200;}, ctx);
   log(ctx);

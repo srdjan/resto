@@ -58,7 +58,7 @@ exports.run = function(request, response) {
     ctx.url = request.url;
     ctx.body = request.body;
     ctx.statusCode = 200;
-    ctx = fn.combineAll(handlers, function(d) {return d.statusCode !== 200;}, ctx);
+    ctx = fn.runAll(handlers, function(d) {return d.statusCode !== 200;}, ctx);
     writeToResp(response, ctx.statusCode, ctx.result);
   }
   catch (e) {
