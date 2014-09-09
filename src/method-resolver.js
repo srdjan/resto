@@ -1,12 +1,11 @@
 //---------------------------------------------------------------------------------
-//- resolver
+//- method resolver
 //---------------------------------------------------------------------------------
 var fn = require('./fn.js');
 var resource = require('./resource.js');
 var log = console.log;
 
-function resolveMethod(ctx) {
-  // log('method-resolver');
+function resolve(ctx) {
   ctx.handler = resource[ctx.method];
   if (typeof ctx.handler === 'undefined') {
     ctx.result = {Error: 'method resolver error'};
@@ -16,16 +15,16 @@ function resolveMethod(ctx) {
   return ctx;
 }
 
-module.exports.resolve = resolveMethod;
+module.exports.resolve = resolve;
 
 //---------------------------------------------------------------------------------
 //@tests
 //---------------------------------------------------------------------------------
   var expect = require('expect.js');
-  log('testing: fn-resolver.js');
+  log('testing: method-resolver.js');
 
-  var ctx = resolveMethod({ method: 'bad method name'});
+  var ctx = resolve({ method: 'bad method name'});
   expect(ctx.statusCode).to.be(500);
 
-  ctx = resolveMethod({method: 'get'});
+  ctx = resolve({method: 'get'});
   expect(typeof ctx.handler).to.be('function');

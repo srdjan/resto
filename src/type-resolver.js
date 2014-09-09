@@ -1,14 +1,13 @@
 //---------------------------------------------------------------------------------
-//- resolver
+//- type resolver
 //---------------------------------------------------------------------------------
 var fn = require('./fn.js');
 var app = require('./app.js');
 var log = console.log;
 
-function resolveType(ctx) {
-  // log('type-resolver');
+function resolve(ctx) {
   var tokens = fn.getTokens(ctx.url);
-  if (tokens.length > 1) {
+  if (tokens.length >= 2) {
     var typeName = tokens[1].slice(0, -1);
     ctx.typeName = typeName.charAt(0).toUpperCase() + typeName.substring(1);
     ctx.typeCtor = app[ctx.typeName];
@@ -19,7 +18,7 @@ function resolveType(ctx) {
   return ctx;
 }
 
-module.exports.resolve = resolveType;
+module.exports.resolve = resolve;
 
 //---------------------------------------------------------------------------------
 //@tests
@@ -29,27 +28,27 @@ module.exports.resolve = resolveType;
 
   //test: resolveType(url):- api/apples/123456/create
   var url = '/api/apples/';
-  var ctx = resolveType({url: url});
+  var ctx = resolve({url: url});
   expect(ctx.typeName).to.be('Apple');
 
   url = 'api/apples/' + fn.atob('123456');
-  ctx = resolveType({url: url});
+  ctx = resolve({url: url});
   expect(ctx.typeName).to.be('Apple');
 
   url = 'api/apples/';
-  ctx = resolveType({url: url});
+  ctx = resolve({url: url});
   expect(ctx.typeName).to.be('Apple');
 
   url = 'api/apples/' + fn.atob('123456');
-  ctx = resolveType({url: url});
+  ctx = resolve({url: url});
   expect(ctx.typeName).to.be('Apple');
 
   url = 'api/apples/' + fn.atob(123456 + '/' + 'create');
-  ctx = resolveType({url: url});
+  ctx = resolve({url: url});
   expect(ctx.typeName).to.be('Apple');
 
   // should fail
   url = 'apples' + fn.atob(123456 + '/' + 'create');
-  ctx = resolveType({url: url});
+  ctx = resolve({url: url});
   expect(ctx.statusCode).to.be(500);
 
