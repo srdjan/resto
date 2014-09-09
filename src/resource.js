@@ -84,25 +84,44 @@ exports.get = function(ctx) {
 exports.post = function(ctx) {
   if(ctx.id === 0) {
     ctx.entity = new ctx.typeCtor();
-    return validatePropsMatch(ctx).chain(update).chain(persist).merge();
+    return validatePropsMatch(ctx)
+                  .chain(update)
+                  .chain(persist)
+                  .merge();
   }
   ctx.entity = db.get(ctx.id);
-  return validateApiCall(ctx).chain(processApi).chain(persist).merge();
+  return validateApiCall(ctx)
+                  .chain(processApi)
+                  .chain(persist)
+                  .merge();
 };
 
 exports.put = function(ctx) {
   ctx.entity = db.get(ctx.id);
-  return validatePropsMatch(ctx).chain(validateApiCall).chain(processApi).chain(update).chain(persist).merge();
+  return validatePropsMatch(ctx)
+                  .chain(validateApiCall)
+                  .chain(processApi)
+                  .chain(update)
+                  .chain(persist)
+                  .merge();
 };
 
 exports.patch = function(ctx) {
   ctx.entity = db.get(ctx.id);
-  return validatePropsExist(ctx).chain(validateApiCall).chain(processApi).chain(update).chain(persist).merge();
+  return validatePropsExist(ctx)
+                  .chain(validateApiCall)
+                  .chain(processApi)
+                  .chain(update)
+                  .chain(persist)
+                  .merge();
 };
 
 exports.delete = function(ctx) {
   ctx.entity = db.get(ctx.id);
-  return validateApiCall(ctx).chain(processApi).chain(persist).merge();
+  return validateApiCall(ctx)
+                  .chain(processApi)
+                  .chain(persist)
+                  .merge();
 };
 
 //---------------------------------------------------------------------------------

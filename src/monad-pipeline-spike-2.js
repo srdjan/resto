@@ -20,7 +20,7 @@ function use(f) {
 function run(ctx) {
   var m = Either.of(ctx);
   handlers.forEach(function(f) { m = map(m, f); });
-  return m.orElse(function(e) { return e; });
+  return m.merge();
 }
 
 module.exports = {
