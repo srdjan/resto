@@ -14,8 +14,6 @@ exports.chain = R.chain;
 
 var log = console.log;
 
-exports.filterEmpty = R.filter(function(e) { return Object.getOwnPropertyNames(e).length > 0; });
-
 function trimLeftAndRight(str, ch) {
   return str.replace(new RegExp("^[" + ch + "]+"), "").replace(new RegExp("[" + ch + "]+$"), "");
 }

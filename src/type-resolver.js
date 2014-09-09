@@ -7,14 +7,14 @@ var log = console.log;
 
 function resolve(ctx) {
   var tokens = fn.getTokens(ctx.url);
-  if (tokens.length >= 2) {
-    var typeName = tokens[1].slice(0, -1);
-    ctx.typeName = typeName.charAt(0).toUpperCase() + typeName.substring(1);
-    ctx.typeCtor = app[ctx.typeName];
+  if (tokens.length < 2) {
+    ctx.result = {Error: 'type resolver error'};
+    ctx.statusCode = 500;
     return ctx;
   }
-  ctx.result = {Error: 'type resolver error'};
-  ctx.statusCode = 500;
+  var typeName = tokens[1].slice(0, -1);
+  ctx.typeName = typeName.charAt(0).toUpperCase() + typeName.substring(1);
+  ctx.typeCtor = app[ctx.typeName];
   return ctx;
 }
 

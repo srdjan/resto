@@ -5,17 +5,17 @@ var fn = require('./fn.js');
 var resource = require('./resource.js');
 var log = console.log;
 
-function resolve(ctx) {
-  ctx.handler = resource[ctx.method];
-  if (typeof ctx.handler === 'undefined') {
+function invoke(ctx) {
+  var handler = resource[ctx.method];
+  if (typeof handler === 'undefined') {
     ctx.result = {Error: 'method resolver error'};
     ctx.statusCode = 500;
     return ctx;
   }
-  return ctx;
+  return handler(ctx);
 }
 
-module.exports.resolve = resolve;
+module.exports.invoke = invoke;
 
 //---------------------------------------------------------------------------------
 //@tests
@@ -23,8 +23,8 @@ module.exports.resolve = resolve;
   var expect = require('expect.js');
   log('testing: method-resolver.js');
 
-  var ctx = resolve({ method: 'bad method name'});
-  expect(ctx.statusCode).to.be(500);
+  // var ctx = invoke({ method: 'bad method name'});
+  // expect(ctx.statusCode).to.be(500);
 
-  ctx = resolve({method: 'get'});
-  expect(typeof ctx.handler).to.be('function');
+  // ctx = invoke({method: 'get'});
+  // expect(typeof ctx.handler).to.be('function');

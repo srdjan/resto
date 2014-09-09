@@ -10,8 +10,7 @@ var pipeline = require('../src/pipeline.js');
 var authenticator = require('../src/auth.js').auth;
 var authorizer = require('../src/auth.js').auth;
 var typeResolver = require('../src/type-resolver.js').resolve;
-var methodResolver = require('../src/method-resolver.js').resolve;
-var invoker = require('../src/invoker.js').invoke;
+var invoker = require('../src/method-resolver.js').invoke;
 var converter = require('../src/hal.js').convert;
 var log = console.log;
 
@@ -46,7 +45,6 @@ log('------ starting integration tests --------');
 // pipeline.use(authenticator);
 // pipeline.use(authorizer);
 pipeline.use(typeResolver);
-pipeline.use(methodResolver);
 pipeline.use(invoker);
 pipeline.use(converter);
 
@@ -55,8 +53,8 @@ pipeline.use(converter);
   expect(all.statusCode).to.be(500);
   expect(all.data.Error).to.be('type resolver error');
 
-// //-  test get all
-  all = get('/api/apples/');
+//-  test get all
+  var all = get('/api/apples/');
   expect(all.statusCode).to.be(200);
   expect(all.data.listLinkRels().length).to.be(2);
   expect(fn.contains('self', all.data.listLinkRels())).to.be(true);

@@ -49,17 +49,12 @@ function getAll() {
   datastore.values(function(vals) {
     objs = vals;
   });
-  if (objs.length >= 1) {
-    objs = fn.filterEmpty(objs);
-  }
   return objs;
 }
 
 function remove(id) {
   var entity = get(id);
-  // if(typeof entity !== 'undefined') {
-    datastore.removeItem(id);
-  // }
+  datastore.removeItem(id);
   return entity;
 }
 
