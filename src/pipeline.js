@@ -6,10 +6,6 @@ var log = console.log;
 
 var handlers = [];
 
-function trace(func, ctx) {
-  log(fn.getFnName(func) + ', ' + JSON.stringify(ctx) + '\r\n');
-}
-
 function writeToResp(response, statusCode, result) {
   response.writeHead(statusCode, {"Content-Type": "application/json"});
   response.write(JSON.stringify(result));
@@ -44,19 +40,24 @@ function getIdAndRel(url) {
   return idAndRel;
 }
 
+function extract(request) {
+  var ctx = {};
+  var idAndRel = getIdAndRel(request.url);
+  ctx.id = idAndRel.id;
+  ctx.rel = idAndRel.rel;
+  ctx.method = request.method.toLowerCase();
+  ctx.url = request.url;
+  ctx.body = request.body;
+  return ctx;
+}
+
 exports.use = function(f, p, t) {
   handlers.push({ func: f, pred: p || false, trace: t || false});
 };
 
 exports.run = function(request, response) {
   try {
-    var idAndRel = getIdAndRel(request.url);
-    var ctx = {};
-    ctx.id = idAndRel.id;
-    ctx.rel = idAndRel.rel;
-    ctx.method = request.method.toLowerCase();
-    ctx.url = request.url;
-    ctx.body = request.body;
+    var ctx = extract(request);
     ctx.statusCode = 200;
     ctx = fn.runAll(handlers, function(d) { return d.statusCode !== 200; }, ctx);
     writeToResp(response, ctx.statusCode, ctx.result);

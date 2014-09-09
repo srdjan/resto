@@ -78,10 +78,16 @@ exports.getTokens = function(url) {
   return trimLeftAndRight(path, '/').split('/');
 };
 
+function trace(h, func, ctx) {
+  log(h + exports.getFnName(func) + ', ' + JSON.stringify(ctx));
+}
+
 // f, ep, m(a) -> m(b)
 function run(f, ep, m) {
   return m.chain(function(d) {
+    trace('> ', f, d);
     var r = f(d);
+    trace('< ', f, r);
     return ep(r) ? Either.Left(r) : Either.Right(r);
   });
 }
