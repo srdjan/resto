@@ -1,5 +1,2 @@
-es6-arrow-function test.js
-es6-arrow-function app.js
-es6-arrow-function fx.js
-browserify -t liveify foo.ls > bundle.js
-
+echo this is arg: %1
+es6-arrow-function %1 > test.js
