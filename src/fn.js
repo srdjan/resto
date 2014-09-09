@@ -91,6 +91,7 @@ function run(f, ep, m) {
     return ep(r) ? Either.Left(r) : Either.Right(r);
   });
 }
+
 // hs, ep, a -> b | err
 exports.runAll = function(hs, ep, d) {
   var m = Either.of(d);
