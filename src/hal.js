@@ -6,16 +6,16 @@ var fn = require('./fn.js');
 var log = console.log;
 
 function addLinks(halRep, ctx) {
-  var links = fn.getLinks(ctx.result);
+  var links = ctx.result.getLinks();
   links.forEach(function(l) {
       halRep.addLink(l.rel, { href: '/api/' + ctx.typeName + 's/' + fn.atob(ctx.result.id + '/' + l.rel), method: l.method});
     });
   return halRep;
 }
 
-function addProperties(halRep, result) {
-  var propNames = fn.filter(function(p) { return !p.startsWith('state_') && p !== 'id'; }, Object.keys(result));
-  return fn.each(function(p) { halRep[p] = result[p]; }, propNames);
+function addProperties(halRep, ctx) {
+  var propNames = fn.filter(function(p) { return !p.startsWith('state_') && p !== 'id'; }, Object.keys(ctx.result));
+  return fn.each(function(p) { halRep[p] = ctx.result[p]; }, propNames);
 }
 
 function createRoot(typeName) {
@@ -39,14 +39,13 @@ function createList(ctx) {
 
 function createOne(ctx) {
   var halRep = halson({});
-  addProperties(halRep, ctx.result);
+  addProperties(halRep, ctx);
   halRep.addLink('self', '/api/' + ctx.typeName.toLowerCase() + 's/' + fn.atob(ctx.result.id));
   addLinks(halRep, ctx);
   return halRep;
 }
 
 exports.convert = function convert(ctx) {
-  // log('converter');
   if (ctx.result instanceof Array) {
     ctx.result = createList(ctx);
   }

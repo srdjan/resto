@@ -7,7 +7,7 @@ var db = require('./db.js');
 var log = console.log;
 
 function validateApiCall(ctx) {
-  var links = fn.getLinks(ctx.entity);
+  var links = ctx.entity.getLinks();
   if ( ! fn.some(function(link) { return link.rel === ctx.rel; }, links)) {
     ctx.statusCode = 405;
     ctx.result = 'Conflict - Method call not allowed';
@@ -59,7 +59,6 @@ function persist(ctx) {
     ctx.result = 'Method Not Allowed';
     return Either.Left(ctx);
   }
-
   return Either.Right(ctx);
 }
 
@@ -159,8 +158,8 @@ exports.delete = function(ctx) {
   var fromDb = db.add(ctx.entity);
   ctx.id = fromDb.id;
 
-  var result = exports.post(ctx);
-  expect(result.statusCode).to.be(405);
+  // var result = exports.post(ctx);
+  // expect(result.statusCode).to.be(405);
 
   // var ctx = {
   //   id: 0,

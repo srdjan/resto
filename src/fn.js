@@ -49,17 +49,6 @@ exports.hasProp = function (obj, prop) {
   return obj.hasOwnProperty(prop);
 };
 
-exports.getLinks = function(entity) {
-  var states = R.filter(function(m) { return m.startsWith('state_'); }, Object.keys(entity));
-  for (var i = 0; i < states.length; i++) {
-    var links = entity[states[i]]();
-    if (links !== false) {
-      return links;
-    }
-  }
-  return [];
-};
-
 exports.getObjType = function(obj){
   var text = Function.prototype.toString.call(obj.constructor);
   return text.match(/function (.*)\(/)[1];
@@ -83,9 +72,9 @@ function trace(h, func, ctx) {
 // f, ep, m(a) -> m(b)
 function run(f, ep, m) {
   return m.chain(function(d) {
-    trace('> ', f, d);
+    // trace('> ', f, d);
     var r = f(d);
-    trace('< ', f, r);
+    // trace('< ', f, r);
     return ep(r) ? Either.Left(r) : Either.Right(r);
   });
 }
