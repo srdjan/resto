@@ -82,9 +82,7 @@ function getState(newTodo) {
           .chain(state_pending)
           .chain(state_done)
           .chain(state_archived)
-          .orElse(function(todo) {
-            return todo;
-          });
+          .merge();
 }
 
 //---------------------------------------------------------------------------------

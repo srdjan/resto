@@ -1,4 +1,3 @@
--todo: es6 arrow !!!!, contracts.js, ...
 -todo:
   // http://j201.github.io/posts/2013-06-16-Evil-JS-Macros.html
   // var dog = {
@@ -21,6 +20,7 @@
 -todo: add query
 -todo: add links to hypermedia type (meta) or via header?
 -todo: add services (non-persisting api) ?
+-todo: es6 arrow !!!!, contracts.js, ...
 -todo: add contracts.js
 -todo: make client up ( http://www.smashingmagazine.com/2014/09/02/building-simple-cross-browser-offline-todo-list-indexeddb-websql
                        http://jdkanani.com/smalleditor
