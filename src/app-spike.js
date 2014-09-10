@@ -29,7 +29,7 @@ function archive(todo) {
   return true;
 }
 
-function state(todo) {
+function getState(todo) {
   if ( ! todo.done && ! todo.archived) {
     todo.state = {
         name: 'pending',
@@ -63,7 +63,7 @@ function state(todo) {
 }
 
 log(done(Todo));
-log(state(Todo));
+log(getState(Todo));
 
 module.exports = {
   Todo: Todo,
@@ -71,5 +71,5 @@ module.exports = {
   done: done,
   notDone: notDone,
   archive: archive,
-  state: state
+  getState: getState
 };

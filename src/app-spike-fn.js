@@ -13,31 +13,19 @@ var Todo = {
 //exports
 function save(newTodo) {
   if(newTodo.content.length > 9) {
-    return Failure("Failed validation");
+    return false;
   }
-  return Success({
-    content: newTodo.Content,
-    done:  false,
-    archived: false
-  });
+  return true;
 }
 
 //exports
 function done(newTodo) {
-  return Success({
-    content: newTodo.content,
-    done:  true,
-    archived: false
-  });
+  return true;
 }
 
 //exports
 function notDone(newTodo) {
-  return Success({
-    content: newTodo.content,
-    done:  false,
-    archived: false
-  });
+  return true;
 }
 
 function state_pending(todo) {
@@ -54,7 +42,7 @@ function state_pending(todo) {
 }
 
 function state_done(todo) {
-  if (todo.done) {
+  if (todo.done && ! todo.archived) {
     log('state done:');
     todo.state = [
       { rel: 'archive', method: "PUT" },
@@ -94,8 +82,8 @@ log('testing: app-spike-fn.js');
 var res = getState({
   content: 'bla bla bla',
   done:  true,
-  archived: true
+  archived: false
 });
-log(res);
+// log(res);
 log(res.state);
 
