@@ -76,20 +76,6 @@ exports.convert = function convert(ctx) {
   var expect = require('expect.js');
   log('testing: hal.js');
 
-  //- get all - when result empty set
-  //-----------------------------------
-  // var ctx = {
-  //   result: { name: 'Apple', data: [] },
-  //   resp: {
-  //     data: '',
-  //     writeHead: function() {},
-  //     write: function(hal) { this.data = hal;},
-  //     end: function() {}
-  //   }
-  // };
-  // var res = exports.toHal(ctx);
-  // log(res);
-
   //- get all - when result on obj
   //-----------------------------------
   var ctx = {
