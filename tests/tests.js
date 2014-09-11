@@ -46,7 +46,7 @@ log('------ starting integration tests --------');
 // pipeline.use(authorizer);
 pipeline.use(typeResolver);
 pipeline.use(invoker);
-pipeline.use(converter, false, true);
+pipeline.use(converter);
 
 //-  test bad get all
   var all = get('bad');
@@ -68,9 +68,17 @@ pipeline.use(converter, false, true);
   expect(fn.contains('grow', apple.data.listLinkRels())).to.be(true);
   expect(fn.contains('toss', apple.data.listLinkRels())).to.be(true);
 
+//- test create
+  var apple = cmd(all.data, 'create', {weight: 20.0, color: "green"});
+  expect(apple.data.listLinkRels().length).to.be(3);
+  expect(apple.data.weight).to.be(20.0);
+  expect(fn.contains('self', apple.data.listLinkRels())).to.be(true);
+  expect(fn.contains('grow', apple.data.listLinkRels())).to.be(true);
+  expect(fn.contains('toss', apple.data.listLinkRels())).to.be(true);
+
 //- test if create sucessful
   var self = get(apple.data.getLink('self').href);
-  expect(self.data.weight).to.be(10.0);
+  expect(self.data.weight).to.be(20.0);
   expect(self.data.listLinkRels().length).to.be(3);
   expect(fn.contains('self', self.data.listLinkRels())).to.be(true);
   expect(fn.contains('grow', self.data.listLinkRels())).to.be(true);
@@ -78,7 +86,7 @@ pipeline.use(converter, false, true);
 
 //- call 'grow' api (post - with id and propertis that don't exist on entity)
   var appleGrown = cmd(self.data, 'grow', { weightIncr: 230.0});
-  expect(appleGrown.data.weight).to.be(240.0);
+  expect(appleGrown.data.weight).to.be(250.0);
   expect(appleGrown.data.listLinkRels().length).to.be(3);
   expect(fn.contains('self', appleGrown.data.listLinkRels())).to.be(true);
   expect(fn.contains('eat', appleGrown.data.listLinkRels())).to.be(true);
@@ -96,13 +104,15 @@ pipeline.use(converter, false, true);
 
 //- test get before toss
   var all = get('/api/apples/');
+  log(JSON.stringify(all.data))
+
   var embeds = all.data.getEmbeds('apples');
-  expect(embeds.length).to.be(1);
+  expect(embeds.length).to.be(2);
 
   result = cmd(appleEaten.data, 'toss', { });
 
 //- test get after toss
   var all = get('/api/apples/');
   var embeds = all.data.getEmbeds('apples');
-  expect(embeds.length).to.be(0);
+  expect(embeds.length).to.be(1);
 
