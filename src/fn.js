@@ -45,15 +45,6 @@ exports.propsDontExist = function (obj1, obj2) {
   return ! propsExist(obj1, obj2);
 };
 
-exports.hasProp = function (obj, prop) {
-  return obj.hasOwnProperty(prop);
-};
-
-exports.getObjType = function(obj){
-  var text = Function.prototype.toString.call(obj.constructor);
-  return text.match(/function (.*)\(/)[1];
-};
-
 exports.getFnName = function(func) {
   var isFunc = typeof func == 'function';
   var s = isFunc && ((func.name && ['', func.name]) || func.toString().match(/function ([^\(]+)/));

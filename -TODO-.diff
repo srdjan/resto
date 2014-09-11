@@ -40,6 +40,7 @@
 -todo: process control: http://tech.pro/tutorial/2074/nodejs-managing-child-processes
 -todo: find the self contained app with searchable database and reuse as a default HAL based UI?
 -todo: use jsfmt to rewrite(remove) tests: http://rdio.github.io/jsfmt/
+-todo: dynamicly load app modules: http://stackoverflow.com/questions/10914751/loading-node-js-modules-dynamically-based-on-route
 
 +todo: make video and blog twit about it
 +todo: publish slides
@@ -67,3 +68,5 @@
   http://blog.newrelic.com/2014/09/08/apipunchlist/
 
   https://github.com/fitzgen/github-api
+  http://www.slideshare.net/GustafKotte/design-hypermedia-apis
+  http://www.slideshare.net/rnewton/amundsen-costbenefitshypermedia

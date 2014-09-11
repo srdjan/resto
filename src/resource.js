@@ -66,7 +66,7 @@ function processApi(ctx) {
   if(ctx.entity[ctx.rel](ctx.body)) {
     return Either.Right(ctx);
   }
-  log('domain API returned false - no changes to entity - no need to persist');
+  log('domain API returned false - no changes to entity should persist');
   return Either.Left(ctx);
 }
 
