@@ -46,7 +46,7 @@ log('------ starting integration tests --------');
 // pipeline.use(authorizer);
 pipeline.use(typeResolver);
 pipeline.use(invoker);
-pipeline.use(converter);
+pipeline.use(converter, false, true);
 
 //-  test bad get all
   var all = get('bad');

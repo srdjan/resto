@@ -1,0 +1,1113 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"conca",
+				"concatenate(monadA, monadB)	monad-pipeline-spike.js"
+			],
+			[
+				"ru",
+				"run(ctx)	pipeline.js"
+			],
+			[
+				"req",
+				"reqSelf	test-no-states.js"
+			],
+			[
+				"getId",
+				"getIdAndRel(url)	resolver.js"
+			],
+			[
+				"hal",
+				"halRep	hal.js"
+			],
+			[
+				"reques",
+				"request(opts)	client.js"
+			],
+			[
+				"grow",
+				"growUrl"
+			],
+			[
+				"u",
+				"ul	Tag"
+			],
+			[
+				"h",
+				"h3	Tag"
+			],
+			[
+				"i",
+				"img	Tag"
+			],
+			[
+				"com",
+				"console.log(message);"
+			],
+			[
+				"function",
+				"assert.fail(actual, expected, message, operator, stackStartFunction);"
+			],
+			[
+				"sec",
+				"secondsPerBeat"
+			],
+			[
+				"current",
+				"current16thNote"
+			],
+			[
+				"play",
+				"playBeat"
+			],
+			[
+				"Current",
+				"currentTime"
+			],
+			[
+				"audi",
+				"audioContext"
+			],
+			[
+				"schedule",
+				"scheduleNote"
+			],
+			[
+				"start",
+				"start_play"
+			],
+			[
+				"s",
+				"start_play"
+			],
+			[
+				"Propert",
+				"PropertyValue"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "tests/tests.js",
+			"settings":
+			{
+				"buffer_size": 4222,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/app.js",
+			"settings":
+			{
+				"buffer_size": 938,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/pipeline.js",
+			"settings":
+			{
+				"buffer_size": 3270,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/type-resolver.js",
+			"settings":
+			{
+				"buffer_size": 1644,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/method-resolver.js",
+			"settings":
+			{
+				"buffer_size": 973,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "//---------------------------------------------------------------------------------\n//- resource\n//---------------------------------------------------------------------------------\nvar fn = require('./fn.js');\nvar Either = require('data.either');\nvar db = require('./db.js');\nvar log = console.log;\n\nfunction validateApiCall(ctx) {\n  var links = ctx.entity.getLinks();\n  if ( ! fn.some(function(link) { return link.rel === ctx.rel; }, links)) {\n    ctx.statusCode = 405;\n    ctx.result = 'Conflict - Method call not allowed';\n    return Either.Left(ctx);\n  }\n  return Either.Right(ctx);\n}\n\nfunction validatePropsExist(ctx) {\n  if (fn.propsDontExist(ctx.body, ctx.entity)) {\n    ctx.statusCode = 400;\n    ctx.result = 'Bad Request - props do not exist';\n    return Either.Left(ctx);\n  }\n  return Either.Right(ctx);\n}\n\nfunction validatePropsMatch(ctx) {\n  if (fn.propsDontMatch(ctx.body, ctx.entity)) {\n    ctx.statusCode = 400;\n    ctx.result = 'Bad Request - props do not match';\n    return Either.Left(ctx);\n  }\n  return Either.Right(ctx);\n}\n\nfunction update(ctx) {\n  fn.each(function(key) { ctx.entity[key] = ctx.body[key]; }, Object.keys(ctx.body));\n  return Either.Right(ctx);\n}\n\nfunction persist(ctx) {\n  if (ctx.method === 'put' || ctx.method === 'patch') {\n    ctx.result = db.save(ctx.entity);\n  }\n  else if (ctx.method === 'delete') {\n    ctx.result = db.remove(ctx.id);\n  }\n  else if (ctx.method === 'post') {\n    if (ctx.id === 0) {\n      ctx.result = db.add(ctx.entity);\n    }\n    else {\n      ctx.result = db.save(ctx.entity);\n    }\n  }\n  else {\n    ctx.statusCode = 405;\n    ctx.result = 'Method Not Allowed';\n    return Either.Left(ctx);\n  }\n  return Either.Right(ctx);\n}\n\nfunction processApi(ctx) {\n  if(ctx.entity[ctx.rel](ctx.body)) {\n    return Either.Right(ctx);\n  }\n  log('domain API returned false - no changes to entity should persist');\n  return Either.Left(ctx);\n}\n\nexports.get = function(ctx) {\n  if (ctx.id === 0) {\n    ctx.result = db.getAll();\n  }\n  else {\n    ctx.result = db.get(ctx.id);\n  }\n  return ctx;\n};\n\nexports.post = function(ctx) {\n  if(ctx.id === 0) {\n    ctx.entity = new ctx.typeCtor();\n    return validatePropsMatch(ctx)\n                  .chain(update)\n                  .chain(persist)\n                  .merge();\n  }\n  ctx.entity = db.get(ctx.id);\n  return validateApiCall(ctx)\n                  .chain(processApi)\n                  .chain(persist)\n                  .merge();\n};\n\nexports.put = function(ctx) {\n  ctx.entity = db.get(ctx.id);\n  return validatePropsMatch(ctx)\n                  .chain(validateApiCall)\n                  .chain(processApi)\n                  .chain(update)\n                  .chain(persist)\n                  .merge();\n};\n\nexports.patch = function(ctx) {\n  ctx.entity = db.get(ctx.id);\n  return validatePropsExist(ctx)\n                  .chain(validateApiCall)\n                  .chain(processApi)\n                  .chain(update)\n                  .chain(persist)\n                  .merge();\n};\n\nexports.delete = function(ctx) {\n  ctx.entity = db.get(ctx.id);\n  return validateApiCall(ctx)\n                  .chain(processApi)\n                  .chain(persist)\n                  .merge();\n};\n\n//---------------------------------------------------------------------------------\n//@tests\n//---------------------------------------------------------------------------------\n  var expect = require('expect.js');\n  log('testing: resource.js');\n\n  // test post, id = 0\n  var ctx = {\n    id: 0,\n    typeCtor: function() { this.name = '';},\n    body: {name: 'sam'}\n  };\n  var result = exports.post(ctx);\n  expect(result.body.name).to.be.equal(result.entity.name);\n\n  var ctx = {\n    id: 0,\n    typeCtor: function() { this.name = '';},\n    body: {nammmme: 'sam'},\n    entity: {name: ''}\n  };\n  var result = exports.post(ctx);\n  expect(result.statusCode).to.be(400);\n\n  // test post, id != 0\n  // prepare db:\n  var ctx = {\n    id: 0,\n    typeCtor: function() { this.name = '';},\n    body: {name: 'sam'},\n    entity: { name: '?'}\n  };\n  var fromDb = db.add(ctx.entity);\n  ctx.id = fromDb.id;\n\n  // var result = exports.post(ctx);\n  // expect(result.statusCode).to.be(405);\n\n  // var ctx = {\n  //   id: 0,\n  //   typeCtor: function() { this.name = '';},\n  //   body: {nammmme: 'sam'},\n  //   entity: {name: ''}\n  // };\n  // var result = exports.post(ctx);\n  // expect(result.statusCode).to.be(400);\n",
+			"file": "src/resource.js",
+			"file_size": 4370,
+			"file_write_time": 130548526771650525,
+			"settings":
+			{
+				"buffer_size": 4364,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/hal.js",
+			"settings":
+			{
+				"buffer_size": 3485,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "src/fn.js",
+			"settings":
+			{
+				"buffer_size": 3600,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "-todo:\n  // http://j201.github.io/posts/2013-06-16-Evil-JS-Macros.html\n  // var dog = {\n  //     mammal : true,\n  //     domestic : true,\n  //     weight : 50,\n  //     speak : function() {\n  //         return \"woof\";\n  //     }\n  // };\n  // var littleDog = extend(dog, {weight : 10});\n  // littleDog.speak(); // \"woof\"\n  // littleDog.weight; // 10\n\n\n-todo: token auth: https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/\n-todo: handle conditional persistance\n-todo: handle embedded entities (https://www.readability.com/articles/c4khqjub)\n-todo: add paging (https://www.readability.com/articles/c4khqjub)\n-todo: add query\n-todo: add links to hypermedia type (meta) or via header?\n-todo: add services (non-persisting api) ?\n-todo: es6 arrow !!!!, contracts.js, ...\n-todo: add contracts.js\n-todo: make client up ( http://www.smashingmagazine.com/2014/09/02/building-simple-cross-browser-offline-todo-list-indexeddb-websql\n                       http://jdkanani.com/smalleditor\n                        http://sennajs.com/docs/,\n                        https://github.com/giann/zappa,\n                        https://github.com/velveteer/mithril-boilerplate\n                        http://tympanus.net/Development/TabStylesInspiration/\n                        http://mobify.github.io/bellows/\n                        http://www.invisionapp.com/tethr\n\n-todo: add meta links to display, validation...\n-todo: use Express (better server error handling (invalid json.!!..)\n      https://stormpath.com/blog/node-api-client-part-one/\n      http://appdevelopermagazine.com/1718/2014/7/31/StrongLoop-Node.js-API-Server-Released-for-Developing,-Securing-and-Scaling-REST-APIs/\n      http://avoidwork.github.io/tenso/rest.html\n-todo: add orchestrator: http://www.chorusjs.com/\n-todo: process control: http://tech.pro/tutorial/2074/nodejs-managing-child-processes\n-todo: find the self contained app with searchable database and reuse as a default HAL based UI?\n-todo: use jsfmt to rewrite(remove) tests: http://rdio.github.io/jsfmt/\n\n+todo: make video and blog twit about it\n+todo: publish slides\n+todo: hal-browser: use rel.method value instead of hardcoded POST\n+todo: hal-browser:don't show non get link for GET\n+todo: fx should return plain js objects - add wrapper to convert to hal\n+todo: hal-browser: fix not showing root props\n-notdoing: handle plain application/json vs application/hal+json\n-notdoing: extract datastore into middleware?\n\n!idea\n  !idea: test in production [http://bahmutov.calepin.co/test-in-production.html]\n  !idea: create web app for todos with !,@,# and keywords, rules, actions, messaies\n\n!use\n  https://github.com/xyncro/frost\n  http://www.rackspace.com/blog/objectrocket-adds-fully-managed-redis-service/?cm_mmc=managed-_-cloud-_-contentnam-_-dbweekly-ORredis\n  https://github.com/ericelliott/cuid\n  http://timelessrepo.com/haters-gonna-hateoas for RESTful APIs talk\n  http://raganwald.com/2014/04/10/mixins-forwarding-delegation.html\n  https://github.com/Raynos/http-framework...\n  https://bitbucket.org/gdamore/mangos/src/f2844c375d81/examples/?at=master\n  http://www.chorusjs.com/\n  http://trackingjs.com/\n  http://blog.newrelic.com/2014/09/08/apipunchlist/\n\n  https://github.com/fitzgen/github-api\n  http://www.slideshare.net/GustafKotte/design-hypermedia-apis\n  http://www.slideshare.net/rnewton/amundsen-costbenefitshypermedia\n",
+			"file": "-TODO-.diff",
+			"file_size": 3249,
+			"file_write_time": 130547730470545884,
+			"settings":
+			{
+				"buffer_size": 3380,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Packages/User/node.sublime-build",
+	"command_palette":
+	{
+		"height": 784.0,
+		"selected_items":
+		[
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"pack",
+				"Package Control: Install Package"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"sni",
+				"HTMLPrettify: Set Prettify Preferences"
+			],
+			[
+				"",
+				"View: Toggle Status Bar"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"remov",
+				"Package Control: Remove Package"
+			],
+			[
+				"html",
+				"HTMLPrettify"
+			],
+			[
+				"repln",
+				"SublimeREPL: Node"
+			],
+			[
+				"repl",
+				"SublimeREPL: Node"
+			],
+			[
+				"packag",
+				"Package Control: Remove Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"ht",
+				"HTMLPrettify: Set Keyboard Shortcuts"
+			],
+			[
+				"htm",
+				"HTMLPrettify"
+			],
+			[
+				"htmlp",
+				"HTMLPrettify"
+			],
+			[
+				"pac",
+				"Package Control: Install Package"
+			],
+			[
+				"pa",
+				"Package Control: Install Package"
+			],
+			[
+				"packa",
+				"Preferences: Browse Packages"
+			]
+		],
+		"width": 848.0
+	},
+	"console":
+	{
+		"height": 308.0,
+		"history":
+		[
+			"exit",
+			"q",
+			"ls",
+			"dir",
+			"?",
+			"ls",
+			"build",
+			"dir",
+			"build",
+			".exit",
+			"q",
+			"quit",
+			"1+1",
+			"exit",
+			"node uppercase.js",
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404' + 'e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/Users/srdjans/Documents/Projects/resto",
+		"/C/Users/srdjans/Documents/Projects/resto/src"
+	],
+	"file_history":
+	[
+		"/C/Users/srdjans/Documents/Projects/resto/resto.sublime-project",
+		"/C/Users/srdjans/Documents/Projects/resto/src/db.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/app-spike-closure.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/app.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/app-spike-fn.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/app-spike.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/invoker.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/filehelper.js",
+		"/C/Users/srdjans/Documents/Dropbox/Workshops/Functional JavaScript/workshop-functional-js/node_modules/functionaljs/functional.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/test.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/build.bat",
+		"/C/Users/srdjans/AppData/Roaming/Sublime Text 3/Packages/User/shell.sublime-build",
+		"/C/Users/srdjans/Documents/Projects/resto/node_modules/es6-arrow-function/example/runner",
+		"/C/Users/srdjans/Documents/Projects/resto/src/test-es6.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/pipeline.js",
+		"/C/Users/srdjans/Documents/Projects/resto/tests/tests.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/fn.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/hal.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/resource.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/method-resolver.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/type-resolver.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/monad-pipeline-spike.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/monad-pipeline-spike-2.js",
+		"/C/Users/srdjans/Documents/Projects/resto/super-func.js",
+		"/C/Users/srdjans/Documents/Dropbox/Workshops/JavaScript/workshop-javascript/src/fx.js",
+		"/C/Users/srdjans/Documents/Projects/resto/inception.txt",
+		"/C/Users/srdjans/Documents/Dropbox/My Stuff/IDEAS.txt",
+		"/C/Users/srdjans/Documents/Projects/resto/src/persister.js",
+		"/C/Users/srdjans/Documents/Projects/resto/-TODO-.diff",
+		"/C/Users/srdjans/Documents/Dropbox/My Stuff/Resumes/use-this-for-resume-linkedinprofile.txt",
+		"/C/Users/srdjans/Documents/Dropbox/My Stuff/available-for-work.txt",
+		"/C/Users/srdjans/Documents/Projects/resto/src/aop-spike.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/auth.js",
+		"/C/Users/srdjans/Documents/Projects/resto/tests/fn-lib.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/simple-proxy-spike.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/spike-railway.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/resource-query.js",
+		"/C/Users/srdjans/Documents/Dropbox/My Stuff/Gotium/gotium.spec.diff",
+		"/C/Users/srdjans/Documents/Dropbox/My Stuff/Gotium/personal-gotium.diff",
+		"/C/Users/srdjans/Documents/Projects/resto/server.js",
+		"/C/Users/srdjans/Documents/Dropbox/My Stuff/Gotium/app-twitter-user-hash-filtering.txt",
+		"/C/Users/srdjans/Documents/Dropbox/My Stuff/Gotium/twitter-user-hash-filtering.txt",
+		"/C/Users/srdjans/Documents/Projects/resto/src/app-spike-fn-temp.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/db-query.js",
+		"/C/Users/srdjans/Documents/Projects/resto/tests/spike-railway.js",
+		"/C/Users/srdjans/Documents/Dropbox/My Stuff/thinkering.txt",
+		"/C/Users/srdjans/Documents/Projects/resto/src/db-cmd.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/resolver.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/datastore.js",
+		"/C/Users/srdjans/Documents/Projects/resto/node_modules/ramda/ramda.js",
+		"/C/Users/srdjans/Documents/Projects/resto/tests/httpMock.js",
+		"/C/Users/srdjans/Documents/Projects/resto/node_modules/expect.js/index.js",
+		"/C/Users/srdjans/Documents/Projects/resto/tests/test-no-states.js",
+		"/C/Users/srdjans/Documents/Projects/resto/tests/test2.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/hal",
+		"/C/Users/srdjans/Documents/Projects/resto/tests/test-mole.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/config.json",
+		"/C/Users/srdjans/Documents/Projects/resto/tests/test.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/app",
+		"/C/Users/srdjans/Documents/Projects/resto/src/resol",
+		"/C/Users/srdjans/Documents/Projects/resto/src/proxy-logger.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/ha",
+		"/C/Users/srdjans/Documents/Projects/checkMoreTypes.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/temp.js",
+		"/C/Users/srdjans/Documents/Dropbox/Workshops/REST API/src/using-proxies-3-functional.js",
+		"/C/Users/srdjans/Documents/Dropbox/Workshops/REST API/src/timer.js",
+		"/C/Users/srdjans/Documents/Dropbox/Workshops/REST API/src/using-proxies-3.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/forwarding-handler.js",
+		"/C/Users/srdjans/Documents/Projects/resto/mercury/test-1.js",
+		"/C/Users/srdjans/Documents/Projects/resto/mercury/index.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/middleware.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/spike-combine-pipeline.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/file-helper.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/middlware.js",
+		"/C/Users/srdjans/Documents/Projects/resto/middlware.js",
+		"/C/Users/srdjans/Documents/Dropbox/Workshops/Functional JavaScript/workshop-functional-js/src/sample-using-object.create.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/test-es6arrow.js",
+		"/C/Users/srdjans/Documents/Projects/resto/test-es6arrow.js",
+		"/C/Users/srdjans/Documents/Projects/resto/node_modules/es6-arrow-function/bin/es6-arrow-function",
+		"/C/Users/srdjans/Documents/Projects/resto/node_modules/.bin/es6-arrow-function.cmd",
+		"/C/Users/srdjans/Documents/Projects/resto/node_modules/.bin/es6-arrow-function",
+		"/C/Users/srdjans/Documents/Projects/resto/src/fx.js",
+		"/C/Users/srdjans/Documents/Dropbox/Workshops/Node/workshop-build-restful-api-with-node/index.html",
+		"/C/Users/srdjans/Documents/Dropbox/Workshops/Functional JavaScript/workshop-functional-js/index.html",
+		"/C/Users/srdjans/Documents/Projects/resto/tests/httpMock,js",
+		"/C/Users/srdjans/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/C/Users/srdjans/AppData/Roaming/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/C/Users/srdjans/Documents/Projects/resto/hal-browser/js/hal/views/inspector.js",
+		"/C/Users/srdjans/Documents/Projects/resto/hal-browser/index.html",
+		"/C/Users/srdjans/Documents/Projects/resto/hal-browser/js/hal/views/embedded_resource.js",
+		"/C/Users/srdjans/Documents/Projects/resto/hal-browser/js/hal/views/resource.js",
+		"/C/Users/srdjans/Documents/Projects/resto/hal-browser/js/hal/views/embedded_resources.js",
+		"/C/Users/srdjans/Documents/Projects/resto/hal-browser/js/hal/views/explorer.js",
+		"/C/Users/srdjans/Documents/Projects/resto/hal-browser/js/hal/views/properties.js",
+		"/C/Users/srdjans/Documents/Projects/resto/hal-browser/js/hal/views/links.js",
+		"/C/Users/srdjans/Documents/Projects/resto/hal-browser/js/hal/views/browser.js",
+		"/C/Users/srdjans/Documents/Projects/resto/hal-browser/js/hal/views/request_headers.js",
+		"/C/Users/srdjans/Documents/Projects/resto/hal-browser/js/hal/views/non_safe_request_dialog.js",
+		"/C/Users/srdjans/Documents/Projects/resto/hal-browser/js/hal/browser.js",
+		"/C/Users/srdjans/Documents/Projects/resto/hal-browser/js/hal/resource.js",
+		"/C/Users/srdjans/Documents/Projects/resto/hal-browser/js/hal.js",
+		"/C/Users/srdjans/Documents/Dropbox/Workshops/REST API/src/using-proxies-3-old-school.js",
+		"/C/Users/srdjans/Documents/Dropbox/Workshops/REST API/src/string-tocharArray.js",
+		"/C/Users/srdjans/AppData/Roaming/Sublime Text 3/Packages/HTML-CSS-JS Prettify/.jsbeautifyrc",
+		"/C/Users/srdjans/Documents/Dropbox/Workshops/REST API/src/forwarding-handler.js",
+		"/C/Users/srdjans/Documents/Dropbox/Workshops/REST API/src/using-proxies.js",
+		"/C/Users/srdjans/Documents/Dynatax/name-servers.txt",
+		"/C/Users/srdjans/Documents/Projects/resto/hal-browser/styles.css",
+		"/C/Users/srdjans/Documents/Projects/resto/hal-browser/vendor/css/bootstrap.css",
+		"/C/Users/srdjans/Documents/Projects/resto/src/server.js",
+		"/C/Users/srdjans/Documents/Projects/resto/src/hal-browser/index.html",
+		"/C/Users/srdjans/Documents/Projects/resto/src/hal-browser/styles.css",
+		"/C/Users/srdjans/Documents/My Projects/resto/hal-browser/styles.css",
+		"/C/Users/srdjans/Documents/My Projects/Resto/src/test.js",
+		"/C/Users/srdjans/Documents/My Projects/resto/hal-browser/index.html",
+		"/C/Users/srdjans/Documents/My Projects/Resto/src/app.js",
+		"/C/Users/srdjans/Documents/My Projects/Resto/src/fx.js",
+		"/C/Users/srdjans/Documents/My Projects/Resto/src/server.js",
+		"/C/Users/srdjans/Documents/My Projects/resto/hal-browser/vendor/css/bootstrap.css",
+		"/C/Users/srdjans/Documents/My Projects/resto/src/build.bat",
+		"/C/Users/srdjans/Documents/My Projects/resto/src/test.lls.ls",
+		"/C/Users/srdjans/Documents/My Projects/resto/src/build-js test.bat",
+		"/C/Users/srdjans/Documents/Dropbox/Workshops/Node/workshop-build-restful-api-with-node/src/test.js",
+		"/C/Users/srdjans/Documents/Dropbox/Workshops/Node/workshop-build-restful-api-with-node/src/server.js",
+		"/C/Users/srdjans/Documents/Dropbox/Workshops/Node/workshop-build-restful-api-with-node/src/fx.js",
+		"/C/Users/srdjans/Documents/Dropbox/Workshops/Node/workshop-build-restful-api-with-node/src/app.js",
+		"/C/Users/srdjans/AppData/Roaming/Sublime Text 3/Packages/HTML-CSS-JS Prettify/HTMLPrettify.sublime-settings",
+		"/C/Users/srdjans/Documents/Dropbox/Workshops/Node/workshop-build-restful-api-with-node/hal-browser/index.html"
+	],
+	"find":
+	{
+		"height": 64.0
+	},
+	"find_in_files":
+	{
+		"height": 176.0,
+		"where_history":
+		[
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"addProperties",
+			"getLinks",
+			"currentState",
+			"404",
+			"ctx.",
+			"filterEmpty",
+			"fn.",
+			"filterEmpty",
+			"getObjType",
+			"isApiCall",
+			"resolveType",
+			"traced",
+			"persist()",
+			"processApi",
+			"map2M",
+			"combineAll",
+			"map2M",
+			"map",
+			"eatNotAllowed",
+			"log",
+			"validatePropsExist",
+			"validatePropsMatch",
+			"update",
+			"validateApiCall",
+			"processApi",
+			"message:",
+			"getLinks",
+			"_run",
+			"validateApiCall",
+			"data:",
+			"toLowercase()",
+			"ctx.typeName",
+			"getTypeName",
+			"query",
+			"db",
+			"oldRef",
+			"combine",
+			"map",
+			"runAll",
+			"_run",
+			"addSelfLink",
+			"addLink",
+			"fn",
+			"_run",
+			"Either.Right",
+			"Either",
+			"400",
+			"ctx.result",
+			"mapM",
+			"map",
+			"stash",
+			"process",
+			"auth",
+			"db",
+			"toLowerCase",
+			"ctx.req",
+			"h",
+			"self(",
+			"self",
+			"getAll",
+			"reqGetAll",
+			"404",
+			"Return",
+			"concatenate",
+			"Nan",
+			"getLinks",
+			"validateApiCall",
+			"ctx.statusCode",
+			"either",
+			"growLink",
+			"create",
+			"getAll",
+			"log(",
+			"processApi",
+			"throw",
+			"func",
+			"getFnName",
+			"func",
+			"db.",
+			"until",
+			"each",
+			"handler",
+			"getTokens(",
+			"fn.",
+			"ctx.body",
+			"ctx.req",
+			"ctx.",
+			"ctx.body",
+			"pipeline.go",
+			"fn.",
+			"getAll",
+			"getSelf",
+			"eatNotAllowed",
+			"result",
+			"result.",
+			"apple",
+			"1",
+			"processApi",
+			"422",
+			"plainJsonObj",
+			"getLinks",
+			"'get'",
+			"plainJsonObj",
+			"processApi",
+			"hasBody",
+			"plainJsonObj",
+			"meesage:",
+			"meesage",
+			"pipeline(",
+			"pipeline(ctx)",
+			"update",
+			"validatePropsExist",
+			"statusCode",
+			"999",
+			"Request",
+			"createList",
+			"createRoot",
+			"processApi",
+			"states",
+			"addLinks",
+			"getLinks",
+			"apple",
+			"state_",
+			"getTokens",
+			"getTypeFromPath",
+			"fn.atob",
+			"db.",
+			"getById"
+		],
+		"highlight": false,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"getStateLinks",
+			"chain(persist)",
+			"fn.map2M",
+			"map2M",
+			"m",
+			"resolveType",
+			"composeAll",
+			"result",
+			"fn.Next",
+			"handlers",
+			"cmd",
+			"handler",
+			"get",
+			"request",
+			"Success",
+			"link",
+			"ctx.req.body",
+			"pipeline.run",
+			"all",
+			"self",
+			"appleEaten",
+			"appleGrown",
+			"self",
+			"apple.",
+			"result.data",
+			"pipeline.go(",
+			"pipeline.go(ctx)",
+			"links",
+			"todo",
+			"getTypeName",
+			"ctx.",
+			"apples",
+			"createList",
+			"halRep",
+			"request.typeName",
+			"stash",
+			"New",
+			"trace.",
+			"stash",
+			"p",
+			"pipeline(c",
+			"pipeline(ctx)",
+			"process(",
+			"pipeline(",
+			"m.pipeline(",
+			"resolver",
+			"ctx.req.",
+			"todo",
+			"app",
+			"getIdAndRel",
+			"getId",
+			"",
+			"httpmock",
+			"resolver.handle(",
+			"request",
+			"all",
+			"body",
+			"headers",
+			"statusCode",
+			"returnFile",
+			"processApi",
+			"request",
+			"fn",
+			"request",
+			"typeCtor",
+			"getStatusCode",
+			"reqSelf",
+			"pathname",
+			"path",
+			"returnFile",
+			"tossLink",
+			"eatLink",
+			"growLink",
+			"selfLink",
+			"createLink",
+			"eatLink",
+			"growLink",
+			"selfLink",
+			"createLink",
+			"tossLink",
+			"processAndStore",
+			"validateApiCall",
+			"requestedType",
+			"db",
+			"data",
+			"entities",
+			"result",
+			"removeEmpty",
+			"validatePropsExist",
+			"validatePropsMatch",
+			"filterEmpty)",
+			"e",
+			"hal.getFull(",
+			"datastore.get(",
+			"datastore.save(",
+			"datastore",
+			"fn.map",
+			"fn.diff",
+			"fn.some",
+			"fn.each",
+			"fn.filter",
+			"fn.",
+			"contains.",
+			"handle",
+			"resource",
+			"typeName",
+			"this.typeName",
+			"resource.handle(",
+			"getPropNames",
+			"fx.log(",
+			"fx.handle(",
+			"request",
+			"",
+			"checkIfApiCallAllowed",
+			"reqCreate",
+			"./hal-browser/js/",
+			"./hal-browser/vendor/",
+			"response",
+			"res",
+			"fileName",
+			"links",
+			"getLinksForCurrentState",
+			"fx.handle(",
+			"rels",
+			"getRelsForCurrentState",
+			"getRels",
+			"getLinks",
+			"About RESTful"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 7,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "tests/tests.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4222,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2950,
+								2950
+							]
+						],
+						"settings":
+						{
+							"editorconfig": true,
+							"ensure_newline_at_eof_on_save": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"trim_trailing_white_space_on_save": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "src/app.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 938,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								344,
+								344
+							]
+						],
+						"settings":
+						{
+							"editorconfig": true,
+							"ensure_newline_at_eof_on_save": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"trim_trailing_white_space_on_save": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "src/pipeline.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3270,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1926,
+								1926
+							]
+						],
+						"settings":
+						{
+							"editorconfig": true,
+							"ensure_newline_at_eof_on_save": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"trim_trailing_white_space_on_save": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "src/type-resolver.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1644,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								606,
+								606
+							]
+						],
+						"settings":
+						{
+							"editorconfig": true,
+							"ensure_newline_at_eof_on_save": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"trim_trailing_white_space_on_save": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "src/method-resolver.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 973,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								305,
+								305
+							]
+						],
+						"settings":
+						{
+							"editorconfig": true,
+							"ensure_newline_at_eof_on_save": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"trim_trailing_white_space_on_save": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "src/resource.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4364,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2071,
+								2071
+							]
+						],
+						"settings":
+						{
+							"editorconfig": true,
+							"ensure_newline_at_eof_on_save": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"trim_trailing_white_space_on_save": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2108.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "src/hal.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3485,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								752,
+								752
+							]
+						],
+						"settings":
+						{
+							"editorconfig": true,
+							"ensure_newline_at_eof_on_save": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"trim_trailing_white_space_on_save": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "src/fn.js",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3600,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								406,
+								406
+							]
+						],
+						"settings":
+						{
+							"editorconfig": true,
+							"ensure_newline_at_eof_on_save": true,
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"trim_trailing_white_space_on_save": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "-TODO-.diff",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3380,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3103,
+								3103
+							]
+						],
+						"settings":
+						{
+							"editorconfig": true,
+							"ensure_newline_at_eof_on_save": true,
+							"syntax": "Packages/Diff/Diff.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true,
+							"trim_trailing_white_space_on_save": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1364.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 39.0
+	},
+	"input":
+	{
+		"height": 55.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": false,
+	"output.exec":
+	{
+		"height": 527.0
+	},
+	"output.find_results":
+	{
+		"height": 240.0
+	},
+	"project": "resto.sublime-project",
+	"replace":
+	{
+		"height": 120.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"crea",
+				"C:\\Users\\srdjans\\Documents\\Projects\\resto\\src\\hal.js"
+			],
+			[
+				"ha",
+				"C:\\Users\\srdjans\\Documents\\Projects\\resto\\src\\hal.js"
+			],
+			[
+				"get",
+				"using-proxies-3-functional.js"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 1000.0,
+		"selected_items":
+		[
+		],
+		"width": 760.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": false,
+	"side_bar_visible": true,
+	"side_bar_width": 266.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

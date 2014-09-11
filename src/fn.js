@@ -8,11 +8,13 @@ exports.contains = R.contains;
 exports.filter = R.filter;
 exports.each = R.each;
 exports.some = R.some;
+exports.every = R.every;
 exports.diff = R.difference;
 exports.map = R.map;
 exports.chain = R.chain;
 
 var log = console.log;
+var noop = function() { return this; };
 
 function trimLeftAndRight(str, ch) {
   return str.replace(new RegExp("^[" + ch + "]+"), "").replace(new RegExp("[" + ch + "]+$"), "");
@@ -61,11 +63,11 @@ function trace(h, func, ctx) {
 }
 
 // f, ep, m(a) -> m(b)
-function run(f, ep, m) {
+function run(h, ep, m) {
   return m.chain(function(d) {
-    // trace('> ', f, d);
-    var r = f(d);
-    // trace('< ', f, r);
+    if(h.trace) trace('-> ', h.func, d);
+    var r = h.func(d);
+    if(h.trace) trace('<- ', h.func, d);
     return ep(r) ? Either.Left(r) : Either.Right(r);
   });
 }
@@ -73,7 +75,7 @@ function run(f, ep, m) {
 // hs, ep, a -> b | err
 exports.runAll = function(hs, ep, d) {
   var m = Either.of(d);
-  hs.forEach(function(h) { m = run(h.func, ep, m); });
+  hs.forEach(function(h) { m = run(h, ep, m); });
   return m.merge();
 };
 
@@ -110,7 +112,7 @@ exports.runAll = function(hs, ep, d) {
 
   // setup
   var handlers = [];
-  handlers.push({ func: f1, pred: false, trace: false});
+  handlers.push({ func: f1, pred: false, trace: true});
   handlers.push({ func: f2, pred: false, trace: false});
   handlers.push({ func: f3, pred: false, trace: false});
 

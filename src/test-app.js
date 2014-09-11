@@ -13,9 +13,7 @@ exports.Apple = function() {
   };
 
   this.eat = function(msg) {
-    if (msg.weight === 0.0) {
-      return true;
-    }
+    if (msg.weight === 0.0) return true;
     return false;
   };
 

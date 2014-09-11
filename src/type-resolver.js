@@ -2,7 +2,7 @@
 //- type resolver
 //---------------------------------------------------------------------------------
 var fn = require('./fn.js');
-var app = require('./app.js');
+var app = require('./test-app.js');
 var log = console.log;
 
 function resolve(ctx) {

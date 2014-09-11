@@ -1,28 +1,13 @@
 -todo:
-  // http://j201.github.io/posts/2013-06-16-Evil-JS-Macros.html
-  // var dog = {
-  //     mammal : true,
-  //     domestic : true,
-  //     weight : 50,
-  //     speak : function() {
-  //         return "woof";
-  //     }
-  // };
-  // var littleDog = extend(dog, {weight : 10});
-  // littleDog.speak(); // "woof"
-  // littleDog.weight; // 10
-
-
--todo: token auth: https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
--todo: handle conditional persistance
 -todo: handle embedded entities (https://www.readability.com/articles/c4khqjub)
 -todo: add paging (https://www.readability.com/articles/c4khqjub)
 -todo: add query
--todo: add links to hypermedia type (meta) or via header?
--todo: add services (non-persisting api) ?
--todo: es6 arrow !!!!, contracts.js, ...
--todo: add contracts.js
 -todo: make client up ( http://www.smashingmagazine.com/2014/09/02/building-simple-cross-browser-offline-todo-list-indexeddb-websql
+-todo: add services (non-persisting api) ?
+-todo: token auth: https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
+-todo: add links to hypermedia type (meta) or via header?
+-      or add meta links to display, validation...
+-todo: es6 arrow !!!!, contracts.js, ...
                        http://jdkanani.com/smalleditor
                         http://sennajs.com/docs/,
                         https://github.com/giann/zappa,
@@ -31,7 +16,6 @@
                         http://mobify.github.io/bellows/
                         http://www.invisionapp.com/tethr
 
--todo: add meta links to display, validation...
 -todo: use Express (better server error handling (invalid json.!!..)
       https://stormpath.com/blog/node-api-client-part-one/
       http://appdevelopermagazine.com/1718/2014/7/31/StrongLoop-Node.js-API-Server-Released-for-Developing,-Securing-and-Scaling-REST-APIs/
@@ -50,6 +34,7 @@
 +todo: hal-browser: fix not showing root props
 -notdoing: handle plain application/json vs application/hal+json
 -notdoing: extract datastore into middleware?
+-notdoing: handle conditional persistance
 
 !idea
   !idea: test in production [http://bahmutov.calepin.co/test-in-production.html]
@@ -70,3 +55,16 @@
   https://github.com/fitzgen/github-api
   http://www.slideshare.net/GustafKotte/design-hypermedia-apis
   http://www.slideshare.net/rnewton/amundsen-costbenefitshypermedia
+
+  // http://j201.github.io/posts/2013-06-16-Evil-JS-Macros.html
+  // var dog = {
+  //     mammal : true,
+  //     domestic : true,
+  //     weight : 50,
+  //     speak : function() {
+  //         return "woof";
+  //     }
+  // };
+  // var littleDog = extend(dog, {weight : 10});
+  // littleDog.speak(); // "woof"
+  // littleDog.weight; // 10
