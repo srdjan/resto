@@ -14,6 +14,11 @@ exports.map = R.map;
 exports.chain = R.chain;
 
 var log = console.log;
+exports.trace = function(obj) {
+  log(obj);
+  log(new Error().stack);
+};
+
 var noop = function() { return this; };
 
 function trimLeftAndRight(str, ch) {

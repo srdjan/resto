@@ -1,8 +1,12 @@
 -todo:
 -todo: handle embedded entities (https://www.readability.com/articles/c4khqjub)
--todo: add paging (https://www.readability.com/articles/c4khqjub)
+-todo: add paging
+      https://www.readability.com/articles/c4khqjub
+      http://thestorefront.github.io/DataCollection.js/
 -todo: add query
--todo: make client up ( http://www.smashingmagazine.com/2014/09/02/building-simple-cross-browser-offline-todo-list-indexeddb-websql
+-todo: make client app:
+        http://www.smashingmagazine.com/2014/09/02/building-simple-cross-browser-offline-todo-list-indexeddb-websql
+        http://adodson.com/hello.js/
 -todo: add services (non-persisting api) ?
 -todo: token auth: https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
 -todo: add links to hypermedia type (meta) or via header?
