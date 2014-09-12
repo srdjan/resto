@@ -72,8 +72,8 @@ function processApi(ctx) {
 
 exports.get = function(ctx) {
   if (ctx.id === 0) {
-    var all = db.getAll();
-    ctx.result = all.result;
+    var all = db.getAll(ctx.pageNumber || 0);
+    ctx.result = all.page;
     ctx.pageNumber = all.pageNumber;
     ctx.pageCount = all.pageCount;
   }

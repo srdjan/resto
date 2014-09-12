@@ -22,7 +22,7 @@ function addProperties(halRep, result) {
 }
 
 function addEmbed(halRep, typeName, result) {
-  var embed = halson({}).addLink('self', '/api/' + typeName.toLowerCase() + 's/' + fn.atob(result.id));
+  var embed = halson({}).addLink('self', '/api/' + typeName + '/' + fn.atob(result.id));
   addProperties(embed, result);
   halRep.addEmbed(typeName, embed);
 }
@@ -33,7 +33,7 @@ function addEmbeds(halRep, typeName, result) {
 }
 
 function addLinks(halRep, typeName, result) {
-  halRep.addLink('self', '/api/' + typeName.toLowerCase() + 's/' + fn.atob(result.id));
+  halRep.addLink('self', '/api/' + typeName + 's/' + fn.atob(result.id));
   var links = result.getLinks();
   links.forEach(function(l) { halRep.addLink(l.rel, { href: '/api/' + typeName + 's/' + fn.atob(result.id + '/' + l.rel), method: l.method}); });
   return halRep;
@@ -42,11 +42,16 @@ function addLinks(halRep, typeName, result) {
 //todo: add paging
 function createListRoot(typeName, pageNumber, pageCount) {
   var halRep = halson({});
-  halRep.addLink('self', '/api/' + typeName + 's' + '?page=' + pageNumber);
-  halRep.addLink('first', '/api/' + typeName + 's');
-  halRep.addLink('prev', '/api/' + typeName + 's' + '?page=' + (pageNumber > 0 ? pageNumber-1 : pageNumber));
-  halRep.addLink('next', '/api/' + typeName + 's' + '?page=' + (pageNumber < pageCount ? pageNumber+1 : pageCount));
-  halRep.addLink('last', '/api/' + typeName + 's' + '?page=' + pageCount);
+  if (pageNumber > 1) {
+    halRep.addLink('self', '/api/' + typeName + 's' + '?page=' + pageNumber);
+    halRep.addLink('first', '/api/' + typeName + 's');
+    halRep.addLink('prev', '/api/' + typeName + 's' + '?page=' + (pageNumber === 0 ? pageNumber + 1 : pageNumber));
+    halRep.addLink('next', '/api/' + typeName + 's' + '?page=' + (pageNumber < pageCount ? pageNumber + 1 : pageCount));
+    halRep.addLink('last', '/api/' + typeName + 's' + '?page=' + pageCount);
+  }
+  else {
+    halRep.addLink('self', '/api/' + typeName + 's');
+  }
   halRep.addLink('create', { href: '/api/' + typeName + 's/' + fn.atob('create'), method: 'POST'});
   return halRep;
 }
@@ -61,8 +66,8 @@ function createList(ctx) {
 function createResource(ctx) {
   var halRep = halson({});
   addProperties(halRep, ctx.result);
-  addLinks(halRep, ctx.typeName, ctx.result);
-  addEmbeds(halRep, ctx.typeName, ctx.result);
+  addLinks(halRep, ctx.typeName.toLowerCase(), ctx.result);
+  addEmbeds(halRep, ctx.typeName.toLowerCase(), ctx.result);
   return halRep;
 }
 
@@ -237,7 +242,7 @@ exports.convert = function convert(ctx) {
     result: todos
   };
   var res = exports.convert(ctx);
-  log(JSON.stringify(res.result));
+  // log(JSON.stringify(res.result));
   var embeds = res.result.getEmbeds('todos');
   expect(embeds.length).to.be(12);
 
