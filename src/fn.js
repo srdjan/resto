@@ -112,7 +112,7 @@ exports.runAll = function(hs, ep, d) {
 
   // setup
   var handlers = [];
-  handlers.push({ func: f1, pred: false, trace: true});
+  handlers.push({ func: f1, pred: false, trace: false});
   handlers.push({ func: f2, pred: false, trace: false});
   handlers.push({ func: f3, pred: false, trace: false});
 
