@@ -40,16 +40,20 @@ function addLinks(halRep, typeName, result) {
 }
 
 //todo: add paging
-function createListRoot(typeName) {
+function createListRoot(typeName, pageNumber, pageCount) {
   var halRep = halson({});
-  halRep.addLink('self', '/api/' + typeName + 's');
+  halRep.addLink('self', '/api/' + typeName + 's' + '?page=' + pageNumber);
+  halRep.addLink('first', '/api/' + typeName + 's');
+  halRep.addLink('prev', '/api/' + typeName + 's' + '?page=' + (pageNumber > 0 ? pageNumber-1 : pageNumber));
+  halRep.addLink('next', '/api/' + typeName + 's' + '?page=' + (pageNumber < pageCount ? pageNumber+1 : pageCount));
+  halRep.addLink('last', '/api/' + typeName + 's' + '?page=' + pageCount);
   halRep.addLink('create', { href: '/api/' + typeName + 's/' + fn.atob('create'), method: 'POST'});
   return halRep;
 }
 
-function createList(typeName, result) {
-  var halRep = createListRoot(typeName.toLowerCase());
-  result.forEach(function(el, index, array) { addEmbed(halRep, typeName.toLowerCase() + 's', el); });
+function createList(ctx) {
+  var halRep = createListRoot(ctx.typeName.toLowerCase(), ctx.pageNumber, ctx.pageCount);
+  ctx.result.forEach(function(el, index, array) { addEmbed(halRep, ctx.typeName.toLowerCase() + 's', el); });
   return halRep;
 }
 
@@ -64,7 +68,7 @@ function createResource(ctx) {
 
 exports.convert = function convert(ctx) {
   if (ctx.result instanceof Array) {
-    ctx.result = createList(ctx.typeName, ctx.result);
+    ctx.result = createList(ctx);
   }
   else {
     ctx.result = createResource(ctx);
@@ -116,32 +120,124 @@ exports.convert = function convert(ctx) {
               }
             ];
 
-  //test isEmbed()
+  // //test isEmbed()
+  // //-----------------------------------
   // var result = isEmbed(apples[0].weight);
-  // log(Object.keys(apples[0].assigned));
-  // log(apples[0].assigned);
-  // var result = isObject(apples[0].assigned);
-  // log(result);
-  // var result = (apples[0].assigned).hasOwnProperty('id');
-  // log(result);
-  // var result = isEmbed(apples[0].assigned);
-  // log(result);
+  // expect(result).to.be(false);
 
-  //- get all - when result is one obj: createResource()
+  // result = isEmbed(apples[0].refObj1);
+  // expect(result).to.be(true);
+
+  // result = isObject(apples[0].refObj1);
+  // expect(result).to.be(true);
+
+  // //- get all - when result is one obj: createResource()
+  // //-----------------------------------
+  // var ctx = {
+  //   typeName: 'Apple',
+  //   result: apples[0]
+  // };
+  // var res = exports.convert(ctx);
+  // // log(JSON.stringify(res.result));
+  // expect(res.result.listLinkRels().length).to.be(3);
+  // var embeds = res.result.getEmbeds('refObj1');
+  // expect(embeds.length).to.be(1);
+
+  // //- get all - when result is array: createList()
+  // //-----------------------------------
+  // var ctx = {
+  //   typeName: 'Apple',
+  //   result: apples
+  // };
+  // var res = exports.convert(ctx);
+  // // log(JSON.stringify(res.result));
+  // var embeds = res.result.getEmbeds('apples');
+  // expect(embeds.length).to.be(2);
+
+  //-- test paging
+  var todos = [{
+                id: '111111',
+                content: '1',
+                isDone: false,
+                isArchived: false
+              },
+              {
+                id: '222222',
+                content: '2',
+                isDone: false,
+                isArchived: false
+              },
+              {
+                id: '333333',
+                content: '3',
+                isDone: false,
+                isArchived: false
+              },
+              {
+                id: '444444',
+                content: '4',
+                isDone: false,
+                isArchived: false
+              },
+              {
+                id: '555555',
+                content: '5',
+                isDone: false,
+                isArchived: false
+              },
+              {
+                id: '666666',
+                content: '6',
+                isDone: false,
+                isArchived: false
+              },
+              {
+                id: '777777',
+                content: '7',
+                isDone: false,
+                isArchived: false
+              },
+              {
+                id: '888888',
+                content: '8',
+                isDone: false,
+                isArchived: false
+              },
+              {
+                id: '999999',
+                content: '9',
+                isDone: false,
+                isArchived: false
+              },
+              {
+                id: '101010',
+                content: '10',
+                isDone: false,
+                isArchived: false
+              },
+              {
+                id: '11111111',
+                content: '11',
+                isDone: false,
+                isArchived: false
+              },
+              {
+                id: '12121212',
+                content: '12',
+                isDone: false,
+                isArchived: false
+              }
+  ];
+   //- get all - when result is array: createList()
   //-----------------------------------
   var ctx = {
-    typeName: 'Apple',
-    result: apples[0]
-  };
-  var res = exports.convert(ctx);
-  // log(JSON.stringify(res.result));
-
-  //- get all - when result is array: createList()
-  //-----------------------------------
-  var ctx = {
-    typeName: 'Apple',
-    result: apples
+    typeName: 'Todo',
+    pageNumber: 3,
+    pageCount: 4,
+    result: todos
   };
   var res = exports.convert(ctx);
   log(JSON.stringify(res.result));
+  var embeds = res.result.getEmbeds('todos');
+  expect(embeds.length).to.be(12);
 

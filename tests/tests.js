@@ -7,10 +7,10 @@ var http = require('./httpmock.js');
 var fn = require('../src/fn.js');
 var db = require('../src/db.js');
 var pipeline = require('../src/pipeline.js');
-var authenticator = require('../src/auth.js').auth;
-var authorizer = require('../src/auth.js').auth;
-var typeResolver = require('../src/type-resolver.js').resolve;
-var invoker = require('../src/method-resolver.js').invoke;
+var authenticator = require('../src/authn.js').auth;
+var authorizer = require('../src/authr.js').auth;
+var typeResolver = require('../src/resolver.js').resolve;
+var invoker = require('../src/invoker.js').invoke;
 var converter = require('../src/hal.js').convert;
 var log = console.log;
 
@@ -56,7 +56,7 @@ pipeline.use(converter);
 //-  test get all
   var all = get('/api/apples/');
   expect(all.statusCode).to.be(200);
-  expect(all.data.listLinkRels().length).to.be(2);
+  expect(all.data.listLinkRels().length).to.be(6);
   expect(fn.contains('self', all.data.listLinkRels())).to.be(true);
   expect(fn.contains('create', all.data.listLinkRels())).to.be(true);
 
