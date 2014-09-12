@@ -49,7 +49,7 @@ function getAll() {
   datastore.values(function(vals) {
     objs = vals;
   });
-  return objs;
+  return { pageNumber: 1, pageCount: 1, result: objs};
 }
 
 function remove(id) {
