@@ -93,7 +93,7 @@ module.exports.remove = remove;
   var hal = require('./hal.js');
   log('testing: db.js');
 
-init('../../../datastore-test');
+init('../../../../datastore-test');
 clear();
 
 //-- TEST PAGING

@@ -14,7 +14,7 @@ var converter = require('./src/hal.js').convert;
 var log = console.log;
 var port = 8080;
 
-db.init('../../../datastore');
+db.init('../../../../datastore');
 
 pipeline.use(typeResolver);
 pipeline.use(invoker);

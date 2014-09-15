@@ -131,8 +131,8 @@ exports.delete = function(ctx) {
 //---------------------------------------------------------------------------------
   var expect = require('expect.js');
   log('testing: resource.js');
-// db.init('../../../datastore-test');
-db.clear();
+
+  db.clear();
 
   // test post, id = 0
   var ctx = {

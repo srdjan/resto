@@ -4,13 +4,9 @@
 var fn = require('./fn.js');
 var log = console.log;
 
-//note: parent-child relationships
-//one, oneOrMore, zeroOrOne, zeroOrMore
-//
-
 exports.Activity = function() {
   this.name = '?';
-  this.taskList = { zeroOrMore : [] };
+  this.taskList = [];
   this.archived = false;
 
 //-- helper methods
