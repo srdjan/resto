@@ -52,7 +52,6 @@ function createListRoot(typeName, pageNumber, pageCount) {
     halRep.addLink('self', '/api/' + typeName + 's');
   }
   halRep.addLink('create', { href: '/api/' + typeName + 's/' + fn.atob('create'), method: 'POST'});
-  // log(halRep)
   return halRep;
 }
 

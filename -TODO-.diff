@@ -1,14 +1,13 @@
 ❤ m฿
--todo: paging nav
--todo: add query
 -todo: make client app:
         http://www.smashingmagazine.com/2014/09/02/building-simple-cross-browser-offline-todo-list-indexeddb-websql
         http://adodson.com/hello.js/
+-todo: find the self contained app with searchable database and reuse as a default HAL based UI?
+-todo: add queries
 -todo: use as resto home page: http://fluxxor.com/
 -todo: add services (non-persisting api) ?
 -todo: token auth: https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
 -todo: add links to hypermedia type (meta) or via header?
--      or add meta links to display, validation...
 -todo: es6 arrow !!!!, contracts.js, ...
                        http://jdkanani.com/smalleditor
                         http://sennajs.com/docs/,
@@ -24,12 +23,12 @@
       http://avoidwork.github.io/tenso/rest.html
 -todo: add orchestrator: http://www.chorusjs.com/
 -todo: process control: http://tech.pro/tutorial/2074/nodejs-managing-child-processes
--todo: find the self contained app with searchable database and reuse as a default HAL based UI?
--todo: use jsfmt to rewrite(remove) tests: http://rdio.github.io/jsfmt/
 -todo: dynamicly load app modules: http://stackoverflow.com/questions/10914751/loading-node-js-modules-dynamically-based-on-route
         use http://labs.voronianski.com/melchior.js/ ?
+-todo: use jsfmt to rewrite(remove) tests: http://rdio.github.io/jsfmt/
 -todo: launch!!! https://github.com/slogsdon/placid
 
++todo: paging nav
 +todo: add paging
       https://www.readability.com/articles/c4khqjub
       http://thestorefront.github.io/DataCollection.js/
