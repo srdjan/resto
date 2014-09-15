@@ -1,12 +1,10 @@
--todo:
--todo: handle embedded entities (https://www.readability.com/articles/c4khqjub)
--todo: add paging
-      https://www.readability.com/articles/c4khqjub
-      http://thestorefront.github.io/DataCollection.js/
+❤ m฿
+-todo: paging nav
 -todo: add query
 -todo: make client app:
         http://www.smashingmagazine.com/2014/09/02/building-simple-cross-browser-offline-todo-list-indexeddb-websql
         http://adodson.com/hello.js/
+-todo: use as resto home page: http://fluxxor.com/
 -todo: add services (non-persisting api) ?
 -todo: token auth: https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
 -todo: add links to hypermedia type (meta) or via header?
@@ -19,7 +17,7 @@
                         http://tympanus.net/Development/TabStylesInspiration/
                         http://mobify.github.io/bellows/
                         http://www.invisionapp.com/tethr
-
+-todo: https://github.com/rtc-io/demo-datachannel-node
 -todo: use Express (better server error handling (invalid json.!!..)
       https://stormpath.com/blog/node-api-client-part-one/
       http://appdevelopermagazine.com/1718/2014/7/31/StrongLoop-Node.js-API-Server-Released-for-Developing,-Securing-and-Scaling-REST-APIs/
@@ -29,7 +27,13 @@
 -todo: find the self contained app with searchable database and reuse as a default HAL based UI?
 -todo: use jsfmt to rewrite(remove) tests: http://rdio.github.io/jsfmt/
 -todo: dynamicly load app modules: http://stackoverflow.com/questions/10914751/loading-node-js-modules-dynamically-based-on-route
+        use http://labs.voronianski.com/melchior.js/ ?
+-todo: launch!!! https://github.com/slogsdon/placid
 
++todo: add paging
+      https://www.readability.com/articles/c4khqjub
+      http://thestorefront.github.io/DataCollection.js/
++todo: handle embedded entities (https://www.readability.com/articles/c4khqjub)
 +todo: make video and blog twit about it
 +todo: publish slides
 +todo: hal-browser: use rel.method value instead of hardcoded POST
@@ -43,7 +47,7 @@
 !idea
   !idea: test in production [http://bahmutov.calepin.co/test-in-production.html]
   !idea: create web app for todos with !,@,# and keywords, rules, actions, messaies
-
+  !idea: http://fluxxor.com/ as a way to persist data
 !use
   https://github.com/xyncro/frost
   http://www.rackspace.com/blog/objectrocket-adds-fully-managed-redis-service/?cm_mmc=managed-_-cloud-_-contentnam-_-dbweekly-ORredis
@@ -55,7 +59,7 @@
   http://www.chorusjs.com/
   http://trackingjs.com/
   http://blog.newrelic.com/2014/09/08/apipunchlist/
-
+  http://telehash.org/
   https://github.com/fitzgen/github-api
   http://www.slideshare.net/GustafKotte/design-hypermedia-apis
   http://www.slideshare.net/rnewton/amundsen-costbenefitshypermedia
@@ -72,3 +76,8 @@
   // var littleDog = extend(dog, {weight : 10});
   // littleDog.speak(); // "woof"
   // littleDog.weight; // 10
+
+//node os resources:
+http://node-os.com/
+vs
+http://runtimejs.org/

@@ -63,6 +63,9 @@ exports.getTokens = function(url) {
   return trimLeftAndRight(path, '/').split('/');
 };
 
+exports.isApiCall = function(request) { return request.url.indexOf('/api') !== -1; };
+exports.hasBody = function(method) { return method === 'POST' || method === 'PUT' || method === 'PATCH'; };
+
 function trace(h, func, ctx) {
   log(h + exports.getFnName(func) + ', ' + JSON.stringify(ctx));
 }

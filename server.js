@@ -3,19 +3,22 @@
 //---------------------------------------------------------------------------------
 var http = require("http");
 var file = require("./src/filehelper.js");
+var db = require('./src/db.js');
 var fn = require('./src/fn.js');
 var pipeline = require('./src/pipeline.js');
-var auth = require('./src/auth.js').auth;
-var resolve = require('./src/resolver.js').resolve;
-var convert = require('./src/hal.js').toHal;
-var persist = require('./src/persister.js').persist;
+var authenticator = require('./src/authn.js').auth;
+var authorizer = require('./src/authr.js').auth;
+var typeResolver = require('./src/resolver.js').resolve;
+var invoker = require('./src/invoker.js').invoke;
+var converter = require('./src/hal.js').convert;
 var log = console.log;
-var port = 8060;
+var port = 8080;
 
-pipeline.use(auth);
-pipeline.use(resolve);
-pipeline.use(persist);
-pipeline.use(convert);
+db.init('../../../datastore');
+
+pipeline.use(typeResolver);
+pipeline.use(invoker);
+pipeline.use(converter);
 
 http.createServer(function(request, response) {
   if (fn.isApiCall(request)) {

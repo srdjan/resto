@@ -2,6 +2,7 @@
 //- pipeline
 //---------------------------------------------------------------------------------
 var fn = require('./fn.js');
+var urlParser = require('url');
 var log = console.log;
 
 var handlers = [];
@@ -46,8 +47,10 @@ function extract(request) {
   ctx.id = idAndRel.id;
   ctx.rel = idAndRel.rel;
   ctx.method = request.method.toLowerCase();
-  ctx.url = request.url;
   ctx.body = request.body;
+  var urlParts = urlParser.parse(request.url, true);
+  ctx.url = urlParts.pathname;
+  ctx.pageNumber = urlParts.query.hasOwnProperty('page') ? urlParts.query.page : 0;
   return ctx;
 }
 

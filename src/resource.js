@@ -72,7 +72,7 @@ function processApi(ctx) {
 
 exports.get = function(ctx) {
   if (ctx.id === 0) {
-    var all = db.getAll(ctx.pageNumber || 0);
+    var all = db.getAll(ctx.pageNumber);
     ctx.result = all.page;
     ctx.pageNumber = all.pageNumber;
     ctx.pageCount = all.pageCount;
@@ -131,6 +131,8 @@ exports.delete = function(ctx) {
 //---------------------------------------------------------------------------------
   var expect = require('expect.js');
   log('testing: resource.js');
+// db.init('../../../datastore-test');
+db.clear();
 
   // test post, id = 0
   var ctx = {
@@ -172,3 +174,4 @@ exports.delete = function(ctx) {
   // };
   // var result = exports.post(ctx);
   // expect(result.statusCode).to.be(400);
+db.clear();

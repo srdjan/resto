@@ -5,7 +5,7 @@ var halson = require('halson');
 var fn = require('./fn.js');
 var log = console.log;
 
-// && Object.keys(prop).length === 1 && isSub(Object.keys(prop)[0])
+//--------
 function isFunc(obj) { return obj instanceof Function;}
 function isNotFunc(obj) { return ! isFunc(obj);}
 function isObject(obj) { return obj instanceof Object;}
@@ -39,20 +39,20 @@ function addLinks(halRep, typeName, result) {
   return halRep;
 }
 
-//todo: add paging
 function createListRoot(typeName, pageNumber, pageCount) {
   var halRep = halson({});
-  if (pageNumber > 1) {
+  if (pageCount > 1) {
     halRep.addLink('self', '/api/' + typeName + 's' + '?page=' + pageNumber);
-    halRep.addLink('first', '/api/' + typeName + 's');
-    halRep.addLink('prev', '/api/' + typeName + 's' + '?page=' + (pageNumber === 0 ? pageNumber + 1 : pageNumber));
-    halRep.addLink('next', '/api/' + typeName + 's' + '?page=' + (pageNumber < pageCount ? pageNumber + 1 : pageCount));
+    halRep.addLink('first', '/api/' + typeName + 's' + '?page=1');
+    halRep.addLink('prev', '/api/' + typeName + 's' + '?page=' + (pageNumber < 2 ? 1 : pageNumber - 1));
+    halRep.addLink('next', '/api/' + typeName + 's' + '?page=' + (pageNumber < pageCount ? Number(pageNumber) + 1 : pageCount));
     halRep.addLink('last', '/api/' + typeName + 's' + '?page=' + pageCount);
   }
   else {
     halRep.addLink('self', '/api/' + typeName + 's');
   }
   halRep.addLink('create', { href: '/api/' + typeName + 's/' + fn.atob('create'), method: 'POST'});
+  // log(halRep)
   return halRep;
 }
 
@@ -87,43 +87,45 @@ exports.convert = function convert(ctx) {
   var expect = require('expect.js');
   log('testing: hal.js');
 
-  var apples = [{
-                id: '3333',
-                weight: 30,
-                color: "red",
-                valueObj: {name: 'abc', descr: 'description'},
-                possibleColors: ['green', 'red', 'orange'],
-                // checkList: [{id:1, checked: 11}, {id:2,checked: 22}],
-                refObj1: { id: '33', initials: 'ss'},
-                refObj2: { id: '44', prop: 'some property', timestamp: Date.now()},
-                refObj3: { id: '55', firstName: 'tom', lastName: 'peters'},
-                getLinks: function() {
-                                  if (this.weight > 0.0 && this.weight < 200.0) {
-                                    return [{ rel: 'grow', method: "POST" },
-                                            { rel: 'toss', method: "DELETE"}];
-                                  }
-                                  return false;
-                                }
-              },
-              {
-                id: '4444',
-                weight: 40,
-                color: "orange",
-                valueObj: {name: '123', descr: 'description'},
-                possibleColors: ['green', 'red', 'orange'],
-                // checkList: [{id: 1, checked: 11}, {id: 2, checked: 22}, {id: 3,checked: 33}],
-                refObj1: { id: '33', initials: 'ss'},
-                refObj2: { id: '44', prop: 'some property', timestamp: Date.now()},
-                refObj3: { id: '55', firstName: 'tom', lastName: 'peters'},
-                getLinks: function() {
-                                  if (this.weight > 0.0 && this.weight < 200.0) {
-                                    return [{ rel: 'grow', method: "POST" },
-                                            { rel: 'toss', method: "DELETE"}];
-                                  }
-                                  return false;
-                                }
-              }
-            ];
+//TEST EMBEDS
+//-------------------------------------------------------------------------------
+  // var apples = [{
+  //               id: '3333',
+  //               weight: 30,
+  //               color: "red",
+  //               valueObj: {name: 'abc', descr: 'description'},
+  //               possibleColors: ['green', 'red', 'orange'],
+  //               // checkList: [{id:1, checked: 11}, {id:2,checked: 22}],
+  //               refObj1: { id: '33', initials: 'ss'},
+  //               refObj2: { id: '44', prop: 'some property', timestamp: Date.now()},
+  //               refObj3: { id: '55', firstName: 'tom', lastName: 'peters'},
+  //               getLinks: function() {
+  //                                 if (this.weight > 0.0 && this.weight < 200.0) {
+  //                                   return [{ rel: 'grow', method: "POST" },
+  //                                           { rel: 'toss', method: "DELETE"}];
+  //                                 }
+  //                                 return false;
+  //                               }
+  //             },
+  //             {
+  //               id: '4444',
+  //               weight: 40,
+  //               color: "orange",
+  //               valueObj: {name: '123', descr: 'description'},
+  //               possibleColors: ['green', 'red', 'orange'],
+  //               // checkList: [{id: 1, checked: 11}, {id: 2, checked: 22}, {id: 3,checked: 33}],
+  //               refObj1: { id: '33', initials: 'ss'},
+  //               refObj2: { id: '44', prop: 'some property', timestamp: Date.now()},
+  //               refObj3: { id: '55', firstName: 'tom', lastName: 'peters'},
+  //               getLinks: function() {
+  //                                 if (this.weight > 0.0 && this.weight < 200.0) {
+  //                                   return [{ rel: 'grow', method: "POST" },
+  //                                           { rel: 'toss', method: "DELETE"}];
+  //                                 }
+  //                                 return false;
+  //                               }
+  //             }
+  //           ];
 
   // //test isEmbed()
   // //-----------------------------------
@@ -159,90 +161,92 @@ exports.convert = function convert(ctx) {
   // var embeds = res.result.getEmbeds('apples');
   // expect(embeds.length).to.be(2);
 
-  //-- test paging
-  var todos = [{
-                id: '111111',
-                content: '1',
-                isDone: false,
-                isArchived: false
-              },
-              {
-                id: '222222',
-                content: '2',
-                isDone: false,
-                isArchived: false
-              },
-              {
-                id: '333333',
-                content: '3',
-                isDone: false,
-                isArchived: false
-              },
-              {
-                id: '444444',
-                content: '4',
-                isDone: false,
-                isArchived: false
-              },
-              {
-                id: '555555',
-                content: '5',
-                isDone: false,
-                isArchived: false
-              },
-              {
-                id: '666666',
-                content: '6',
-                isDone: false,
-                isArchived: false
-              },
-              {
-                id: '777777',
-                content: '7',
-                isDone: false,
-                isArchived: false
-              },
-              {
-                id: '888888',
-                content: '8',
-                isDone: false,
-                isArchived: false
-              },
-              {
-                id: '999999',
-                content: '9',
-                isDone: false,
-                isArchived: false
-              },
-              {
-                id: '101010',
-                content: '10',
-                isDone: false,
-                isArchived: false
-              },
-              {
-                id: '11111111',
-                content: '11',
-                isDone: false,
-                isArchived: false
-              },
-              {
-                id: '12121212',
-                content: '12',
-                isDone: false,
-                isArchived: false
-              }
-  ];
-   //- get all - when result is array: createList()
-  //-----------------------------------
-  var ctx = {
-    typeName: 'Todo',
-    pageNumber: 3,
-    pageCount: 4,
-    result: todos
-  };
-  var res = exports.convert(ctx);
+//TEST PAGING
+//-------------------------------------------------------------------------------
+  // var todos = [{
+  //               id: '111111',
+  //               content: '1',
+  //               isDone: false,
+  //               isArchived: false
+  //             },
+  //             {
+  //               id: '222222',
+  //               content: '2',
+  //               isDone: false,
+  //               isArchived: false
+  //             },
+  //             {
+  //               id: '333333',
+  //               content: '3',
+  //               isDone: false,
+  //               isArchived: false
+  //             },
+  //             {
+  //               id: '444444',
+  //               content: '4',
+  //               isDone: false,
+  //               isArchived: false
+  //             },
+  //             {
+  //               id: '555555',
+  //               content: '5',
+  //               isDone: false,
+  //               isArchived: false
+  //             },
+  //             {
+  //               id: '666666',
+  //               content: '6',
+  //               isDone: false,
+  //               isArchived: false
+  //             },
+  //             {
+  //               id: '777777',
+  //               content: '7',
+  //               isDone: false,
+  //               isArchived: false
+  //             },
+  //             {
+  //               id: '888888',
+  //               content: '8',
+  //               isDone: false,
+  //               isArchived: false
+  //             },
+  //             {
+  //               id: '999999',
+  //               content: '9',
+  //               isDone: false,
+  //               isArchived: false
+  //             },
+  //             {
+  //               id: '101010',
+  //               content: '10',
+  //               isDone: false,
+  //               isArchived: false
+  //             },
+  //             {
+  //               id: '11111111',
+  //               content: '11',
+  //               isDone: false,
+  //               isArchived: false
+  //             },
+  //             {
+  //               id: '12121212',
+  //               content: '12',
+  //               isDone: false,
+  //               isArchived: false
+  //             }
+  // ];
+  //  //- get all - when result is array: createList()
+  // //-----------------------------------
+  // var ctx = {
+  //   typeName: 'Todo',
+  //   pageNumber: 3,
+  //   pageCount: 4,
+  //   result: todos
+  // };
+  // var res = exports.convert(ctx);
   // log(JSON.stringify(res.result));
-  var embeds = res.result.getEmbeds('todos');
-  expect(embeds.length).to.be(12);
+  // var embeds = res.result.getEmbeds('todos');
+  // expect(embeds.length).to.be(12);
+
 

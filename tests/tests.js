@@ -40,7 +40,6 @@ function eatNotAllowed(apple) {
 }
 
 //- prepare
-db.init('../../../../datastore');
 db.clear();
 
 log('------ starting integration tests --------');
@@ -94,13 +93,6 @@ pipeline.use(converter);
   expect(fn.contains('grow', apple.data.listLinkRels())).to.be(true);
   expect(fn.contains('toss', apple.data.listLinkRels())).to.be(true);
 
-//-  test get all - 2 pages
-  var all = get('/api/apples/');
-  expect(all.statusCode).to.be(200);
-  expect(all.data.listLinkRels().length).to.be(2);
-  expect(fn.contains('self', all.data.listLinkRels())).to.be(true);
-  expect(fn.contains('create', all.data.listLinkRels())).to.be(true);
-
 //- test if create sucessful
   var self = get(apple.data.getLink('self').href);
   expect(self.data.weight).to.be(20.0);
@@ -108,6 +100,13 @@ pipeline.use(converter);
   expect(fn.contains('self', self.data.listLinkRels())).to.be(true);
   expect(fn.contains('grow', self.data.listLinkRels())).to.be(true);
   expect(fn.contains('toss', self.data.listLinkRels())).to.be(true);
+
+//-  test get all - 2 pages
+  var all = get('/api/apples/');
+  expect(all.statusCode).to.be(200);
+  expect(all.data.listLinkRels().length).to.be(6);
+  expect(fn.contains('self', all.data.listLinkRels())).to.be(true);
+  expect(fn.contains('create', all.data.listLinkRels())).to.be(true);
 
 //- call 'grow' api (post - with id and propertis that don't exist on entity)
   var appleGrown = cmd(self.data, 'grow', { weightIncr: 230.0});
@@ -127,20 +126,19 @@ pipeline.use(converter);
   var notAllowedResult = eatNotAllowed(appleGrown.data);
   expect(notAllowedResult.statusCode).to.be(405);
 
-//- test get before toss
-  // var all = get('/api/apples/');
-  // log(JSON.stringify(all.data))
-  // var embeds = all.data.getEmbeds('apples');
-  // expect(embeds.length).to.be(3);  //page 1
+// - test get before toss
+  var all = get('/api/apples/');
+  log(JSON.stringify(all.data));
+  var embeds = all.data.getEmbeds('apples');
+  expect(embeds.length).to.be(3);  //page 1
 
-  //todo: get page 2 and atest that is has 1 embed
+  //todo: get page 2 and a test that is has 1 embed
 
+//- toos one of the apples
   result = cmd(appleEaten.data, 'toss', { });
 
 //- test get after toss
   var all = get('/api/apples/');
-  log(JSON.stringify(all.data))
+  log(JSON.stringify(all.data));
   var embeds = all.data.getEmbeds('apples');
-  // log(all.data)
-  // expect(embeds.length).to.be(3);
-
+  expect(embeds.length).to.be(3);
