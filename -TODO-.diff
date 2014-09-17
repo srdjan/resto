@@ -9,6 +9,7 @@
 -todo: use as resto home page: http://fluxxor.com/
 -todo: add services (non-persisting api, composition) ?
       https://github.com/srikumarks/cspjs
+      https://github.com/ubolonton/js-csp
 -todo: token auth: https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
 -todo: add metadata (http://marmelab.com/blog/2014/09/15/easy-backend-for-your-restful-api.html)
        use links to hypermedia type (meta) or via header?
@@ -90,3 +91,13 @@ restify? node-inspector? paper-trail? xhr -> httpfy?
 http://node-os.com/
 vs
 http://runtimejs.org/
+
+
+//thinkering -----------------------------------------------------------------------
+REST: what happens when you discover that you want hateaos but not rpc part?
+
+it is the message format -> hal with crdts instead of hal/model
+it is the topology -> more then point to point
+throw away mutability -> always record the change -> but use difss? (like fluxx/react)
+throw away sync calls -> all async
+throw away all or nothing -> always streams

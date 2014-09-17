@@ -128,7 +128,7 @@ pipeline.use(converter);
 
 // - test get before toss
   var all = get('/api/apples/');
-  log(JSON.stringify(all.data));
+  // log(JSON.stringify(all.data));
   var embeds = all.data.getEmbeds('apples');
   expect(embeds.length).to.be(3);  //page 1
 
@@ -139,6 +139,6 @@ pipeline.use(converter);
 
 //- test get after toss
   var all = get('/api/apples/');
-  log(JSON.stringify(all.data));
+  // log(JSON.stringify(all.data));
   var embeds = all.data.getEmbeds('apples');
   expect(embeds.length).to.be(3);
