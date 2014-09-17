@@ -2,12 +2,16 @@
 -todo: make client app:
         http://www.smashingmagazine.com/2014/09/02/building-simple-cross-browser-offline-todo-list-indexeddb-websql
         http://adodson.com/hello.js/
--todo: find the self contained app with searchable database and reuse as a default HAL based UI?
+        http://lhorie.github.io/mithril-blog/velocity-animations-in-mithril.html
+        https://github.com/jed/domo
 -todo: add queries
+-todo: find the self contained app with searchable database and reuse as a default HAL based UI?
 -todo: use as resto home page: http://fluxxor.com/
--todo: add services (non-persisting api) ?
+-todo: add services (non-persisting api, composition) ?
+      https://github.com/srikumarks/cspjs
 -todo: token auth: https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
--todo: add links to hypermedia type (meta) or via header?
+-todo: add metadata (http://marmelab.com/blog/2014/09/15/easy-backend-for-your-restful-api.html)
+       use links to hypermedia type (meta) or via header?
 -todo: es6 arrow !!!!, contracts.js, ...
                        http://jdkanani.com/smalleditor
                         http://sennajs.com/docs/,
@@ -25,8 +29,14 @@
 -todo: process control: http://tech.pro/tutorial/2074/nodejs-managing-child-processes
 -todo: dynamicly load app modules: http://stackoverflow.com/questions/10914751/loading-node-js-modules-dynamically-based-on-route
         use http://labs.voronianski.com/melchior.js/ ?
--todo: use jsfmt to rewrite(remove) tests: http://rdio.github.io/jsfmt/
+-todo: handle errors: https://vimeo.com/78654146
+-todo: handle logging: bunyan
+-todo: use jsfmt to rewrite(remove) tests: http://rdio.github.io/jsfmt
+-todo: real db? http://leveldb.org/
+      add replication: https://github.com/dominictarr/crdt/tree/master/example/simple
 -todo: launch!!! https://github.com/slogsdon/placid
+
+restify? node-inspector? paper-trail? xhr -> httpfy?
 
 +todo: paging nav
 +todo: add paging
