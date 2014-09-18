@@ -2,7 +2,7 @@
 //- db api
 //---------------------------------------------------------------------------------
 var datastore = require('node-persist');
-var fn = require('./fn.js');
+var fn = require('./fn');
 var log = console.log;
 
 function init(path) {
@@ -68,7 +68,6 @@ function getAll(pgNumber) {
 
   if (pageNumber > pageCount) pageNumber = pageCount;
   var page = objs.slice((pageNumber - 1) * pageSize, pageNumber * pageSize);
-  // log('pageSize: ' + pageSize + ' pageNumber: ' + pageNumber + ' objs.length: ' + objs.length + ' pageCount: ' + pageCount)
   return { pageNumber: pageNumber, pageCount: pageCount, page: page };
 }
 

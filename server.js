@@ -2,19 +2,16 @@
 //- server
 //---------------------------------------------------------------------------------
 var http = require("http");
-var file = require("./src/filehelper.js");
-var db = require('./src/db.js');
-var fn = require('./src/fn.js');
-var pipeline = require('./src/pipeline.js');
-var authenticator = require('./src/authn.js').auth;
-var authorizer = require('./src/authr.js').auth;
-var typeResolver = require('./src/resolver.js').resolve;
-var invoker = require('./src/invoker.js').invoke;
-var converter = require('./src/hal.js').convert;
+var file = require("./src/filehelper");
+var fn = require('./src/fn');
+var pipeline = require('./src/pipeline');
+var authenticator = require('./src/authn').auth;
+var authorizer = require('./src/authr').auth;
+var typeResolver = require('./src/resolver').resolve;
+var invoker = require('./src/invoker').invoke;
+var converter = require('./src/hal').convert;
 var log = console.log;
 var port = 8080;
-
-db.init('../../../../datastore');
 
 pipeline.use(typeResolver);
 pipeline.use(invoker);

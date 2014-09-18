@@ -13,6 +13,7 @@
 -todo: token auth: https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
 -todo: add metadata (http://marmelab.com/blog/2014/09/15/easy-backend-for-your-restful-api.html)
        use links to hypermedia type (meta) or via header?
+       http://brandur.org/elegant-apis
 -todo: es6 arrow !!!!, contracts.js, ...
                        http://jdkanani.com/smalleditor
                         http://sennajs.com/docs/,

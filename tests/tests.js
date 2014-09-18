@@ -3,15 +3,15 @@
 //---------------------------------------------------------------------------------
 var halson = require('halson');
 var expect = require('expect.js');
-var http = require('./httpmock.js');
-var fn = require('../src/fn.js');
-var db = require('../src/db.js');
-var pipeline = require('../src/pipeline.js');
-var authenticator = require('../src/authn.js').auth;
-var authorizer = require('../src/authr.js').auth;
-var typeResolver = require('../src/resolver.js').resolve;
-var invoker = require('../src/invoker.js').invoke;
-var converter = require('../src/hal.js').convert;
+var http = require('./httpmock');
+var fn = require('../src/fn');
+var db = require('../src/db');
+var pipeline = require('../src/pipeline');
+var authenticator = require('../src/authn').auth;
+var authorizer = require('../src/authr').auth;
+var typeResolver = require('../src/resolver').resolve;
+var invoker = require('../src/invoker').invoke;
+var converter = require('../src/hal').convert;
 var log = console.log;
 
 function get(path) {

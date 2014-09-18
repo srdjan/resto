@@ -1,10 +1,12 @@
 //---------------------------------------------------------------------------------
 //- pipeline
 //---------------------------------------------------------------------------------
-var fn = require('./fn.js');
 var urlParser = require('url');
+var fn = require('./fn');
+var db = require('./db');
 var log = console.log;
 
+db.init('../../datastore');
 var handlers = [];
 
 function writeToResp(response, statusCode, result) {

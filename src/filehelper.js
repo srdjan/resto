@@ -4,7 +4,7 @@
 var path = require("path");
 var fs = require("fs");
 var url = require("url");
-var fn = require('./fn.js');
+var fn = require('./fn');
 var log = console.log;
 
 function getFile(fileName, response) {

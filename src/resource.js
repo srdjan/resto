@@ -1,9 +1,9 @@
 //---------------------------------------------------------------------------------
 //- resource
 //---------------------------------------------------------------------------------
-var fn = require('./fn.js');
 var Either = require('data.either');
-var db = require('./db.js');
+var fn = require('./fn');
+var db = require('./db');
 var log = console.log;
 
 function validateApiCall(ctx) {

@@ -1,8 +1,8 @@
 //---------------------------------------------------------------------------------
 //- type resolver
 //---------------------------------------------------------------------------------
-var fn = require('./fn.js');
-var app = require('./test-app.js');
+var fn = require('./fn');
+var app = require('./apple-app');
 var log = console.log;
 
 function resolve(ctx) {

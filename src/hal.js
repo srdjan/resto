@@ -2,7 +2,7 @@
 //- hal parsing
 //---------------------------------------------------------------------------------
 var halson = require('halson');
-var fn = require('./fn.js');
+var fn = require('./fn');
 var log = console.log;
 
 //--------
