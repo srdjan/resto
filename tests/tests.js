@@ -104,8 +104,7 @@ pipeline.use(converter);
 //-  test get all - 2 pages
   var all = get('/api/apples/');
   expect(all.statusCode).to.be(200);
-  expect(all.data.listLinkRels().length).to.be(6);
-  expect(fn.contains('self', all.data.listLinkRels())).to.be(true);
+  expect(all.data.listLinkRels().length).to.be(5);
   expect(fn.contains('create', all.data.listLinkRels())).to.be(true);
 
 //- call 'grow' api (post - with id and propertis that don't exist on entity)

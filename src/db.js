@@ -221,7 +221,6 @@ clear();
   log(JSON.stringify(res.result));
   var embeds = res.result.getEmbeds('todos');
   expect(embeds.length).to.be(3);
-  expect(fn.contains('self', res.result.listLinkRels())).to.be(true);
   expect(fn.contains('create', res.result.listLinkRels())).to.be(true);
   expect(fn.contains('next', res.result.listLinkRels())).to.be(true);
 

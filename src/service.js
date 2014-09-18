@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------
-//- pipeline
+//- service
 //---------------------------------------------------------------------------------
 var urlParser = require('url');
 var fn = require('./fn');
@@ -8,6 +8,8 @@ var log = console.log;
 
 db.init('../../datastore');
 var handlers = [];
+var app;
+var server;
 
 function writeToResp(response, statusCode, result) {
   response.writeHead(statusCode, {"Content-Type": "application/json"});
@@ -58,11 +60,25 @@ function extract(request) {
 
 exports.use = function(f, p, t) {
   handlers.push({ func: f, pred: p || false, trace: t || false});
+  return this;
+};
+exports.on = function(srvr) {
+  server = srvr;
+  return this;
+};
+exports.configure = function(appl) {
+  app = appl;
+  return this;
+};
+exports.start = function(port) {
+  server.listen(port);
+  return this;
 };
 
 exports.run = function(request, response) {
   try {
     var ctx = extract(request);
+    ctx.app = app;
     ctx.statusCode = 200;
     ctx = fn.runAll(handlers, function(d) { return d.statusCode !== 200; }, ctx);
     writeToResp(response, ctx.statusCode, ctx.result);
