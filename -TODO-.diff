@@ -1,4 +1,6 @@
 ❤ m฿
+
+-todo: make app.js be starting point (microservice?) even further - build unikernel to run it!!!
 -todo: make client app:
         http://www.smashingmagazine.com/2014/09/02/building-simple-cross-browser-offline-todo-list-indexeddb-websql
         http://adodson.com/hello.js/
@@ -59,6 +61,7 @@ restify? node-inspector? paper-trail? xhr -> httpfy?
   !idea: test in production [http://bahmutov.calepin.co/test-in-production.html]
   !idea: create web app for todos with !,@,# and keywords, rules, actions, messaies
   !idea: http://fluxxor.com/ as a way to persist data
+  !server replication: viewstamped replication? with spread?
 !use
   https://github.com/xyncro/frost
   http://www.rackspace.com/blog/objectrocket-adds-fully-managed-redis-service/?cm_mmc=managed-_-cloud-_-contentnam-_-dbweekly-ORredis
