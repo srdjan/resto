@@ -1,18 +1,28 @@
 ❤ m฿
 
+-todo: use sweet.js !
+        contracts.js
+        sparkler.js
+        arrow.js
+
 -todo: make app.js be starting point (microservice?) even further - build unikernel to run it!!!
 -todo: make client app:
         http://www.smashingmagazine.com/2014/09/02/building-simple-cross-browser-offline-todo-list-indexeddb-websql
         http://adodson.com/hello.js/
         http://lhorie.github.io/mithril-blog/velocity-animations-in-mithril.html
         https://github.com/jed/domo
+        http://semu.github.io/timesheet.js/
+        http://fian.my.id/marka/
+        http://timothy-long.com/kindling/
 -todo: add queries
 -todo: find the self contained app with searchable database and reuse as a default HAL based UI?
 -todo: use as resto home page: http://fluxxor.com/
 -todo: add services (non-persisting api, composition) ?
       https://github.com/srikumarks/cspjs
       https://github.com/ubolonton/js-csp
--todo: token auth: https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
+-todo: security
+        token auth: https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
+        http://blog.bitpay.com/2014/09/18/announcing-the-new-bitpay-api.html
 -todo: add metadata (http://marmelab.com/blog/2014/09/15/easy-backend-for-your-restful-api.html)
        use links to hypermedia type (meta) or via header?
        http://brandur.org/elegant-apis
@@ -31,6 +41,8 @@
       http://avoidwork.github.io/tenso/rest.html
 -todo: add orchestrator: http://www.chorusjs.com/
 -todo: process control: http://tech.pro/tutorial/2074/nodejs-managing-child-processes
+-todo: use pattern matching to define states?
+        https://github.com/natefaubion/sparkler
 -todo: dynamicly load app modules: http://stackoverflow.com/questions/10914751/loading-node-js-modules-dynamically-based-on-route
         use http://labs.voronianski.com/melchior.js/ ?
 -todo: handle errors: https://vimeo.com/78654146
@@ -77,6 +89,7 @@ restify? node-inspector? paper-trail? xhr -> httpfy?
   https://github.com/fitzgen/github-api
   http://www.slideshare.net/GustafKotte/design-hypermedia-apis
   http://www.slideshare.net/rnewton/amundsen-costbenefitshypermedia
+  https://github.com/RisingStack/node-style-guide
 
   // http://j201.github.io/posts/2013-06-16-Evil-JS-Macros.html
   // var dog = {

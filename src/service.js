@@ -58,15 +58,15 @@ function extract(request) {
   return ctx;
 }
 
-exports.use = function(f, p, t) {
-  handlers.push({ func: f, pred: p || false, trace: t || false});
+exports.use = function(f, t) {
+  handlers.push({ func: f, trace: t || false});
   return this;
 };
 exports.on = function(srvr) {
   server = srvr;
   return this;
 };
-exports.configure = function(appl) {
+exports.expose = function(appl) { //todo: support multiple resources
   app = appl;
   return this;
 };
@@ -75,7 +75,7 @@ exports.start = function(port) {
   return this;
 };
 
-exports.run = function(request, response) {
+exports.process = function(request, response) {
   try {
     var ctx = extract(request);
     ctx.app = app;

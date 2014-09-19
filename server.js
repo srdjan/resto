@@ -7,10 +7,10 @@ var fn = require('./src/fn');
 var log = console.log;
 
 var server;
-exports.create = function(pipeline) {
+exports.create = function(service) {
     server = http.createServer(function(request, response) {
     if (fn.isApiCall(request)) {
-      processApi(pipeline, request, response);
+      processApi(service, request, response);
     }
     else {
       file.get(request, response);
@@ -23,20 +23,20 @@ exports.create = function(pipeline) {
 //   server.listen(port);
 // };
 
-// exports.startServer = function(pipeline) {
-// exports.stopServer = function(pipeline) {
+// exports.startServer = function(service) {
+// exports.stopServer = function(service) {
 // log("Server running at port: " + port + "\nCTRL + SHIFT + C to shutdown");
 
-function processApi(pipeline, request, response) {
+function processApi(service, request, response) {
   if (fn.hasBody(request.method)) {
     var body = '';
     request.on('data', function(chunk) { body += chunk.toString(); });
     request.on('end', function() {
       request.body = JSON.parse(body);
-      pipeline.run(request, response);
+      service.process(request, response);
     });
   }
   else {
-    pipeline.run(request, response);
+    service.process(request, response);
   }
 }

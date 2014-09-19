@@ -12,7 +12,8 @@ function invoke(ctx) {
     ctx.statusCode = 500;
     return ctx;
   }
-  return handler(ctx);
+  ctx = handler(ctx);
+  return ctx;
 }
 
 module.exports.invoke = invoke;

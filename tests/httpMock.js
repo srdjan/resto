@@ -1,3 +1,6 @@
+exports.create = function(service) { return this; };
+exports.listen = function(port) {};
+
 //note: taken from: https://github.com/vojtajina/node-mocks
 exports.request = function(method, url, body, headers) {
   this.method = method;
@@ -12,16 +15,9 @@ exports.request = function(method, url, body, headers) {
 
 exports.response = function() {
   var bodySent = false;
-
   this.headers = {};
   this.body = null;
   this.statusCode = null;
-
-  // this._isFinished = function() {
-  //   return this.headerSent && bodySent;
-  // };
-
-  // this.headerSent = false;
 
   this.setHeader = function(name, value) {
     // if (this.headerSent) {
