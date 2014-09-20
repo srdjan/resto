@@ -118,3 +118,6 @@ it is the topology -> more then point to point
 throw away mutability -> always record the change -> but use difss? (like fluxx/react)
 throw away sync calls -> all async
 throw away all or nothing -> always streams
+
+api jst generates event??? like in the talk @ nordicjs
+    websockets clients (ui, persistance, subscribed services... ?)

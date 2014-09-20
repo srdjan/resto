@@ -11,7 +11,7 @@ var log = console.log;
 
 // service processing pipeline
 // configure and and start:
-service.expose(apple/* compose(farm, ownedBy, farmer, has, apple-orchard */).on(httpServer.create())
+service.expose(apple/* compose(farm, ownedBy, farmer, has, apple-orchard */).on(httpServer.create(service))
               .use(authenticator)
               .use(resolver)
               .use(authorizer)
