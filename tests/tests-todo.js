@@ -1,52 +1,26 @@
 //---------------------------------------------------------------------------------
-//- tests
+//- tests using todo model
 //---------------------------------------------------------------------------------
 var halson = require('halson');
 var expect = require('expect.js');
-var httpServerMock = require('./httpmock');
-var httpRequest = require('./httpmock').request;
-var httpResponse = require('./httpmock').response;
 var fn = require('../src/fn');
 var db = require('../src/db');
-var apple = require('../src/resources/apple');
 var service = require('../src/service');
 var authenticator = require('../src/authn').auth;
 var authorizer = require('../src/authr').auth;
 var resolver = require('../src/resolver').resolve;
 var invoker = require('../src/invoker').invoke;
 var converter = require('../src/hal').convert;
+
+var activity = require('../examples/todo/resources/activity');
+var apple = require('../examples/todo/resources/todo');
 var log = console.log;
-
-function get(url) {
-  var request = new httpRequest('GET', url);
-  var response = new httpResponse();
-  service.process(request, response);
-  var result = halson(response.body);
-  return { data: result, statusCode: response.statusCode };
-}
-
-function cmd(resource, rel, newResource) {
-  var link = resource.getLink(rel);
-  var request = new httpRequest(link.method, link.href, newResource);
-  var response = new httpResponse();
-  service.process(request, response);
-  apple = halson(response.body);
-  return { data: apple, statusCode: response.statusCode };
-}
-
-function eatNotAllowed(apple) {
-  var eatLink = apple.getLink('eat');
-  var request = new httpRequest(eatLink.method, eatLink.href, { weight: 0.0, color: 'orange'});
-  var response = new httpResponse();
-  service.process(request, response);
-  return { data: {}, statusCode: response.statusCode };
-}
 
 //- prepare
 db.clear();
 
 log('------ starting service --------');
-service.expose(apple).on(httpServerMock.create())
+service.expose(compose(activity, hasMany, todo)).on(httpServerMock.create())
               .use(authenticator, true)
               .use(resolver, true)
               .use(authorizer, true)

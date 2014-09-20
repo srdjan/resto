@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------
-//- server
+//- http-server
 //---------------------------------------------------------------------------------
 var http = require("http");
 var file = require("./src/filehelper");
@@ -18,14 +18,6 @@ exports.create = function(service) {
   });
   return server;
 };
-
-// exports.start = function(server) {
-//   server.listen(port);
-// };
-
-// exports.startServer = function(service) {
-// exports.stopServer = function(service) {
-// log("Server running at port: " + port + "\nCTRL + SHIFT + C to shutdown");
 
 function processApi(service, request, response) {
   if (fn.hasBody(request.method)) {
