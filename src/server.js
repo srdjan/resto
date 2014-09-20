@@ -2,9 +2,9 @@
 //- http-server
 //---------------------------------------------------------------------------------
 var http = require("http");
-var file = require("./src/filehelper");
-var fn = require('./src/fn');
-var log = console.log;
+var file = require("./file-helper");
+var fn   = require('./fn');
+var log  = console.log;
 
 var server;
 exports.create = function(service) {
