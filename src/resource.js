@@ -2,9 +2,9 @@
 //- resource
 //---------------------------------------------------------------------------------
 var Either = require('data.either');
-var fn = require('./fn');
-var db = require('./db');
-var log = console.log;
+var fn     = require('./fn');
+var db     = require('./db');
+var log    = console.log;
 
 function validateApiCall(ctx) {
   var links = ctx.entity.getLinks();
@@ -71,14 +71,14 @@ function processApi(ctx) {
 }
 
 exports.get = function(ctx) {
-  if (ctx.id === 0) {
+  if (ctx.id) {
+    ctx.result = db.get(ctx.id);
+  }
+  else {
     var all = db.getAll(ctx.pageNumber);
     ctx.result = all.page;
     ctx.pageNumber = all.pageNumber;
     ctx.pageCount = all.pageCount;
-  }
-  else {
-    ctx.result = db.get(ctx.id);
   }
   return ctx;
 };

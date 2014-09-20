@@ -75,7 +75,7 @@ function run(h, ep, m) {
   return m.chain(function(d) {
     if(h.trace) trace('-> ', h.func, d);
     var r = h.func(d);
-    if(h.trace) trace('<- ', h.func, d);
+    if(h.trace) trace('<- ', h.func, r);
     return ep(r) ? Either.Left(r) : Either.Right(r);
   });
 }

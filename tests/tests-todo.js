@@ -1,54 +1,34 @@
 //---------------------------------------------------------------------------------
-//- tests
+//- tests using todo model
 //---------------------------------------------------------------------------------
 var halson = require('halson');
 var expect = require('expect.js');
-var http = require('./httpmock');
 var fn = require('../src/fn');
 var db = require('../src/db');
-var pipeline = require('../src/pipeline');
+var service = require('../src/service');
 var authenticator = require('../src/authn').auth;
 var authorizer = require('../src/authr').auth;
-var typeResolver = require('../src/resolver').resolve;
+var resolver = require('../src/resolver').resolve;
 var invoker = require('../src/invoker').invoke;
 var converter = require('../src/hal').convert;
+
+var activity = require('../examples/todo/resources/activity');
+var apple = require('../examples/todo/resources/todo');
 var log = console.log;
-
-function get(path) {
-  var request = new http.request('GET', path);
-  var response = new http.response();
-  pipeline.run(request, response);
-  var result = halson(response.body);
-  return { data: result, statusCode: response.statusCode };
-}
-
-function cmd(resource, rel, newResource) {
-  var link = resource.getLink(rel);
-  var request = new http.request(link.method, link.href, newResource);
-  var response = new http.response();
-  pipeline.run(request, response);
-  apple = halson(response.body);
-  return { data: apple, statusCode: response.statusCode };
-}
-
-function eatNotAllowed(apple) {
-  var eatLink = apple.getLink('eat');
-  var request = new http.request(eatLink.method, eatLink.href, { weight: 0.0, color: 'orange'});
-  var response = new http.response();
-  pipeline.run(request, response);
-  return { data: {}, statusCode: response.statusCode };
-}
 
 //- prepare
 db.clear();
 
-log('------ starting integration tests --------');
-// pipeline.use(authenticator);
-// pipeline.use(authorizer);
-pipeline.use(typeResolver);
-pipeline.use(invoker);
-pipeline.use(converter);
+log('------ starting service --------');
+service.expose(compose(activity, hasMany, todo)).on(httpServerMock.create())
+              .use(authenticator, true)
+              .use(resolver, true)
+              .use(authorizer, true)
+              .use(invoker, true)
+              .use(converter, true)
+              .start(8070);
 
+log('------ running integration tests --------');
 //-  test bad get all
   var all = get('bad');
   expect(all.statusCode).to.be(500);
@@ -104,8 +84,7 @@ pipeline.use(converter);
 //-  test get all - 2 pages
   var all = get('/api/apples/');
   expect(all.statusCode).to.be(200);
-  expect(all.data.listLinkRels().length).to.be(6);
-  expect(fn.contains('self', all.data.listLinkRels())).to.be(true);
+  expect(all.data.listLinkRels().length).to.be(5);
   expect(fn.contains('create', all.data.listLinkRels())).to.be(true);
 
 //- call 'grow' api (post - with id and propertis that don't exist on entity)

@@ -1,18 +1,19 @@
 //---------------------------------------------------------------------------------
 //- method resolver
 //---------------------------------------------------------------------------------
-var fn = require('./fn.js');
-var resource = require('./resource.js');
-var log = console.log;
+var fn        = require('./fn.js');
+var resource  = require('./resource.js');
+var log       = console.log;
 
 function invoke(ctx) {
   var handler = resource[ctx.method];
-  if (typeof handler === 'undefined') {
-    ctx.result = {Error: 'method resolver error'};
+  if ( ! typeof handler) {
+    ctx.result = { Error: 'method resolver error' };
     ctx.statusCode = 500;
     return ctx;
   }
-  return handler(ctx);
+  ctx = handler(ctx);
+  return ctx;
 }
 
 module.exports.invoke = invoke;

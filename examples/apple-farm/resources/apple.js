@@ -13,8 +13,8 @@ exports.Apple = function() {
   };
 
   this.eat = function(msg) {
-    if (msg.weight === 0.0) return true;
-    return false;
+    if (msg.weight) return false;
+    return true;
   };
 
   this.toss = function(msg) {
@@ -31,9 +31,10 @@ exports.Apple = function() {
       return [{ rel: 'eat', method: "PUT" },
               { rel: 'toss', method: "DELETE" }];
     }
-    else if (this.weight === 0.0) {
+    else if ( ! this.weight) {
       return [{ rel: 'toss', method: "DELETE"}];
     }
     return [];
   };
 };
+
