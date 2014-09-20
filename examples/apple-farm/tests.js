@@ -3,18 +3,18 @@
 //---------------------------------------------------------------------------------
 var halson          = require('halson');
 var expect          = require('expect.js');
-var helper          = require('./test-helper');
-var fn              = require('../src/fn');
-var db              = require('../src/db');
-var httpServerMock  = require('./httpmock');
-var service         = require('../src/service');
-var authenticator   = require('../src/authn').auth;
-var authorizer      = require('../src/authr').auth;
-var resolver        = require('../src/resolver').resolve;
-var invoker         = require('../src/invoker').invoke;
-var converter       = require('../src/hal').convert;
+var helper          = require('../../src/test-helper');
+var fn              = require('../../src/fn');
+var db              = require('../../src/db');
+var httpServerMock  = require('../../src/http-mock');
+var service         = require('../../src/service');
+var authenticator   = require('../../src/authn').auth;
+var authorizer      = require('../../src/authr').auth;
+var resolver        = require('../../src/resolver').resolve;
+var invoker         = require('../../src/invoker').invoke;
+var converter       = require('../../src/hal').convert;
 
-var apple = require('../examples/apple-farm/resources/apple');
+var apple = require('./resources/apple');
 var log = console.log;
 
 //- prepare

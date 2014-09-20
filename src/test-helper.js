@@ -3,10 +3,10 @@
 //---------------------------------------------------------------------------------
 var halson = require('halson');
 var expect = require('expect.js');
-var fn = require('../src/fn');
-var httpRequest = require('./httpmock').request;
-var httpResponse = require('./httpmock').response;
-var service = require('../src/service');
+var fn = require('./fn');
+var httpRequest = require('./http-mock').request;
+var httpResponse = require('./http-mock').response;
+var service = require('./service');
 
 exports.get = function get(url) {
   var request = new httpRequest('GET', url);
