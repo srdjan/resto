@@ -2,11 +2,11 @@
 //- service
 //---------------------------------------------------------------------------------
 var urlParser = require('url');
-var fn = require('./fn');
-var db = require('./db');
-var log = console.log;
+var fn        = require('./fn');
+var db        = require('./db');
+var log       = console.log;
 
-db.init('../../datastore');
+db.init('../../../datastore');
 var handlers = [];
 var app;
 var server;

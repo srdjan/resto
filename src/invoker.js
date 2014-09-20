@@ -1,9 +1,9 @@
 //---------------------------------------------------------------------------------
 //- method resolver
 //---------------------------------------------------------------------------------
-var fn = require('./fn.js');
-var resource = require('./resource.js');
-var log = console.log;
+var fn        = require('./fn.js');
+var resource  = require('./resource.js');
+var log       = console.log;
 
 function invoke(ctx) {
   var handler = resource[ctx.method];

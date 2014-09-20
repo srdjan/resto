@@ -2,8 +2,8 @@
 //- db api
 //---------------------------------------------------------------------------------
 var datastore = require('node-persist');
-var fn = require('./fn');
-var log = console.log;
+var fn        = require('./fn');
+var log       = console.log;
 
 function init(path) {
     datastore.initSync({

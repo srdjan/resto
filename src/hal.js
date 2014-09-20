@@ -2,8 +2,8 @@
 //- hal parsing
 //---------------------------------------------------------------------------------
 var halson = require('halson');
-var fn = require('./fn');
-var log = console.log;
+var fn     = require('./fn');
+var log    = console.log;
 
 //--------
 function isFunc(obj) { return obj instanceof Function; }

@@ -2,9 +2,9 @@
 //- resource
 //---------------------------------------------------------------------------------
 var Either = require('data.either');
-var fn = require('./fn');
-var db = require('./db');
-var log = console.log;
+var fn     = require('./fn');
+var db     = require('./db');
+var log    = console.log;
 
 function validateApiCall(ctx) {
   var links = ctx.entity.getLinks();
