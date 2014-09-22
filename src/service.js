@@ -72,6 +72,7 @@ exports.expose = function(appl) { //todo: support multiple resources
 };
 exports.start = function(port) {
   server.listen(port);
+  log("Apple Farm Service running at port: " + port + "\nCTRL + SHIFT + C to shutdown");
   return this;
 };
 

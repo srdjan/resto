@@ -1,59 +1,3 @@
-❤ m฿
-
--todo: use sweet.js !
-        contracts.js
-        sparkler.js
-        arrow.js
-
--todo: make app.js be starting point (microservice?) even further - build unikernel to run it!!!
--todo: make client app:
-        http://www.smashingmagazine.com/2014/09/02/building-simple-cross-browser-offline-todo-list-indexeddb-websql
-        http://adodson.com/hello.js/
-        http://lhorie.github.io/mithril-blog/velocity-animations-in-mithril.html
-        https://github.com/jed/domo
-        http://semu.github.io/timesheet.js/
-        http://fian.my.id/marka/
-        http://timothy-long.com/kindling/
--todo: add queries
--todo: find the self contained app with searchable database and reuse as a default HAL based UI?
--todo: use as resto home page: http://fluxxor.com/
--todo: add services (non-persisting api, composition) ?
-      https://github.com/srikumarks/cspjs
-      https://github.com/ubolonton/js-csp
--todo: security
-        token auth: https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
-        http://blog.bitpay.com/2014/09/18/announcing-the-new-bitpay-api.html
--todo: add metadata (http://marmelab.com/blog/2014/09/15/easy-backend-for-your-restful-api.html)
-       use links to hypermedia type (meta) or via header?
-       http://brandur.org/elegant-apis
--todo: es6 arrow !!!!, contracts.js, ...
-                       http://jdkanani.com/smalleditor
-                        http://sennajs.com/docs/,
-                        https://github.com/giann/zappa,
-                        https://github.com/velveteer/mithril-boilerplate
-                        http://tympanus.net/Development/TabStylesInspiration/
-                        http://mobify.github.io/bellows/
-                        http://www.invisionapp.com/tethr
--todo: https://github.com/rtc-io/demo-datachannel-node
--todo: use Express (better server error handling (invalid json.!!..)
-      https://stormpath.com/blog/node-api-client-part-one/
-      http://appdevelopermagazine.com/1718/2014/7/31/StrongLoop-Node.js-API-Server-Released-for-Developing,-Securing-and-Scaling-REST-APIs/
-      http://avoidwork.github.io/tenso/rest.html
--todo: add orchestrator: http://www.chorusjs.com/
--todo: process control: http://tech.pro/tutorial/2074/nodejs-managing-child-processes
--todo: use pattern matching to define states?
-        https://github.com/natefaubion/sparkler
--todo: dynamicly load app modules: http://stackoverflow.com/questions/10914751/loading-node-js-modules-dynamically-based-on-route
-        use http://labs.voronianski.com/melchior.js/ ?
--todo: handle errors: https://vimeo.com/78654146
--todo: handle logging: bunyan
--todo: use jsfmt to rewrite(remove) tests: http://rdio.github.io/jsfmt
--todo: real db? http://leveldb.org/
-      add replication: https://github.com/dominictarr/crdt/tree/master/example/simple
--todo: launch!!! https://github.com/slogsdon/placid
-
-restify? node-inspector? paper-trail? xhr -> httpfy?
-
 +todo: paging nav
 +todo: add paging
       https://www.readability.com/articles/c4khqjub
@@ -65,6 +9,70 @@ restify? node-inspector? paper-trail? xhr -> httpfy?
 +todo: hal-browser:don't show non get link for GET
 +todo: fx should return plain js objects - add wrapper to convert to hal
 +todo: hal-browser: fix not showing root props
+
+-todo: add relationships
+        https://github.com/letsgetrandy/brototype/blob/master/brototype.js
+-todo: add queries
+-todo: use sweet.js !
+        contracts.js
+        sparkler.js
+        arrow.js
+-todo: make client app:
+-todo: find the self contained app with searchable database and reuse as a default HAL based UI?
+        http://www.smashingmagazine.com/2014/09/02/building-simple-cross-browser-offline-todo-list-indexeddb-websql
+        http://adodson.com/hello.js/
+        http://lhorie.github.io/mithril-blog/velocity-animations-in-mithril.html
+        https://github.com/jed/domo
+        http://semu.github.io/timesheet.js/
+        http://fian.my.id/marka/
+        http://timothy-long.com/kindling/
+-todo: add services (non-persisting api, composition) ?
+      https://github.com/srikumarks/cspjs
+      https://github.com/ubolonton/js-csp
+-todo: security
+        token auth: https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
+        http://blog.bitpay.com/2014/09/18/announcing-the-new-bitpay-api.html
+-todo: add metadata
+       http://www.bizcoder.com/self-descriptive-isn-t-don-t-assume-anything
+       http://marmelab.com/blog/2014/09/15/easy-backend-for-your-restful-api.html)
+       use links to hypermedia type (meta) or via header?
+       http://brandur.org/elegant-apis
+-todo: es6 arrow !!!!, contracts.js, ...
+                       http://jdkanani.com/smalleditor
+                        http://sennajs.com/docs/,
+                        https://github.com/giann/zappa,
+                        https://github.com/velveteer/mithril-boilerplate
+                        http://tympanus.net/Development/TabStylesInspiration/
+                        http://mobify.github.io/bellows/
+                        http://www.invisionapp.com/tethr
+-todo: better pipeline?
+      https://github.com/rtc-io/demo-datachannel-node
+      http://jlongster.com/Taming-the-Asynchronous-Beast-with-CSP-in-JavaScript
+      http://jlongster.com/Transducers.js--A-JavaScript-Library-for-Transformation-of-Data
+-todo: add orchestrator: http://www.chorusjs.com/
+-todo: use pattern matching to define states?
+        https://github.com/natefaubion/sparkler
+-todo: dynamicly load app modules: http://stackoverflow.com/questions/10914751/loading-node-js-modules-dynamically-based-on-route
+        use http://labs.voronianski.com/melchior.js/ ?
+-todo: handle errors: https://vimeo.com/78654146
+-todo: handle logging: bunyan
+-todo: use jsfmt to rewrite(remove) tests: http://rdio.github.io/jsfmt
+-todo: use as resto home page: http://fluxxor.com/
+-TODO: 1.0 launch!!! https://github.com/slogsdon/placid
+-----------------------------------------------------------------------------------------
+
+-todo: make app.js be starting point (microservice?) even further - build unikernel to run it!!!
+-todo: process control: http://tech.pro/tutorial/2074/nodejs-managing-child-processes
+-todo: real db? http://leveldb.org/
+      add replication: https://github.com/dominictarr/crdt/tree/master/example/simple
+-todo: rate limiting: http://code.tutsplus.com/tutorials/how-to-build-rate-limiting-into-your-web-app-login--cms-22133
+-todo: add discovery?
+-todo: use Express (better server error handling (invalid json.!!..)
+      https://stormpath.com/blog/node-api-client-part-one/
+      http://appdevelopermagazine.com/1718/2014/7/31/StrongLoop-Node.js-API-Server-Released-for-Developing,-Securing-and-Scaling-REST-APIs/
+      http://avoidwork.github.io/tenso/rest.html
+-todo: restify? node-inspector? paper-trail? xhr -> httpfy?
+
 -notdoing: handle plain application/json vs application/hal+json
 -notdoing: extract datastore into middleware?
 -notdoing: handle conditional persistance
@@ -74,6 +82,9 @@ restify? node-inspector? paper-trail? xhr -> httpfy?
   !idea: create web app for todos with !,@,# and keywords, rules, actions, messaies
   !idea: http://fluxxor.com/ as a way to persist data
   !server replication: viewstamped replication? with spread?
+
+  do this as product IFTTT: http://gizmodo.com/ford-puts-voice-activated-ifttt-in-your-dashboard-1635301439
+
 !use
   https://github.com/xyncro/frost
   http://www.rackspace.com/blog/objectrocket-adds-fully-managed-redis-service/?cm_mmc=managed-_-cloud-_-contentnam-_-dbweekly-ORredis
@@ -104,13 +115,16 @@ restify? node-inspector? paper-trail? xhr -> httpfy?
   // littleDog.speak(); // "woof"
   // littleDog.weight; // 10
 
-//node os resources:
+-//node os resources:
 http://node-os.com/
 vs
 http://runtimejs.org/
 
+watch:
+---------------------------------------------------------------------------------------
+https://www.youtube.com/watch?v=rP9EKvWt0zo
 
-//thinkering -----------------------------------------------------------------------
+-//thinkering -----------------------------------------------------------------------
 REST: what happens when you discover that you want hateaos but not rpc part?
 
 it is the message format -> hal with crdts instead of hal/model
