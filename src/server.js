@@ -7,28 +7,33 @@ var fn   = require('./fn');
 var log  = console.log;
 
 var server;
-exports.create = function(service) {
+exports.create = function(pipeline) {
     server = http.createServer(function(request, response) {
     if (fn.isApiCall(request)) {
-      processApi(service, request, response);
+      processApi(pipeline, request, response);
     }
     else {
       file.get(request, response);
     }
   });
-  return server;
+  return this;
+};
+exports.runOn = function(port) {
+  server.listen(port);
+  log("Apple Farm Service running at port: " + port + "\nCTRL + SHIFT + C to shutdown");
+  return true;
 };
 
-function processApi(service, request, response) {
+function processApi(pipeline, request, response) {
   if (fn.hasBody(request.method)) {
     var body = '';
     request.on('data', function(chunk) { body += chunk.toString(); });
     request.on('end', function() {
       request.body = JSON.parse(body);
-      service.process(request, response);
+      pipeline.process(request, response);
     });
   }
   else {
-    service.process(request, response);
+    pipeline.process(request, response);
   }
 }

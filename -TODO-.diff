@@ -1,7 +1,5 @@
 +todo: paging nav
-+todo: add paging
-      https://www.readability.com/articles/c4khqjub
-      http://thestorefront.github.io/DataCollection.js/
++todo: add paging (https://www.readability.com/articles/c4khqjub, http://thestorefront.github.io/DataCollection.js/
 +todo: handle embedded entities (https://www.readability.com/articles/c4khqjub)
 +todo: make video and blog twit about it
 +todo: publish slides
@@ -9,16 +7,17 @@
 +todo: hal-browser:don't show non get link for GET
 +todo: fx should return plain js objects - add wrapper to convert to hal
 +todo: hal-browser: fix not showing root props
-
+-todo: check this out: https://www.joyent.com/developers/node/design
 -todo: add relationships
         https://github.com/letsgetrandy/brototype/blob/master/brototype.js
 -todo: add queries
--todo: use sweet.js !
+-todo: use sweet.js or es6ify or wait for flow?
         contracts.js
         sparkler.js
         arrow.js
 -todo: make client app:
 -todo: find the self contained app with searchable database and reuse as a default HAL based UI?
+        http://tympanus.net/codrops/2014/09/23/animated-background-headers/
         http://www.smashingmagazine.com/2014/09/02/building-simple-cross-browser-offline-todo-list-indexeddb-websql
         http://adodson.com/hello.js/
         http://lhorie.github.io/mithril-blog/velocity-animations-in-mithril.html
@@ -33,12 +32,14 @@
         token auth: https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
         http://blog.bitpay.com/2014/09/18/announcing-the-new-bitpay-api.html
 -todo: add metadata
-       http://www.bizcoder.com/self-descriptive-isn-t-don-t-assume-anything
-       http://marmelab.com/blog/2014/09/15/easy-backend-for-your-restful-api.html)
-       use links to hypermedia type (meta) or via header?
-       http://brandur.org/elegant-apis
+      http://jsonary.com/
+      http://www.bizcoder.com/self-descriptive-isn-t-don-t-assume-anything
+      http://marmelab.com/blog/2014/09/15/easy-backend-for-your-restful-api.html)
+      use links to hypermedia type (meta) or via header?
+      http://brandur.org/elegant-apis
 -todo: es6 arrow !!!!, contracts.js, ...
-                       http://jdkanani.com/smalleditor
+        http://thlorenz.github.io/es6ify/
+                        http://jdkanani.com/smalleditor, http://quilljs.com/
                         http://sennajs.com/docs/,
                         https://github.com/giann/zappa,
                         https://github.com/velveteer/mithril-boilerplate
@@ -54,6 +55,10 @@
         https://github.com/natefaubion/sparkler
 -todo: dynamicly load app modules: http://stackoverflow.com/questions/10914751/loading-node-js-modules-dynamically-based-on-route
         use http://labs.voronianski.com/melchior.js/ ?
+-todo: add liveupdates:
+        http://www.html5rocks.com/en/tutorials/es7/observe/
+        ws video ?
+-todo: ci: http://blog.risingstack.com/continuous-deployment-of-node-js-applications/
 -todo: handle errors: https://vimeo.com/78654146
 -todo: handle logging: bunyan
 -todo: use jsfmt to rewrite(remove) tests: http://rdio.github.io/jsfmt
@@ -63,10 +68,12 @@
 
 -todo: make app.js be starting point (microservice?) even further - build unikernel to run it!!!
 -todo: process control: http://tech.pro/tutorial/2074/nodejs-managing-child-processes
--todo: real db? http://leveldb.org/
+-todo: real db?
+      http://leveldb.org/
+      http://kellabyte.com/2013/07/09/lightning-memory-mapped-database/
       add replication: https://github.com/dominictarr/crdt/tree/master/example/simple
 -todo: rate limiting: http://code.tutsplus.com/tutorials/how-to-build-rate-limiting-into-your-web-app-login--cms-22133
--todo: add discovery?
+-todo: add discovery? https://www.youtube.com/watch?v=HJIjTTHWYnE
 -todo: use Express (better server error handling (invalid json.!!..)
       https://stormpath.com/blog/node-api-client-part-one/
       http://appdevelopermagazine.com/1718/2014/7/31/StrongLoop-Node.js-API-Server-Released-for-Developing,-Securing-and-Scaling-REST-APIs/
@@ -77,15 +84,31 @@
 -notdoing: extract datastore into middleware?
 -notdoing: handle conditional persistance
 
-!idea
-  !idea: test in production [http://bahmutov.calepin.co/test-in-production.html]
-  !idea: create web app for todos with !,@,# and keywords, rules, actions, messaies
-  !idea: http://fluxxor.com/ as a way to persist data
-  !server replication: viewstamped replication? with spread?
+!read:
+  http://www.bizcoder.com/archive/2014/9
 
+  http://kellabyte.com/2011/09/04/clarifying-rest/
+  http://pjmolina.com/metalevel/2014/09/dissecting-an-appnow-specimen/
+  https://github.com/dominictarr/crdt/tree/master/example/simple
+  http://jlongster.com/Transducers.js--A-JavaScript-Library-for-Transformation-of-Data
+  http://andrewdupont.net/2012/12/21/hypermedia-apis-part-one/
+  https://speakerdeck.com/owolf/hypermedia-apis-for-the-internet-of-things
+  http://apievangelist.com/2014/08/28/video-from-the-hypermedia-panel-at-apicraft-in-detroit-last-month/?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed%3A+ApiEvangelist+%28API+Evangelist+-+Blog%29
+  http://petejohanson.github.io/nerdfest-2014-hypermedia-slides/#/2
+  http://www.infoq.com/presentations/problems-distributed-systems
+
+
+!idea
+  idea: test in production [http://bahmutov.calepin.co/test-in-production.html]
+  idea: create web app for todos with !,@,# and keywords, rules, actions, messaies
+  idea: http://fluxxor.com/ as a way to persist data
+  server replication: viewstamped replication? with spread?
+  read pdf in articles: Ontology versioning on the Semantic Web
   do this as product IFTTT: http://gizmodo.com/ford-puts-voice-activated-ifttt-in-your-dashboard-1635301439
 
 !use
+  http://travishorn.github.io/fake-identity/
+  https://www.youtube.com/watch?v=VnsA9q9hKEY
   https://github.com/xyncro/frost
   http://www.rackspace.com/blog/objectrocket-adds-fully-managed-redis-service/?cm_mmc=managed-_-cloud-_-contentnam-_-dbweekly-ORredis
   https://github.com/ericelliott/cuid
