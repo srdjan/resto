@@ -16,6 +16,17 @@
         sparkler.js
         arrow.js
 -todo: make client app:
+        https://github.com/rendrjs/rendr
+        rest lib (hal2js conversion(just data? react component'sstate get updataed?), follow the links, cache meta, ...)
+        http://jdkanani.com/smalleditor, http://quilljs.com/
+        http://sennajs.com/docs/,
+        https://github.com/giann/zappa,
+        https://github.com/velveteer/mithril-boilerplate
+        http://tympanus.net/Development/TabStylesInspiration/
+        http://mobify.github.io/bellows/
+        http://www.invisionapp.com/tethr
+        +
+        diff UI interaction designs (layout, look and feel, user interaction: for different popular frameworks (ember, angular, react(dflt)))
 -todo: find the self contained app with searchable database and reuse as a default HAL based UI?
         http://tympanus.net/codrops/2014/09/23/animated-background-headers/
         http://www.smashingmagazine.com/2014/09/02/building-simple-cross-browser-offline-todo-list-indexeddb-websql
@@ -34,18 +45,9 @@
 -todo: add metadata
       http://jsonary.com/
       http://www.bizcoder.com/self-descriptive-isn-t-don-t-assume-anything
-      http://marmelab.com/blog/2014/09/15/easy-backend-for-your-restful-api.html)
+      http://marmelab.com/blog/2014/09/15/easy-backend-for-your-restful-api.html
       use links to hypermedia type (meta) or via header?
       http://brandur.org/elegant-apis
--todo: es6 arrow !!!!, contracts.js, ...
-        http://thlorenz.github.io/es6ify/
-                        http://jdkanani.com/smalleditor, http://quilljs.com/
-                        http://sennajs.com/docs/,
-                        https://github.com/giann/zappa,
-                        https://github.com/velveteer/mithril-boilerplate
-                        http://tympanus.net/Development/TabStylesInspiration/
-                        http://mobify.github.io/bellows/
-                        http://www.invisionapp.com/tethr
 -todo: better pipeline?
       https://github.com/rtc-io/demo-datachannel-node
       http://jlongster.com/Taming-the-Asynchronous-Beast-with-CSP-in-JavaScript
@@ -66,6 +68,9 @@
 -TODO: 1.0 launch!!! https://github.com/slogsdon/placid
 -----------------------------------------------------------------------------------------
 
+-todo: add communication layer:
+    http://hypercomm.github.io/wonder/
+    http://webrtchacks.com/wonder_webrtc_nni/
 -todo: make app.js be starting point (microservice?) even further - build unikernel to run it!!!
 -todo: process control: http://tech.pro/tutorial/2074/nodejs-managing-child-processes
 -todo: real db?
@@ -79,6 +84,26 @@
       http://appdevelopermagazine.com/1718/2014/7/31/StrongLoop-Node.js-API-Server-Released-for-Developing,-Securing-and-Scaling-REST-APIs/
       http://avoidwork.github.io/tenso/rest.html
 -todo: restify? node-inspector? paper-trail? xhr -> httpfy?
+-todo: server as a resource that serves resources
+      function server() {
+        port: 0,
+        codePath: "path",
+
+        codeCheck: function() {
+          fn.compile(code);
+          return code.signature.check();
+        }
+
+        //or monitor github and get when new available?
+        upload: function(code) {
+          var newPath = __dir__ + nextSeq;
+          file.save(code);
+          flip();
+        }
+        revert: function() {
+          //...
+        }
+      }
 
 -notdoing: handle plain application/json vs application/hal+json
 -notdoing: extract datastore into middleware?
@@ -158,3 +183,5 @@ throw away all or nothing -> always streams
 
 api jst generates event??? like in the talk @ nordicjs
     websockets clients (ui, persistance, subscribed services... ?)
+
+    game with webRTC - do a chess game? https://github.com/takahirox/toho-like-js

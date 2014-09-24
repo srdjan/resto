@@ -1,3 +1,4 @@
+var fn  = require('../../../src/fn');
 var log = console.log;
 
 exports.Apple = function() {
@@ -5,7 +6,7 @@ exports.Apple = function() {
   this.color = 'green';
 
   this.grow = function(msg) {
-    if (this.weight > 0.0 && this.weight < 300.0) {
+    if (this.weight > 0.0 && (this.weight + msg.weightIncr) < 300.0) {
       this.weight += msg.weightIncr;
       return true;
     }
@@ -35,6 +36,38 @@ exports.Apple = function() {
       return [{ rel: 'toss', method: "DELETE"}];
     }
     return [];
+  };
+
+  this.getMeta = function() {
+    var properties = [];
+    properties.push( {
+          name: 'weight',
+          type: 'number',
+          label: 'Weight:',
+          order: { group: 1, item: 1 },
+          readOnly: true
+        });
+    properties.push( {
+          name: 'color',
+          type: 'string',
+          label: 'Color:',
+          order: { group: 1, item: 2 },
+          readOnly: false,
+          validation: {
+                        "required": true,
+                        "max-length" : 15,
+                        "validator" : function(value) {
+                          return fn.some(function(item) {
+                              return item === value;
+                            }), ["green", "orange", "red"]; }
+                      }
+    });
+
+    return {
+      label: 'Apple',
+      pageSize: 3,
+      properties: props
+    };
   };
 };
 
