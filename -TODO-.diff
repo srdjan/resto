@@ -16,6 +16,8 @@
         sparkler.js
         arrow.js
 -todo: make client app:
+        http://wilhelmson.github.io/blog/flickr-viewer-searchbar.html
+        https://medium.com/react-tutorials/latest
         https://github.com/rendrjs/rendr
         rest lib (hal2js conversion(just data? react component'sstate get updataed?), follow the links, cache meta, ...)
         http://jdkanani.com/smalleditor, http://quilljs.com/
@@ -25,6 +27,7 @@
         http://tympanus.net/Development/TabStylesInspiration/
         http://mobify.github.io/bellows/
         http://www.invisionapp.com/tethr
+        https://github.com/walmartlabs/lazojs
         +
         diff UI interaction designs (layout, look and feel, user interaction: for different popular frameworks (ember, angular, react(dflt)))
 -todo: find the self contained app with searchable database and reuse as a default HAL based UI?
@@ -40,6 +43,7 @@
       https://github.com/srikumarks/cspjs
       https://github.com/ubolonton/js-csp
 -todo: security
+        http://thejackalofjavascript.com/architecting-a-restful-node-js-app/
         token auth: https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
         http://blog.bitpay.com/2014/09/18/announcing-the-new-bitpay-api.html
 -todo: add metadata
@@ -122,6 +126,8 @@
   http://petejohanson.github.io/nerdfest-2014-hypermedia-slides/#/2
   http://www.infoq.com/presentations/problems-distributed-systems
 
+!competition
+    https://twofactorauth.org/
 
 !idea
   idea: test in production [http://bahmutov.calepin.co/test-in-production.html]

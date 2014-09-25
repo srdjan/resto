@@ -43,15 +43,19 @@ exports.Apple = function() {
     properties.push( {
           name: 'weight',
           type: 'number',
-          label: 'Weight:',
-          order: { group: 1, item: 1 },
+          label: 'Current Weight:',
+          readOnly: true
+        });
+    properties.push( {
+          name: 'maxWeight',
+          type: 'number',
+          label: 'Maximum Weight:',
           readOnly: true
         });
     properties.push( {
           name: 'color',
           type: 'string',
           label: 'Color:',
-          order: { group: 1, item: 2 },
           readOnly: false,
           validation: {
                         "required": true,

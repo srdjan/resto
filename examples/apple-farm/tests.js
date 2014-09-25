@@ -1,33 +1,33 @@
 //---------------------------------------------------------------------------------
 //- tests using apple-farm model
 //---------------------------------------------------------------------------------
-var halson          = require('halson');
-var expect          = require('expect.js');
-var helper          = require('../../src/test-helper');
-var fn              = require('../../src/fn');
-var db              = require('../../src/db');
-var httpServerMock  = require('../../src/http-mock');
-var service         = require('../../src/service');
-var authenticator   = require('../../src/authn').auth;
-var authorizer      = require('../../src/authr').auth;
-var resolver        = require('../../src/resolver').resolve;
-var invoker         = require('../../src/invoker').invoke;
-var converter       = require('../../src/hal').convert;
-
-var apple = require('./resources/apple');
-var log = console.log;
+var halson        = require('halson');
+var expect        = require('expect.js');
+var helper        = require('../../src/test-helper');
+var fn            = require('../../src/fn');
+var db            = require('../../src/db');
+var http          = require('../../src/http-mock');
+var service       = require('../../src/service');
+var pipeline      = require('../../src/pipeline');
+var authenticator = require('../../src/authn').auth;
+var authorizer    = require('../../src/authr').auth;
+var resolver      = require('../../src/resolver').resolve;
+var invoker       = require('../../src/invoker').invoke;
+var converter     = require('../../src/hal').convert;
+var apple         = require('./resources/apple');
+var log           = console.log;
 
 //- prepare
 db.clear();
 
-log('------ starting service --------');
-service.expose(apple).on(httpServerMock.create())
-              .use(authenticator, true)
-              .use(resolver, true)
-              .use(authorizer, true)
-              .use(invoker, true)
-              .use(converter, true)
-              .start(8070);
+log('------ configure and start service --------');
+pipeline.expose(apple).on(http)//.on([http, ws])
+        .use(authenticator)
+        .use(resolver)
+        .use(authorizer)
+        .use(invoker)
+        .use(converter);
+        // .listenOn(8080);
 
 log('------ running integration tests --------');
 //-  test bad get all

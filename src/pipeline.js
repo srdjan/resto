@@ -62,15 +62,19 @@ exports.use = function(f, t) {
   handlers.push({ func: f, trace: t || false});
   return this;
 };
-exports.on = function(srvr) {
-  server = srvr;
-  return this;
-};
 exports.expose = function(appl) { //todo: support multiple resources
   app = appl;
   return this;
 };
-
+exports.on = function(serverFactory) {
+  server = serverFactory.create();
+  return this;
+};
+exports.listenOn = function(port) {
+  server.listen(port);
+  log("Apple Farm Service running at port: " + port + "\nCTRL + SHIFT + C to shutdown");
+  return this;
+};
 exports.process = function(request, response) {
   try {
     var ctx = extract(request);

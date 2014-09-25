@@ -6,7 +6,6 @@ var file = require("./file-helper");
 var fn   = require('./fn');
 var log  = console.log;
 
-var server;
 exports.create = function(pipeline) {
     server = http.createServer(function(request, response) {
     if (fn.isApiCall(request)) {
@@ -16,12 +15,7 @@ exports.create = function(pipeline) {
       file.get(request, response);
     }
   });
-  return this;
-};
-exports.runOn = function(port) {
-  server.listen(port);
-  log("Apple Farm Service running at port: " + port + "\nCTRL + SHIFT + C to shutdown");
-  return true;
+  return server;
 };
 
 function processApi(pipeline, request, response) {
