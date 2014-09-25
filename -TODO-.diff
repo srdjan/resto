@@ -11,6 +11,8 @@
 -todo: add relationships
         https://github.com/letsgetrandy/brototype/blob/master/brototype.js
 -todo: add queries
+        http://www.slideshare.net/bobdobbes/api-abstraction-api-chaining
+        http://begriffs.com/posts/2014-03-06-beyond-http-header-links.html
 -todo: use sweet.js or es6ify or wait for flow?
         contracts.js
         sparkler.js

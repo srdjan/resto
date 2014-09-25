@@ -7,7 +7,6 @@ var helper        = require('../../src/test-helper');
 var fn            = require('../../src/fn');
 var db            = require('../../src/db');
 var http          = require('../../src/http-mock');
-var service       = require('../../src/service');
 var pipeline      = require('../../src/pipeline');
 var authenticator = require('../../src/authn').auth;
 var authorizer    = require('../../src/authr').auth;
