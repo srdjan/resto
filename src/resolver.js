@@ -13,7 +13,7 @@ function resolve(ctx) {
   }
   var typeName = tokens[1].slice(0, -1);
   ctx.typeName = typeName.charAt(0).toUpperCase() + typeName.substring(1);
-  ctx.typeCtor = ctx.app[ctx.typeName];
+  ctx.typeCtor = ctx.model[ctx.typeName];
   return ctx;
 }
 
@@ -25,29 +25,29 @@ module.exports.resolve = resolve;
   var expect = require('expect.js');
   log('testing: type-resolver.js');
 
-  //test: resolveType(url):- api/apples/123456/create
+  // test: resolveType(url):- api/apples/123456/create
   var url = '/api/apples/';
-  var ctx = resolve({url: url, app: {Apple: function() {}}});
+  var ctx = resolve({url: url, model: {Apple: function() {}}});
   expect(ctx.typeName).to.be('Apple');
 
-  // url = 'api/apples/' + fn.atob('123456');
-  // ctx = resolve({url: url});
-  // expect(ctx.typeName).to.be('Apple');
+  url = 'api/apples/' + fn.atob('123456');
+  ctx = resolve({url: url, model: {Apple: function() {}}});
+  expect(ctx.typeName).to.be('Apple');
 
-  // url = 'api/apples/';
-  // ctx = resolve({url: url});
-  // expect(ctx.typeName).to.be('Apple');
+  url = 'api/apples/';
+  ctx = resolve({url: url, model: {Apple: function() {}}});
+  expect(ctx.typeName).to.be('Apple');
 
-  // url = 'api/apples/' + fn.atob('123456');
-  // ctx = resolve({url: url});
-  // expect(ctx.typeName).to.be('Apple');
+  url = 'api/apples/' + fn.atob('123456');
+  ctx = resolve({url: url, model: {Apple: function() {}}});
+  expect(ctx.typeName).to.be('Apple');
 
-  // url = 'api/apples/' + fn.atob(123456 + '/' + 'create');
-  // ctx = resolve({url: url});
-  // expect(ctx.typeName).to.be('Apple');
+  url = 'api/apples/' + fn.atob(123456 + '/' + 'create');
+  ctx = resolve({url: url, model: {Apple: function() {}}});
+  expect(ctx.typeName).to.be('Apple');
 
-  // // should fail
-  // url = 'apples' + fn.atob(123456 + '/' + 'create');
-  // ctx = resolve({url: url});
-  // expect(ctx.statusCode).to.be(500);
+  // should fail
+  url = 'apples' + fn.atob(123456 + '/' + 'create');
+  ctx = resolve({url: url, model: {Apple: function() {}}});
+  expect(ctx.statusCode).to.be(500);
 

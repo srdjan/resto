@@ -10,14 +10,17 @@ var converter     = require('../../src/hal');
 var farm          = require('./resources/farm');
 var apples        = require('./resources/apple');
 
-var appleFarm = service.create(farm)
-                       .hasMany(apples);
+var Model = model.compose(farm).hasMany(apples);
 
-pipeline.expose(appleFarm.model)
-        .use(authenticator)
-        .use(resolver)
-        .use(authorizer)
-        .use(invoker)
-        .use(converter);
+var ReqResp = pipeline.expose(Model)
+                      .use(authenticator)
+                      .use(resolver)
+                      .use(authorizer)
+                      .use(invoker)
+                      .use(converter);
 
-var server = http.create(pipeline).runOn(8090);
+var EndPoint = http.create(ReqResp);
+EndPoint.start(8080);
+
+//var endPoints = [].push(http.create(8080)
+//                  .push(ws.create(7676)));

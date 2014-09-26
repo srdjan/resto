@@ -19,30 +19,32 @@ var log           = console.log;
 //- prepare
 db.clear();
 
-log('------ configure and start service --------');
-pipeline.expose(apple).on(http)//.on([http, ws])
-        .use(authenticator)
-        .use(resolver)
-        .use(authorizer)
-        .use(invoker)
-        .use(converter);
-        // .listenOn(8080);
+log('------ configure pipeline --------');
+var Model = apple;
+var ReqResp = pipeline.expose(Model)
+                      .use(authenticator, true)
+                      .use(resolver, true)
+                      .use(authorizer, true)
+                      .use(invoker)
+                      .use(converter);
+var EndPoint = helper.create(ReqResp);
+// EndPoint.start(8080);
 
-log('------ running integration tests --------');
+log('------ run integration tests -----');
 //-  test bad get all
-  var all = helper.get('bad');
+  var all = EndPoint.get('bad');
   expect(all.statusCode).to.be(500);
   expect(all.data.Error).to.be('type resolver error');
 
 //-  test get all - empty set
-  var all = helper.get('/api/apples/');
+  var all = EndPoint.get('/api/apples/');
   expect(all.statusCode).to.be(200);
   expect(all.data.listLinkRels().length).to.be(2);
   expect(fn.contains('self', all.data.listLinkRels())).to.be(true);
   expect(fn.contains('create', all.data.listLinkRels())).to.be(true);
 
 //- test create apple 1
-  var apple = helper.cmd(all.data, 'create', {weight: 10.0, color: "red"});
+  var apple = EndPoint.cmd(all.data, 'create', {weight: 10.0, color: "red"});
   expect(apple.data.listLinkRels().length).to.be(3);
   expect(apple.data.weight).to.be(10.0);
   expect(fn.contains('self', apple.data.listLinkRels())).to.be(true);
@@ -50,7 +52,7 @@ log('------ running integration tests --------');
   expect(fn.contains('toss', apple.data.listLinkRels())).to.be(true);
 
 //- test create apple 2
-  var apple = helper.cmd(all.data, 'create', {weight: 20.0, color: "green"});
+  var apple = EndPoint.cmd(all.data, 'create', {weight: 20.0, color: "green"});
   expect(apple.data.listLinkRels().length).to.be(3);
   expect(apple.data.weight).to.be(20.0);
   expect(fn.contains('self', apple.data.listLinkRels())).to.be(true);
@@ -58,7 +60,7 @@ log('------ running integration tests --------');
   expect(fn.contains('toss', apple.data.listLinkRels())).to.be(true);
 
 //- test create apple 3 - full page size
-  var apple = helper.cmd(all.data, 'create', {weight: 20.0, color: "orange"});
+  var apple = EndPoint.cmd(all.data, 'create', {weight: 20.0, color: "orange"});
   expect(apple.data.listLinkRels().length).to.be(3);
   expect(apple.data.weight).to.be(20.0);
   expect(fn.contains('self', apple.data.listLinkRels())).to.be(true);
@@ -66,7 +68,7 @@ log('------ running integration tests --------');
   expect(fn.contains('toss', apple.data.listLinkRels())).to.be(true);
 
 //- test create apple 4 - page 2
-  var apple = helper.cmd(all.data, 'create', {weight: 20.0, color: "blue"});
+  var apple = EndPoint.cmd(all.data, 'create', {weight: 20.0, color: "blue"});
   expect(apple.data.listLinkRels().length).to.be(3);
   expect(apple.data.weight).to.be(20.0);
   expect(fn.contains('self', apple.data.listLinkRels())).to.be(true);
@@ -74,7 +76,7 @@ log('------ running integration tests --------');
   expect(fn.contains('toss', apple.data.listLinkRels())).to.be(true);
 
 //- test if create sucessful
-  var self = helper.get(apple.data.getLink('self').href);
+  var self = EndPoint.get(apple.data.getLink('self').href);
   expect(self.data.weight).to.be(20.0);
   expect(self.data.listLinkRels().length).to.be(3);
   expect(fn.contains('self', self.data.listLinkRels())).to.be(true);
@@ -82,13 +84,13 @@ log('------ running integration tests --------');
   expect(fn.contains('toss', self.data.listLinkRels())).to.be(true);
 
 //-  test get all - 2 pages
-  var all = helper.get('/api/apples/');
+  var all = EndPoint.get('/api/apples/');
   expect(all.statusCode).to.be(200);
   expect(all.data.listLinkRels().length).to.be(5);
   expect(fn.contains('create', all.data.listLinkRels())).to.be(true);
 
 //- call 'grow' api (post - with id and propertis that don't exist on entity)
-  var appleGrown = helper.cmd(self.data, 'grow', { weightIncr: 230.0});
+  var appleGrown = EndPoint.cmd(self.data, 'grow', { weightIncr: 230.0});
   expect(appleGrown.data.weight).to.be(250.0);
   expect(appleGrown.data.listLinkRels().length).to.be(3);
   expect(fn.contains('self', appleGrown.data.listLinkRels())).to.be(true);
@@ -96,17 +98,17 @@ log('------ running integration tests --------');
   expect(fn.contains('toss', appleGrown.data.listLinkRels())).to.be(true);
 
 //- call 'eat' api (full put)
-  var appleEaten = helper.cmd(appleGrown.data, 'eat', { weight: 0.0, color: 'orange'});
+  var appleEaten = EndPoint.cmd(appleGrown.data, 'eat', { weight: 0.0, color: 'orange'});
   expect(appleEaten.data.weight).to.be(0.0);
   expect(appleEaten.data.listLinkRels().length).to.be(2);
   expect(fn.contains('self', appleEaten.data.listLinkRels())).to.be(true);
 
 // - test api whitelisting - should not be able to call 'grow' in this state
-  var notAllowedResult = helper.cmd(appleGrown.data, 'eat',  { weight: 0.0, color: 'orange'});
+  var notAllowedResult = EndPoint.cmd(appleGrown.data, 'eat',  { weight: 0.0, color: 'orange'});
   expect(notAllowedResult.statusCode).to.be(405);
 
 // - test get before toss
-  var all = helper.get('/api/apples/');
+  var all = EndPoint.get('/api/apples/');
   // log(JSON.stringify(all.data));
   var embeds = all.data.getEmbeds('apples');
   expect(embeds.length).to.be(3);  //page 1
@@ -114,10 +116,10 @@ log('------ running integration tests --------');
   //todo: get page 2 and a test that is has 1 embed
 
 //- toos one of the apples
-  result = helper.cmd(appleEaten.data, 'toss', { });
+  result = EndPoint.cmd(appleEaten.data, 'toss', { });
 
 //- test get after toss
-  var all = helper.get('/api/apples/');
+  var all = EndPoint.get('/api/apples/');
   // log(JSON.stringify(all.data));
   var embeds = all.data.getEmbeds('apples');
   expect(embeds.length).to.be(3);

@@ -8,8 +8,7 @@ var log       = console.log;
 
 db.init('../../../datastore');
 var handlers = [];
-var app;
-var server;
+var appModel;
 
 function writeToResp(response, statusCode, result) {
   response.writeHead(statusCode, {"Content-Type": "application/json"});
@@ -62,23 +61,16 @@ exports.use = function(f, t) {
   handlers.push({ func: f, trace: t || false});
   return this;
 };
-exports.expose = function(appl) { //todo: support multiple resources
-  app = appl;
+
+exports.expose = function(model) {
+  appModel = model;
   return this;
 };
-exports.on = function(serverFactory) {
-  server = serverFactory.create();
-  return this;
-};
-exports.listenOn = function(port) {
-  server.listen(port);
-  log("Apple Farm Service running at port: " + port + "\nCTRL + SHIFT + C to shutdown");
-  return this;
-};
+
 exports.process = function(request, response) {
   try {
     var ctx = extract(request);
-    ctx.app = app;
+    ctx.model = appModel;
     ctx.statusCode = 200;
     ctx = fn.runAll(handlers, function(d) { return d.statusCode !== 200; }, ctx);
     writeToResp(response, ctx.statusCode, ctx.result);

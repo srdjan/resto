@@ -6,14 +6,16 @@ var invoker       = require('../../src/invoker').invoke;
 var converter     = require('../../src/hal').convert;
 var http          = require('../../src/server');
 var apple         = require('./resources/apple');
-var log = console.log;
+var log           = console.log;
 
-pipeline.expose(apple).on(http)//.on([http, ws])
-        .use(authenticator)
-        .use(resolver)
-        .use(authorizer)
-        .use(invoker)
-        .use(converter)
-        .listenOn(8080);
+var Model = apple;
 
+var ReqResp = pipeline.expose(Model)
+                      .use(authenticator)
+                      .use(resolver)
+                      .use(authorizer)
+                      .use(invoker)
+                      .use(converter);
 
+var EndPoint = http.create(ReqResp);
+EndPoint.start(8080);
