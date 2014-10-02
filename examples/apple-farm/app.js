@@ -5,6 +5,7 @@ var resolver      = require('../../src/resolver').resolve;
 var invoker       = require('../../src/invoker').invoke;
 var converter     = require('../../src/hal').convert;
 var http          = require('../../src/server');
+
 var apple         = require('./resources/apple');
 var log           = console.log;
 
