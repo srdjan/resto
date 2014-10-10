@@ -3,16 +3,16 @@
 //---------------------------------------------------------------------------------
 var halson        = require('halson');
 var expect        = require('expect.js');
-var helper        = require('../../src/test-helper');
-var fn            = require('../../src/fn');
-var db            = require('../../src/db');
-var http          = require('../../src/http-mock');
-var pipeline      = require('../../src/pipeline');
-var authenticator = require('../../src/authn').auth;
-var authorizer    = require('../../src/authr').auth;
-var resolver      = require('../../src/resolver').resolve;
-var invoker       = require('../../src/invoker').invoke;
-var converter     = require('../../src/hal').convert;
+var helper        = require('../../lib/test-helper');
+var fn            = require('../../lib/fn');
+var db            = require('../../lib/db');
+var http          = require('../../lib/http-mock');
+var pipeline      = require('../../lib/pipeline');
+var authenticator = require('../../lib/authn').auth;
+var authorizer    = require('../../lib/authr').auth;
+var resolver      = require('../../lib/resolver').resolve;
+var invoker       = require('../../lib/invoker').invoke;
+var converter     = require('../../lib/hal').convert;
 var apple         = require('./resources/apple');
 var log           = console.log;
 

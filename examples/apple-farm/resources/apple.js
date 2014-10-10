@@ -1,4 +1,4 @@
-var fn  = require('../../../src/fn');
+var fn  = require('../../../lib/fn');
 var log = console.log;
 
 exports.Apple = function() {
