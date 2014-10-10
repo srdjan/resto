@@ -1,4 +1,3 @@
-var fn  = require('../../../lib/fn');
 var log = console.log;
 
 exports.Apple = function() {
@@ -61,9 +60,9 @@ exports.Apple = function() {
                         "required": true,
                         "max-length" : 15,
                         "validator" : function(value) {
-                          return fn.some(function(item) {
+                          return function(item) {
                               return item === value;
-                            }), ["green", "orange", "red"]; }
+                            }, ["green", "orange", "red"]; }
                       }
     });
 
