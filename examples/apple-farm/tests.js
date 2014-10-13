@@ -23,10 +23,10 @@ log('------ configure pipeline --------');
 var Model = apple;
 var ReqResp = pipeline.expose(Model)
                       .use(authenticator)
-                      .use(resolver, true)
+                      .use(resolver)
                       .use(authorizer)
                       .use(invoker)
-                      .use(converter ,true);
+                      .use(converter, true);
 var EndPoint = helper.create(ReqResp);
 // EndPoint.start(8080);
 

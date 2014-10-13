@@ -1,32 +1,35 @@
 //---------------------------------------------------------------------------------
 //- tests using todo model
 //---------------------------------------------------------------------------------
-var halson = require('halson');
-var expect = require('expect.js');
-var fn = require('../src/fn');
-var db = require('../src/db');
-var service = require('../src/service');
-var authenticator = require('../src/authn').auth;
-var authorizer = require('../src/authr').auth;
-var resolver = require('../src/resolver').resolve;
-var invoker = require('../src/invoker').invoke;
-var converter = require('../src/hal').convert;
+var halson        = require('halson');
+var expect        = require('expect.js');
+var helper        = require('../../lib/test-helper');
+var fn            = require('../../lib/fn');
+var db            = require('../../lib/db');
+var http          = require('../../lib/http-mock');
+var pipeline      = require('../../lib/pipeline');
+var authenticator = require('../../lib/authn').auth;
+var authorizer    = require('../../lib/authr').auth;
+var resolver      = require('../../lib/resolver').resolve;
+var invoker       = require('../../lib/invoker').invoke;
+var converter     = require('../../lib/hal').convert;
 
-var activity = require('../examples/todo/resources/activity');
-var apple = require('../examples/todo/resources/todo');
-var log = console.log;
+var activity = require('./resources/activity');
+var apple    = require('./resources/todo');
+var log      = console.log;
 
 //- prepare
 db.clear();
 
-log('------ starting service --------');
-service.expose(compose(activity, hasMany, todo)).on(httpServerMock.create())
-              .use(authenticator, true)
-              .use(resolver, true)
-              .use(authorizer, true)
-              .use(invoker, true)
-              .use(converter, true)
-              .start(8070);
+log('------ configure pipeline --------');
+var Model = compose(activity, hasMany, todo);
+var ReqResp = pipeline.expose(Model)
+                      .use(authenticator)
+                      .use(resolver)
+                      .use(authorizer)
+                      .use(invoker)
+                      .use(converter, true);
+var EndPoint = helper.create(ReqResp);
 
 log('------ running integration tests --------');
 //-  test bad get all
