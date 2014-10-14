@@ -9,14 +9,14 @@ var http          = require('../../lib/server');
 var apple         = require('./resources/apple');
 var log           = console.log;
 
-var Model = apple;
+var appleResource = apple;
 
-var ReqResp = pipeline.expose(Model)
+var ReqResp = pipeline.createFor(appleResource)
                       .use(authenticator)
                       .use(resolver)
                       .use(authorizer)
                       .use(invoker)
                       .use(converter);
 
-var EndPoint = http.create(ReqResp);
+var EndPoint = http.createOn(ReqResp);
 EndPoint.start(8080);
