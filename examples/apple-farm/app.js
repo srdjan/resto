@@ -11,12 +11,12 @@ var log           = console.log;
 
 var appleResource = apple;
 
-var ReqResp = pipeline.createFor(appleResource)
+var reqResp = pipeline.createFor(appleResource)
                       .use(authenticator)
                       .use(resolver)
                       .use(authorizer)
                       .use(invoker)
                       .use(converter);
 
-var EndPoint = http.createOn(ReqResp);
+var EndPoint = http.createOn(reqResp);
 EndPoint.start(8080);
