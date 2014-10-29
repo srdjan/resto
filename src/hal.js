@@ -37,10 +37,10 @@ function isNotId(propName) {
 
 function addProperties(halRep, result) {
   // fn.trace(result);
-  var propNames = fn.filter(propName => {
+  var propNames = fn.filter(function(propName) {
     return isNotId(propName) && isNotEmbed(result[propName]) && isNotFunc(result[propName]);
   }, Object.keys(result));
-  return fn.each(propName => { halRep[propName] = result[propName];}, propNames);
+  return fn.each(function(propName) { halRep[propName] = result[propName];}, propNames);
 }
 
 function addEmbed(halRep, typeName, result) {
@@ -50,8 +50,8 @@ function addEmbed(halRep, typeName, result) {
 }
 
 function addEmbeds(halRep, typeName, result) {
-  var propNames = fn.filter(propName => { return isNotFunc(result[propName]) && isEmbed(result[propName]);}, Object.keys(result));
-  return propNames.forEach(propName => {
+  var propNames = fn.filter(function(propName) { return isNotFunc(result[propName]) && isEmbed(result[propName]);}, Object.keys(result));
+  return propNames.forEach(function(propName) {
     addEmbed(halRep, propName, result[propName]);
   });
 }
@@ -59,7 +59,7 @@ function addEmbeds(halRep, typeName, result) {
 function addLinks(halRep, typeName, result) {
   halRep.addLink('self', '/api/' + typeName + 's/' + fn.atob(result.id));
   var links = result.getLinks();
-  links.forEach(l => {
+  links.forEach(function(l) {
     halRep.addLink(l.rel, {
       href: '/api/' + typeName + 's/' + fn.atob(result.id + '/' + l.rel),
       method: l.method
@@ -95,7 +95,7 @@ function createList(ctx) {
   } else {
     halRep = createListRoot(halson({}), ctx.typeName.toLowerCase());
   }
-  ctx.result.forEach((el, index, array) => {
+  ctx.result.forEach(function(el, index, array) {
     addEmbed(halRep, ctx.typeName.toLowerCase() + 's', el);
   });
   return halRep;

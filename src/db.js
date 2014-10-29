@@ -34,7 +34,7 @@ function add(obj) {
 }
 
 function addBatch(objs) {
-  objs.forEach(obj => {
+  objs.forEach(function(obj) {
     obj.id = createId();
     save(obj);
   });
@@ -57,7 +57,7 @@ var pageSize = 3;
 function getAll(pgNumber) {
   var pageNumber = pgNumber || 0;
   var objs = [];
-  datastore.values(vals => {
+  datastore.values(function(vals) {
     objs = vals;
   });
   if (objs.length === 0 ) return { pageNumber: 0, pageCount: 0, page: [] };

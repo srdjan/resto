@@ -3,15 +3,15 @@
 //---------------------------------------------------------------------------------
 var halson        = require('halson');
 var expect        = require('expect.js');
-var fn            = require('../../lib/fn');
-var db            = require('../../lib/db');
-var http          = require('../../lib/http-mock');
-var pipeline      = require('../../lib/pipeline');
-var authenticator = require('../../lib/authn').auth;
-var authorizer    = require('../../lib/authr').auth;
-var resolver      = require('../../lib/resolver').resolve;
-var invoker       = require('../../lib/invoker').invoke;
-var converter     = require('../../lib/hal').convert;
+var fn            = require('../../src/fn');
+var db            = require('../../src/db');
+var http          = require('../../src/test-helper');
+var pipeline      = require('../../src/pipeline');
+var authenticator = require('../../src/authn').auth;
+var authorizer    = require('../../src/authr').auth;
+var resolver      = require('../../src/resolver').resolve;
+var invoker       = require('../../src/invoker').invoke;
+var converter     = require('../../src/hal').convert;
 var apple         = require('./resources/apple');
 var log           = console.log;
 
@@ -20,14 +20,14 @@ db.clear();
 
 log('------ configure pipeline --------');
 var appleResource = apple;
-var reqResp = pipeline.createFor(appleResource)
+var reqResp = pipeline.expose(appleResource)
                       .use(authenticator)
                       .use(resolver)
                       .use(authorizer)
                       .use(invoker, true)
                       .use(converter);
 
-var reqRespEndPoint = http.createOn(reqResp);
+var reqRespEndPoint = http.create(reqResp);
 // reqRespEndPoint.start(8080);
 
 log('------ run integration tests -----');

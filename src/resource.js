@@ -8,7 +8,7 @@ var log    = console.log;
 
 function validateApiCall(ctx) {
   var links = ctx.entity.getLinks();
-  if ( ! fn.some(link => { return link.rel === ctx.rel; }, links)) {
+  if ( ! fn.some(function(link) { return link.rel === ctx.rel; }, links)) {
     ctx.statusCode = 405;
     ctx.result = 'Conflict - Method call not allowed';
     return Either.Left(ctx);
@@ -35,7 +35,7 @@ function validatePropsMatch(ctx) {
 }
 
 function update(ctx) {
-  fn.each(key => { ctx.entity[key] = ctx.body[key]; }, Object.keys(ctx.body));
+  fn.each(function(key) { ctx.entity[key] = ctx.body[key]; }, Object.keys(ctx.body));
   return Either.Right(ctx);
 }
 

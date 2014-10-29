@@ -8,6 +8,7 @@ exports.Activity = function() {
   this.name = '?';
   this.taskList = [];
   this.archived = false;
+  this.hasMany = todo;
 
 //-- helper methods
   this.isCompleted = function() {

@@ -1,2 +1,1 @@
-echo this is arg: %1
-es6-arrow-function %1 > test.js
+6to5 src --out-dir lib
