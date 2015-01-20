@@ -1,0 +1,708 @@
++todo: paging nav
++todo: add paging (https://www.readability.com/articles/c4khqjub, http://thestorefront.github.io/DataCollection.js/
++todo: handle embedded entities (https://www.readability.com/articles/c4khqjub)
++todo: make video and blog twit about it
++todo: publish slides
++todo: hal-browser: use rel.method value instead of hardcoded POST
++todo: hal-browser: don't show non get link for GET
++todo: fx should return plain js objects - add wrapper to convert to hal
++todo: hal-browser: fix not showing root props
+!
+-todo: refactor for es6
+  C:\Users\srdjans\Documents\MyFiles\blog-this\es6 plus crackford way.txt
+
+-todo: add support for different content-types:
+          - application/json
+          - application/hal+json (http://stateless.co/hal_specification.html)
+          - application/ld+json
+              https://developers.google.com/webmasters/structured-data/schema-org
+              https://www.youtube.com/watch?v=91wSt3fHWLE&index=6&list=PLnrk9ITBDMcXKfrf1O7T7-FWSTQlyUJ1U
+
+-todo: READ!!!
+  schema validation: http://gilesbowkett.blogspot.co.uk/2015/01/why-panda-strike-wrote-fastest-json.html
+  auto-client: https://github.com/patchboard/patchboard
+  https://golden-layout.com/docs/
+
+-todo: extract router into a module
+  like this: https://github.com/alexmingoia/koa-router
+  http://www.smashingmagazine.com/2015/01/13/why-ajax-isnt-enough/
+  koa, bigpipe (http://bigpipe.io/)
+  https://www.npmjs.com/package/mach
+  koa + shen = https://www.youtube.com/watch?v=B2ASp0jb6FY&utm_content=buffer86054
+  http://knowthen.com/episode-3-koajs-quickstart-guide/
+  http://knowthen.com/episode-4-writing-middleware-in-koajs/
+  https://github.com/selvakn/todo-backend-node-koa-redis ?
+  http://blog.risingstack.com/introduction-to-koa-generators/
+  https://www.youtube.com/watch?v=s-BwEk-Y4kg
+  http://node-machine.org/
+  https://github.com/pillarjs/router
+  https://github.com/muit/serveme ?
+
+-todo:  !!! read !!!
+  http://blogs.mulesoft.org/api-best-practices-hypermedia-part-2
+  http://blog.risingstack.com/functional-reactive-programming-with-the-power-of-nodejs-streams/
+  https://www.airpair.com/node.js/posts/top-10-mistakes-node-developers-make
+
+  http://machina-js.org/
+  http://www.slideshare.net/AmazonWebServices/building-mobile-apps-on-aws-amazon-cognito-amazon-mobile-analytics-amazon-sns-mobile-push-and-more
+  http://www.markus-lanthaler.com/hydra/
+  https://github.com/mjackson/mach
+  http://hook.io/
+  https://github.com/bigcompany/hook.io
+  !!!
+  https://genehughson.wordpress.com/2014/06/16/coordinating-microservices-playing-well-with-others/
+  http://www.infoq.com/news/2014/11/ucon-microservices-model
+  https://github.com/mschema/mschema
+  http://jsonpatch.com/ (https://news.ycombinator.com/item?id=8530620)
+
+-todo: implement ?
+  https://www.npmjs.com/package/whatwg-fetch
+  https://github.com/b00giZm/express-ifttt-webhook
+  http://socketcluster.io
+  orchestartion: https://github.com/feross/run-auto ?
+  https://github.com/divshot/superstatic
+  https://normalize.github.io/ or    http://duojs.org/
+  https://github.com/substack/hyperquest
+  http://apisjson.org/index.html
+
+-todo: add todo todo-backend example
+  https://github.com/JonCanning/TodoBackendSuave/blob/master/TodoBackendSuave/Program.fs
+  http://todo-backend.thepete.net ?
+
+-todo: refactor:
+  http://www.slideshare.net/lanthaler/why-and-how-to-optimize-your-data-architecture-for-an-integrated-future
+  commands: persistance (PUT, PATCH, DELETE) + services (POST)
+  query: GET, HEADER
+
+  https://j201.github.io/posts/2013-06-22-JS-Object-Literal-Inheritance.html
+  https://github.com/catberry/catberry-uri
+  http://es6rocks.com/2014/10/es6-modules-today-with-6to5/
+  https://www.joyent.com/developers/node/design
+  http://strongloop.com/strongblog/modular-node-js-express/
+
+  add queries
+  http://www.slideshare.net/bobdobbes/api-abstraction-api-chaining
+  http://begriffs.com/posts/2014-03-06-beyond-http-header-links.html
+
+  add sync like:
+  https://andreypopp.com/posts/2013-05-21-rpc-over-websocket-the-easy-way.html
+  https://github.com/Kixeye/chassis
+
+  add relationships (tcomb)
+  http://sailsjs.org/#/documentation/concepts/ORM/Models.html
+  https://github.com/letsgetrandy/brototype/blob/master/brototype.js
+  http://loopback.io/examples/
+  https://j201.github.io/posts/2013-06-22-JS-Object-Literal-Inheritance.html
+  http://gcanti.github.io or https://github.com/SitePen/dmodel
+  https://www.arangodb.com/2014/11/06/data-modeling-mongodb-arangodb
+  add valiadation http://gcanti.github.io/2014/09/15/json-api-validation-in-node.html
+  https://github.com/hagino3000/Struct.js
+  http://ericleads.com/2014/02/prototypal-inheritance-with-stamps/ ??
+  or
+  plain old as in Kyle video: https://www.youtube.com/watch?v=S4cvuuq3OKY
+
+  add history:
+  https://github.com/KualiCo/immutable-history
+
+-todo: use https://github.com/e-conomic/multifetch/
+
+-todo: make client app:
+  use THIS:
+  http://jsfiddle.net/6rauuetb/
+  http://n1k0.github.io/kept/#
+  https://github.com/yoshuawuyts/barracks
+  http://omniscientjs.github.io/
+  http://foss-haas.github.io/fynx/
+
+  http://paperclipjs.com
+  http://react.rocks/#/example/react_json_viewer
+
+  step 1:
+  combine tcomb + jtmpl !!!
+  http://jtmpl.com/kitchensink.html
+  https://github.com/gcanti/tcomb
+  https://github.com/spoike/refluxjs
+  use http://vimawesome.com/ or http://www.unheap.com/ as TEMPLATE!!!!!! for a final generic app UI
+  https://github.com/zurb/foundation-apps
+
+    or convert hal browser to this:
+  hal lib: http://weluse.github.io/hyperagent/, http://petegamache.com/hyperresource-0-9-is-released/, http://hyperresource.com/doc/
+  https://blog.codecentric.de/en/2013/11/traverson/
+
+  http://enyojs.com/
+
+  PROTOTYPING:
+
+    !!! http://www.buildweblox.com/
+
+    http://designmodo.com/generator/
+    http://squizzle.me/js/sqimitive/#
+    http://semantic-ui.com/
+    http://trevanhetzel.github.io/barekit/
+    https://speakerdeck.com/jenmyers/adventures-in-prototyping
+    http://material-ui.com/#/
+
+  step 2:
+  TEST TOOL !!!
+    http://facebook.github.io/jest/docs/common-js-testing.html#content
+    https://vimeo.com/110972837
+
+  https://github.com/catalinred/Animenu
+
+  https://github.com/segmentio/nightmare#api
+  http://teropa.info/blog/2014/10/24/how-ive-improved-my-angular-apps-by-banning-ng-controller.html
+  https://github.com/Tvaroh/moreartyjs
+
+
+  http://wilhelmson.github.io/blog/flickr-viewer-searchbar.html
+  https://github.com/rendrjs/rendr
+  rest lib (hal2js conversion(just data? react component'sstate get updataed?), follow the links, cache meta, ...)
+  http://jdkanani.com/smalleditor, http://quilljs.com/
+  http://sennajs.com/docs/,
+  https://github.com/giann/zappa,
+  http://tympanus.net/Development/TabStylesInspiration/
+  http://mobify.github.io/bellows/
+  http://www.invisionapp.com/tethr
+  https://github.com/walmartlabs/lazojs
+  http://scrollrevealjs.org
+  http://upworthy.github.io/2014/06/implementing-attention-minutes-part-1/
+  http://ui-cloud.com/
+  http://planetaryjs.com/
+  http://rigsomelight.com/2014/05/01/interactive-programming-flappy-bird-clojurescript.html
+  + examples to port:
+  https://github.com/emailbox/minimail_mobileapp
+  http://kenwheeler.github.io/slick/
+
+- perf:
+  http://lafikl.github.io/perfBar/
+
+-web analytics
+  http://24ways.org/2011/getting-the-most-out-of-google-analytics/
+
+-todo: find the self contained app with searchable database and reuse as a default HAL based UI?
+  http://tympanus.net/codrops/2014/09/23/animated-background-headers/
+  http://www.smashingmagazine.com/2014/09/02/building-simple-cross-browser-offline-todo-list-indexeddb-websql
+  http://adodson.com/hello.js/
+  http://lhorie.github.io/mithril-blog/velocity-animations-in-mithril.html
+  https://github.com/jed/domo
+  http://semu.github.io/timesheet.js/
+  http://fian.my.id/marka/
+  http://timothy-long.com/kindling/
+
+-todo: graph algorithms
+  https://franzejr.wordpress.com/2012/08/13/bfs-and-dfs-algorithms/
+  https://github.com/franzejr/graph-algorithms
+  http://www.programmerinterview.com/index.php/data-structures/dfs-vs-bfs
+
+-todo: better pipeline?
+  read about koa(co): http://zef.me/6096/callback-free-harmonious-node-js/
+  do with koa: https://github.com/peerigon/alamid-api
+
+  https://github.com/interagent/prmd
+  https://github.com/feross/simple-peer
+  https://github.com/ubolonton/js-csp
+  https://github.com/peerigon/alamid-signal
+  http://winterbe.github.io/streamjs/
+  https://camel.apache.org/
+  http://hypercomm.github.io/wonder/
+  http://webrtchacks.com/wonder_webrtc_nni/
+  https://github.com/rtc-io/demo-datachannel-node
+  http://jlongster.com/Taming-the-Asynchronous-Beast-with-CSP-in-JavaScript
+  http://jlongster.com/Transducers.js--A-JavaScript-Library-for-Transformation-of-Data
+
+-todo: add orchestrator:
+      http://www.chorusjs.com/
+
+-todo: add micro services (BAAS ?) (non-persisting api, composition) ?
+  https://unhosted.org/practice/30/Backend-as-a-Service-platforms.html
+  https://github.com/Netflix/eureka/
+  http://socketcluster.io
+  https://www.youtube.com/watch?v=f_fGwa2-rMk
+  https://github.com/srikumarks/cspjs
+  https://github.com/ubolonton/js-csp
+  http://jsonpatch.com/
+
+-todo: caching -> https://github.com/Cybermaxs/RedisMemoryCacheInvalidation
+
+-todo: code scramlwer
+  https://jscrambler.com/en/compare-plans
+
+-todo: security
+  http://queue.acm.org/detail.cfm?id=1516164
+  https://github.com/auth0/node-jsonwebtoken
+  https://nakedsecurity.sophos.com/2013/11/04/anatomy-of-a-password-disaster-adobes-giant-sized-cryptographic-blunder/
+  https://github.com/MrSwitch/hello.js, http://adodson.com/hello.js/#i-did-not-understand-any-of-that
+  http://www.quora.com/What-are-the-best-practices-to-secure-an-internal-REST-API-in-the-cloud
+  https://github.com/derickbailey/mustbe
+  https://kev.inburke.com/kevin/invalid-username-or-password-useless
+  http://www.ibuildings.com/blog/2013/03/4-http-security-headers-you-should-always-be-using
+  http://aaronparecki.com/articles/2012/07/29/1/oauth2-simplified
+  https://speakerdeck.com/scottksmith95/web-security-in-node-dot-js-application
+  http://mark-kirby.co.uk/2013/how-to-authenticate-apis-http-basic-vs-http-digest/
+  https://cert.startcom.org/
+  http://devcenter.kinvey.com/html5/tutorials/how-to-implement-safe-signin-via-oauth#
+  http://hackingdistributed.com/2014/11/23/macaroons-in-hyperdex/
+  http://openid.net/connect/
+  https://www.youtube.com/watch?v=FkPqcIJvEPk
+  https://blog.codeship.com/node-js-security-tips/
+  http://jwt.io/
+  https://github.com/zaption/dactyloscope
+  http://passportjs.org/
+  http://blog.risingstack.com/node-js-security-tips
+  https://github.com/observing/tolkien#tolkien
+  http://excess-xss.com/
+  http://passportjs.org/
+  https://github.com/google/firing-range
+  https://github.com/yogthos/ring-access-rules
+  http://angular-tips.com/blog/2014/05/json-web-tokens-introduction/
+  https://coderbits.com/posts/ovkIUQ
+  https://github.com/bkimminich/juice-shop
+  https://github.com/zemirco/lockit
+
+  http://scottksmith.com/blog/2014/05/29/beer-locker-building-a-restful-api-with-node-passport/
+  http://scottksmith.com/blog/2014/09/18/beer-locker-building-a-restful-api-with-node-username-and-password/
+
+  https://github.com/nitram509/jmacaroons
+  http://thejackalofjavascript.com/architecting-a-restful-node-js-app/
+  https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
+  http://blog.bitpay.com/2014/09/18/announcing-the-new-bitpay-api.html
+  http://adodson.com/hello.js/#hellojs
+  http://blog.brunoscopelliti.com/deal-with-users-authentication-in-an-angularjs-web-app
+  http://blog.brunoscopelliti.com/authentication-to-a-restful-web-service-in-an-angularjs-web-app
+  http://blog.securityinnovation.com/blog/2014/10/code-assisted-penetration-testing-of-a-nodejs-app.html
+
+-todo: use cuid for id gen:
+  https://www.npmjs.com/package/cuid
+  https://github.com/deoxxa/proquint-random-id
+
+-todo: add model metadata
+  http://mixu.net/mg/
+  http://mtford.co.uk/siesta/
+  https://github.com/pfraze/eco
+  https://github.com/modella/modella
+  https://github.com/peerigon/alamid-schema
+  https://github.com/hapijs/joi
+  http://modeling-languages.com/openxava-lightweight-model-driven-framework/
+  http://jsonary.com/
+  http://www.bizcoder.com/self-descriptive-isn-t-don-t-assume-anything
+  http://marmelab.com/blog/2014/09/15/easy-backend-for-your-restful-api.html
+  use links to hypermedia type (meta) or via header?
+  http://brandur.org/elegant-apis
+
+-todo: use pattern matching to define states?
+  https://github.com/natefaubion/sparkler
+
+-todo: dynamicly load app modules: http://stackoverflow.com/questions/10914751/loading-node-js-modules-dynamically-based-on-route
+  use http://labs.voronianski.com/melchior.js/ ?
+
+-todo: add liveupdates:
+  http://www.html5rocks.com/en/tutorials/es7/observe/
+  ws video ?
+  https://github.com/peerigon/dynamic-config
+
+-todo: https://github.com/voronianski/node-config-boilerplate
+-todo: ci: http://blog.risingstack.com/continuous-deployment-of-node-js-applications/
+-todo: handle errors: https://vimeo.com/78654146
+-todo: handle logging:
+  bunyan or https://github.com/uber/logtron
+  https://github.com/trentm/node-bunyan
+  logging: https://github.com/uber/logtron/tree/no-zookeeper
+
+-todo: use jsfmt to rewrite(remove) tests: http://rdio.github.io/jsfmt
+-todo: use as resto home page/docs:
+  http://www.apidoc.me/
+  http://fluxxor.com/
+  https://github.com/PharkMillups/beautiful-docs
+  http://raneto.com/
+-todo: pluralize: https://github.com/blakeembrey/pluralize
+-todo: https://www.npmjs.org/package/tcp-bind
+-todo: use this: https://github.com/voronianski/node-object-encrypter
+!-
+!-TODO: 1.0 launch!!! https://github.com/slogsdon/placid
+!-----------------------------------------------------------------------------------------
+
+-todo: rule engine:
+  https://github.com/vigetlabs/colonel-kurtz
+  https://github.com/simonlast/billy
+  https://github.com/abeisgreat/FiltrES.js
+  http://blog.maxant.co.uk/pebble/2014/11/15/1416087180000.html
+  https://github.com/eiriktsarpalis/QuotationsCompiler
+  http://thinkbeforecoding.com/post/2013/04/04/C-Static-interfaces-Take-3
+
+-todo: make app.js be starting point (microservice?) even further - build unikernel to run it!!!
+
+-todo: process control:
+  http://tech.pro/tutorial/2074/nodejs-managing-child-processes
+  todo: http://mcavage.me/node-restify/
+
+-todo: reporting, diagraming:
+  https://github.com/knsv/mermaid
+  http://influxdb.com/
+
+-todo: real db?
+  https://github.com/simonlast/node-persist
+  pouchDb + https://cloudant.com/
+  https://github.com/hubgit/vege-table
+  https://orchestrate.io/features
+  http://coreobject.org/
+  http://pouchdb.com/
+  https://github.com/benlue/soar
+  https://github.com/boltdb/bolt
+  https://github.com/typicode/lowdb
+  https://foundationdb.com/
+  https://github.com/simonlast/node-persist
+  http://www.rethinkdb.com/
+  https://github.com/neumino/rethinkdbdash
+  http://www.rethinkdb.com/blog/mongodb-biased-comparison/
+  http://thinky.io
+  http://blog.justonepixel.com/geek/2014/12/20/thinky-its-raison-d-etre/
+  https://github.com/rpflorence/firebase-schema
+  https://github.com/arokor/barn?utm_source=javascriptweekly&utm_medium=email
+  http://hackingdistributed.com/2014/11/23/macaroons-in-hyperdex/
+  http://lokijs.org/#/ + replication(http://techblog.netflix.com/2014/11/introducing-dynomite.html)
+  http://permalink.gmane.org/gmane.comp.db.sqlite.general/90549
+  http://leveldb.org/
+  http://kellabyte.com/2013/07/09/lightning-memory-mapped-database/
+  add replication: https://github.com/dominictarr/crdt/tree/master/example/simple
+
+-todo: multi-tenant
+  https://github.com/deoxxa/kanrinin
+
+-todo: rate limiting: http://code.tutsplus.com/tutorials/how-to-build-rate-limiting-into-your-web-app-login--cms-22133
+-todo: add discovery?
+  https://www.youtube.com/watch?v=HJIjTTHWYnE
+  https://news.ycombinator.com/item?id=8557203
+
+-todo: use Express (better server error handling (invalid json.!!..)
+  https://www.npmjs.com/package/mach
+  https://stormpath.com/blog/node-api-client-part-one/
+  http://appdevelopermagazine.com/1718/2014/7/31/StrongLoop-Node.js-API-Server-Released-for-Developing,-Securing-and-Scaling-REST-APIs/
+  http://avoidwork.github.io/tenso/rest.html
+-todo: restify? node-inspector? paper-trail? xhr -> httpfy?
+-todo: dynamic loading: https://github.com/kessler/node-dynamic-middleware
+-todo: server as a resource that serves resources
+    function server() {
+      port: 0,
+      codePath: "path",
+
+      codeCheck: function() {
+        fn.compile(code);
+        return code.signature.check();
+      }
+
+      //or monitor github and get when new available?
+      upload: function(code) {
+        var newPath = __dir__ + nextSeq;
+        file.save(code);
+        flip();
+      }
+      revert: function() {
+        //...
+      }
+    }
+
+-todo: handle plain application/json vs application/hal+json
+-todo: extract datastore into middleware?
+-todo: handle conditional persistance
+-todo: read: http://www.ebpml.org/blog2/index.php/2015/01/16/state-machines-and-computing
+
+!dsl
+  https://medium.com/@jbscript/intro-to-peg-js-writing-parsers-for-custom-dsls-28376a081e1b
+
+!dev template
+  https://github.com/elierotenberg/es6-starterkit
+
+!testing:
+  https://github.com/chenglou/node-huxley
+
+!check channels swarm
+  http://go.cognitect.com/core_async_webinar_recording
+  http://swarmjs.github.io/articles/todomvc/
+  http://cloudwall.me/arch.html
+  http://yomguithereal.github.io/colback/
+
+!read:
+  http://sigmajs.org/
+  http://thenodeway.io/
+  http://sandervanderburg.blogspot.com/2013/02/yet-another-blog-post-about-object.html
+  https://github.com/daz10000/fss
+  http://www.infoq.com/articles/implementing-hypermedia
+  http://tech.pro/tutorial/2092/nodejs-application-made-with-express-and-absurdjs
+  https://github.com/Mpdreamz/owin-101
+  https://github.com/VesaKarvonen/Hopac/blob/master/Docs/Inverting.md#summary
+  https://github.com/interagent/http-api-design
+  http://javaguirre.net/2014/02/11/twitter-streaming-api-with-node-socket-io-and-reactjs/
+
+  http://smizell.com/weblog/2014/html-hypermedia-api-decoupled-ui
+  https://github.com/muit/serveMe?utm_source=nodeweekly&utm_medium=email
+  http://karpathy.github.io/neuralnets/?utm_source=javascriptweekly&utm_medium=email
+  http://www.stephanboyer.com/post/83/monads-for-dummies
+
+  Microservices:
+    http://www.slideshare.net/RandyShoup/concurrency-at-scale
+    http://rogeralsing.com/2014/11/15/actor-based-distributed-transactions/
+
+  http://leoasis.github.io/posts/2013/01/24/javascript-object-creation-patterns/
+  http://agavejs.org/
+  https://github.com/Rich-Harris/eval2
+  http://jilles.me/express-routing-the-beginners-guide/
+  http://jsonapi.org/about/
+  https://github.com/interagent/http-api-design#provide-machine-readable-json-schema
+  clojurescript ui fx: http://holmsand.github.io/reagent/
+  http://techblog.realestate.com.au/a-microservices-implementation-retrospective/
+  http://www.bizcoder.com/archive/2014/9
+  http://reefpoints.dockyard.com/2014/09/22/javascript-performance-for-the-win.html
+  http://kellabyte.com/2011/09/04/clarifying-rest/
+  http://pjmolina.com/metalevel/2014/09/dissecting-an-appnow-specimen/
+  https://github.com/dominictarr/crdt/tree/master/example/simple
+  http://jlongster.com/Transducers.js--A-JavaScript-Library-for-Transformation-of-Data
+  http://andrewdupont.net/2012/12/21/hypermedia-apis-part-one/
+  https://speakerdeck.com/owolf/hypermedia-apis-for-the-internet-of-things
+  http://apievangelist.com/2014/08/28/video-from-the-hypermedia-panel-at-apicraft-in-detroit-last-month
+  http://petejohanson.github.io/nerdfest-2014-hypermedia-slides/#/2
+  http://www.infoq.com/presentations/problems-distributed-systems
+  http://www.bizcoder.com/rest-agent-lessons-learned-in-building-generic-hypermedia-clients
+  http://www.bizcoder.com/please-no-more-generic-hypermedia-types
+  https://github.com/substack/stream-handbook
+  https://github.com/kusor/node-workflow
+  https://oncletom.io/2014/self-contained-node-scripts/
+  https://github.com/sindresorhus/awesome-nodejs
+  http://www.mobify.com/blog/http-requests-are-hard/
+  http://www.w3.org/TR/2014/WD-push-api-20141007/
+  http://capgemini.github.io/architecture/microservices-reality-check/
+
+!watch
+  http://knowthen.com/episode-5-creating-models-in-koajs/
+  http://knowthen.com/episode-6-serving-content-in-koajs-with-jade/
+  http://www.ndcvideos.com/#/app/video/2281
+  https://www.youtube.com/watch
+  https://www.youtube.com/watch?v=rP9EKvWt0zo
+  https://vimeo.com/77265280
+  http://www.jongleberry.com/talks.html
+  https://www.youtube.com/watch?v=DRz5T3kcygM
+
+!competition
+  http://fortunejs.com/
+  http://hood.ie/
+  https://twofactorauth.org/
+  http://nordicapis.com/using-apis-without-writing-a-line-of-code/
+  http://bish.nu/apper/
+  https://www.mocaroni.com/
+  http://rafaelcorral.com/blog/building-a-restful-api-in-node-using-hapi-js-8
+
++ideas
+  Sebastien Cevey: Server-less applications powered by Web Components: https://www.youtube.com/watch?v=MdcD1rNkNLE
+  https://gist.github.com/pfraze/7a739b42ca0d8d24abae
+  https://github.com/gilt/opm
+  https://neil.fraser.name/software/JS-Interpreter/
+  use https://pages.github.com/ for ui?
+  idea: test in production [http://bahmutov.calepin.co/test-in-production.html]
+  idea: create web app for todos with !,@,# and keywords, rules, actions, messaies
+  idea: http://fluxxor.com/ as a way to persist data
+  server replication: viewstamped replication? with spread?
+  read pdf in articles: Ontology versioning on the Semantic Web
+  do this as product IFTTT: http://gizmodo.com/ford-puts-voice-activated-ifttt-in-your-dashboard-1635301439
+  https://github.com/nxxcxx/Neural-Network make a massive game (twits as cmds?)
+  https://github.com/wala/jsdelta
+  online training: https://www.shortcutfoo.com/app/dojos/sublime-text-2-win
+
+    relationship docs:
+          inner: {"_from": "users/jan", "_to": "users/tim", "type": "knows"}
+          cross: {"_from": "users/", "_to": "todos/", "type": "many"}
+
+!use
+  FSrap.resto:
+    http://fssnip.net/oO (state machine dsl parser)
+
+  http://mixu.net/vectorclock/
+
+  https://github.com/elierotenberg/remutable
+  http://sugarjs.com/features
+  http://keen.github.io/dashboards/
+  http://kenwheeler.github.io/cash/
+  http://studio.restlet.com/#/
+  https://github.com/JexCheng/regulex
+  http://dutzi.github.io/tamper/
+  http://www.sitepoint.com/mini-chat-rails-server-sent-events
+  http://www.algolia.com/
+  https://github.com/omniscientjs/immstruct/blob/master/README.md
+  https://github.com/robotlolita/raven?utm_source=nodeweekly&utm_medium=email
+  https://medium.com/@tech_fort/an-introduction-to-lokijs-the-idiomatic-way-d24a4c546f7
+  http://code.tutsplus.com/tutorials/multi-instance-nodejs-app-in-paas-using-redis-pubsub--cms-22239
+  https://github.com/rtfeldman/seamless-immutable
+  http://drewblaisdell.github.io/monitor.io
+  http://blog.npmjs.org/post/101775448305/npm-and-front-end-packaging
+  http://techblog.netflix.com/2014/11/introducing-dynomite.html + lokijs
+  https://github.com/substack/hyperboot
+  http://www.infoq.com/articles/web-api-rest
+  http://nscale.nearform.com/
+  http://agavejs.org/  !!!!
+  http://blog.humphd.org/introducing-makedrive/
+  http://kenwheeler.github.io/slick/
+  lb proxy and more: https://github.com/Unitech/pm2
+  http://kenwheeler.github.io/cash/
+  https://github.com/mcordingley/Inverse.js
+  http://www.2daygeek.com/how-to-install-nodejs-manually-in-linux/
+  http://rethinkdb.com/
+  http://travishorn.github.io/fake-identity/
+  https://www.youtube.com/watch?v=VnsA9q9hKEY
+  https://github.com/xyncro/frost
+  http://www.rackspace.com/blog/objectrocket-adds-fully-managed-redis-service/?cm_mmc=managed-_-cloud-_-contentnam-_-dbweekly-ORredis
+  https://github.com/ericelliott/cuid
+  http://timelessrepo.com/haters-gonna-hateoas for RESTful APIs talk
+  http://raganwald.com/2014/04/10/mixins-forwarding-delegation.html
+  https://github.com/Raynos/http-framework...
+  https://bitbucket.org/gdamore/mangos/src/f2844c375d81/examples/?at=master
+  http://www.chorusjs.com/
+  http://trackingjs.com/
+  http://blog.newrelic.com/2014/09/08/apipunchlist/
+  http://telehash.org/
+  https://github.com/fitzgen/github-api
+  http://www.slideshare.net/GustafKotte/design-hypermedia-apis
+  http://www.slideshare.net/rnewton/amundsen-costbenefitshypermedia
+  https://github.com/RisingStack/node-style-guide
+  http://yahoo.github.io/boomerang/doc/
+  http://tristanedwards.me/sweetalert
+  https://github.com/baloneysandwiches/parse-srcset
+  https://transfer.sh/
+  https://conversejs.org/
+  http://wysihtml.com/
+
+  // http://j201.github.io/posts/2013-06-16-Evil-JS-Macros.html
+  // var dog = {
+  //     mammal : true,
+  //     domestic : true,
+  //     weight : 50,
+  //     speak : function() {
+  //         return "woof";
+  //     }
+  // };
+  // var littleDog = extend(dog, {weight : 10});
+  // littleDog.speak(); // "woof"
+  // littleDog.weight; // 10
+
+!resources:
+  http://blog.risingstack.com/node-js-best-practices-part-2
+  http://node-os.com/
+  vs
+  http://runtimejs.org/
+  http://jxcore.com/
+  https://www.npmjs.com/~deoxxa
+
+!debugging
+  https://github.com/node-inspector/node-inspector
+
+!infrastructure:
+  https://github.com/mafintosh/multicast-dns
+  https://github.com/gmarland/GhostRunner
+  https://github.com/iloire/WatchMen
+  http://mixu.net/minilog/
+  http://www.cloudflare.com/
+  https://github.com/trentm/node-bunyan/
+  https://github.com/peerigon/autodeploy
+  https://github.com/muit/serveme
+  https://www.youtube.com/watch?v=GaHzdqFithc&feature=youtu.be
+  https://www.terraform.io/intro/examples/index.html
+  https://github.com/crcn/nexe
+  https://ngrok.com/
+  http://shout-irc.com/  (https://github.com/erming/shout) MIT
+  http://anders.janmyr.com/2014/12/lambda-javascript-micro-services-on-aws.html
+  http://docs.travis-ci.com/user/deployment/
+  http://modernweb.com/2014/06/23/using-node-js-in-production
+  https://github.com/bcoe/crapify
+  http://gfxmonk.net/2015/01/04/os-technologies-to-watch.html
+  http://krasimirtsonev.com/blog/article/Catch-uncaught-Exception-in-NodeJS-keep-node-running
+
+!thinkering -----------------------------------------------------------------------
+  http://tutorialzine.com/2015/01/your-first-node-webkit-app/
+  http://writings.quilt.org/2014/05/12/distributed-systems-and-the-end-of-the-api/
+  use GADTs for modeling state invariants ?: http://mads-hartmann.com/ocaml/2015/01/05/gadt-ocaml.html
+  pricing: https://developer.underarmour.com/pricing
+  http://substack.net/offline_decentralized_single_sign_on_in_the_browser
+  https://github.com/dominictarr/scuttlebutt
+  https://github.com/guardian/scribe
+  https://github.com/irvinebroque/isomorphic-hot-loader
+  https://github.com/postaljs/postal.js
+  http://highscalability.com/blog/2014/12/22/scalability-as-a-service.html + https://getstream.io/
+  http://www.codeproject.com/Articles/855284/How-to-Avoid-API-Requests-On-Your-Page
+  open graph: http://ogp.me/
+  https://github.com/cognitect/transit-js
+  see the code: http://overturejs.com/
+  https://www.youtube.com/playlist?list=PLwuUlC2HlHGe7vmItFmrdBLn6p0AS8ALX
+  https://www.youtube.com/watch?v=PtD-WKSC6ak&feature=youtu.be
+  http://www.mikestowe.com/2014/12/more-objections-to-hateoas.php
+  https://xmpp-ftw.jit.su/
+  https://www.npmjs.org/package/passport-xmpp
+
+  REST: what happens when you discover that you want hateaos but not rpc part?
+
+  it is the message format -> hal with crdts instead of hal/model
+  it is the topology -> more then point to point
+  throw away mutability -> always record the change -> but use difss? (like fluxx/react)
+  throw away sync calls -> all async
+  throw away all or nothing -> always streams
+
+  api jst generates event??? like in the talk @ nordicjs
+    websockets clients (ui, persistance, subscribed services... ?)
+
+    game with webRTC - do a chess game? https://github.com/takahirox/toho-like-js
+  https://github.com/pfraze/local
+  https://blog.kissmetrics.com/how-saas-marketing-is-different
+
+!read:
+  https://reactjsnews.com/react-style-guide-patterns-i-like/
+  https://github.com/enaqx/awesome-react
+  http://www.tuicool.com/articles/vEvyeaz
+  https://github.com/andreypopp/react-quickstart
+  http://tech.pro/blog/2044/a-thrown-to-the-wolves-hands-on-introduction-to-react-part-2
+  http://www.jasimabasheer.com/posts/on-react.html
+  http://blog.krawaller.se/posts/a-reflux-todomvc-codebase-walkthrough/
+  https://github.com/rpflorence/react-training/tree/gh-pages/lessons
+  http://blog.krawaller.se/posts/the-reflux-data-flow-model/
+  http://docs.ractivejs.org/latest/plugins
+  https://www.tildedave.com/2014/11/15/introduction-to-contexts-in-react-js.html
+  https://github.com/LeanKit-Labs/lux.js
+  http://blog.krawaller.se/posts/a-reflux-todomvc-codebase-walkthrough/
+
+  http://www.crmarsh.com/flow/
+  http://projs.hackhat.com/react-js-an-interactive-tutorial-to-get-started
+  http://buildwithreact.com/
+  https://www.tildedave.com/2014/11/15/introduction-to-contexts-in-react-js.html
+  http://omniscientjs.github.io/
+  http://www.scoop.it/t/reactjs-flux
+  http://blog.arkency.com/2014/10/react-dot-js-and-dynamic-children-why-the-keys-are-important/#disqus_thread
+  http://blog.krawaller.se/posts/reflux-refinement/
+  https://github.com/dfilatov/bem-react
+  http://www.sitepoint.com/creating-note-taking-app-react-flux/
+  http://christianalfoni.github.io/javascript/2014/12/04/flux-and-eventemitter2.html
+  https://github.com/jurassix/react-immutable-render-mixin
+  http://sugarjs.com/features
+  https://github.com/Granze/react-starterify
+  http://dev.hubspot.com/blog/moving-backbone-to-flux-react
+
+  http://blog.krawaller.se/posts/a-react-encapsulation-pattern/
+  https://medium.com/@garychambers108/functional-reactive-react-js-b04a8d97a540
+  https://github.com/fdecampredon/rx-flux
+  http://merrickchristensen.com/articles/react-dependency-injection.html
+  www.toptal.com/front-end/simple-data-flow-in-react-applications-using-flux-and-backbone
+  http://blog.krawaller.se/posts/reflux-refinement/
+  https://github.com/enaqx/awesome-react
+  http://www.techsonian.net/2014/09/from-backbone-to-react-our-experience-scaling-a-web-application/
+  http://www.dustingetz.com/2014/03/16/react-into-workshop-notes.html
+  http://www.dustingetz.com/2014/02/18/react-dynamic-forms.html
+  dynamic forms? https://github.com/wingspan/wingspan-forms
+  use for PATCH (by diffing like react - with react): http://tools.ietf.org/html/rfc6902
+        so, that patches are sent while user is on one form? not waiting for 'save'???
+  http://brandontilley.com/2014/09/24/custom-react-components-and-the-valuelink-property.html
+  https://medium.com/react-tutorials/latest
+  http://glittershark.github.io/reactable/
+  http://www.htmlxprs.com/post/20/creating-isomorphic-apps-with-react-and-nodejs
+  https://github.com/jmreidy/fluxy
+  https://github.com/fdecampredon/rx-flux
+  http://futurice.com/blog/combining-react-flux-and-web-components
+  http://henleyedition.com/flip-a-reactjs-game/
+  https://github.com/Syncano/react-tutorial  https://code.google.com/p/zaproxy/
+  http://futurice.com/blog/reactive-mvc-and-the-virtual-dom
+  https://github.com/facebook/react/wiki/Complementary-Tools
+  https://github.com/dustingetz/react-cursor/blob/master/README.md
+  https://reactjsnews.com/building-a-test-suite-in-react-js/
