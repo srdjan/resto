@@ -24,6 +24,7 @@
   https://golden-layout.com/docs/
 
 -todo: extract router into a module
+  use extensions? http://bergie.iki.fi/nodext/
   like this: https://github.com/alexmingoia/koa-router
   http://www.smashingmagazine.com/2015/01/13/why-ajax-isnt-enough/
   koa, bigpipe (http://bigpipe.io/)
@@ -422,6 +423,7 @@
   http://yomguithereal.github.io/colback/
 
 !read:
+  http://tezos.com/language.txt
   http://sigmajs.org/
   http://thenodeway.io/
   http://sandervanderburg.blogspot.com/2013/02/yet-another-blog-post-about-object.html
