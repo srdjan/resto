@@ -1,22 +1,22 @@
-var pipeline      = require('../../lib/pipeline');
-var authenticator = require('../../lib/authn').auth;
-var authorizer    = require('../../lib/authr').auth;
-var resolver      = require('../../lib/resolver').resolve;
-var invoker       = require('../../lib/invoker').invoke;
-var converter     = require('../../lib/hal').convert;
-var http          = require('../../lib/server');
+const pipeline      = require('../../src/pipeline');
+const authenticator = require('../../src/authn').auth;
+const authorizer    = require('../../src/authr').auth;
+const resolver      = require('../../src/resolver').resolve;
+const invoker       = require('../../src/invoker').invoke;
+const converter     = require('../../src/hal').convert;
+const http          = require('../../src/server');
 
-var apple         = require('./resources/apple');
-var log           = console.log;
+const apple         = require('./resources/apple');
+const log           = console.log;
 
-var appleResource = apple;
+const appleResource = apple;
 
-var reqResp = pipeline.createFor(appleResource)
+const reqResp = pipeline.expose(appleResource)
                       .use(authenticator)
                       .use(resolver)
                       .use(authorizer)
                       .use(invoker)
                       .use(converter);
 
-var EndPoint = http.createOn(reqResp);
-EndPoint.start(8080);
+const EndPoint = http.create(reqResp);
+EndPoint.start(8070);

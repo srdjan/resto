@@ -115,8 +115,8 @@ log('------ run integration tests -----');
 
   //todo: get page 2 and a test that is has 1 embed
 
-//- toos one of the apples
-  result = reqRespEndPoint.cmd(appleEaten.data, 'toss', { });
+//- todos one of the apples
+  // result = reqRespEndPoint.cmd(appleEaten.data, 'toss', { });
 
 //- test get after toss
   var all = reqRespEndPoint.get('/api/apples/');

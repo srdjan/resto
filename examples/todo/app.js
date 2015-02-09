@@ -12,7 +12,7 @@ var log = console.log;
 
 // service processing pipeline
 // configure and and start:
-service.compse(activity, hasMany, todo).on(httpServer.create())
+service.compose(activity, hasMany, todo).on(httpServer.create())
               .use(authenticator)
               .use(resolver)
               .use(authorizer)
