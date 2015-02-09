@@ -1,42 +1,41 @@
 //---------------------------------------------------------------------------------
 //- http-server
 //---------------------------------------------------------------------------------
-var http = require("http");
-var file = require("./file-helper");
-var fn   = require('./fn');
-var log  = console.log;
+const http = require("http")
+const file = require("./file-helper")
+const fn   = require('./fn')
+const log  = console.log
 
 exports.create = function(pipeline) {
-  server = http.createServer((request, response) => {
-      if (fn.isApiCall(request)) {
-        processApi(pipeline, request, response);
-      }
-      else {
-        file.get(request, response);
-      }
-    });
+  let server = http.createServer((request, response) => {
+                      if (fn.isApiCall(request)) {
+                        processApi(pipeline, request, response)
+                      }
+                      else {
+                        file.get(request, response)
+                      }
+                    })
 
   return {
-    start: function(port) {
-              server.listen(port);
-              log("Apple Farm Service running at port: " + port + "\nCTRL + SHIFT + C to shutdown");
-              return this;
+    start(port) {
+              server.listen(port)
+              log("Apple Farm Service running at port: " + port + "\nCTRL + SHIFT + C to shutdown")
+              return this
             }
     //todo: add stop,restart
-  };
-};
-
+  }
+}
 
 function processApi(pipeline, request, response) {
   if (fn.hasBody(request.method)) {
-    var body = '';
-    request.on('data', chunk => { body += chunk.toString(); });
+    let body = ''
+    request.on('data', chunk => body += chunk.toString())
     request.on('end', () => {
-      request.body = JSON.parse(body);
-      pipeline.process(request, response);
-    });
+      request.body = JSON.parse(body)
+      pipeline.process(request, response)
+    })
   }
   else {
-    pipeline.process(request, response);
+    pipeline.process(request, response)
   }
 }

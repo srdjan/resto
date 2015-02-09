@@ -1,10 +1,10 @@
 //---------------------------------------------------------------------------------
 //- auth
 //---------------------------------------------------------------------------------
-var Either = require('data.either');
-var fn = require('./fn');
-var log = console.log;
+const Either = require('data.either')
+const fn = require('./fn')
+const log = console.log
 
 exports.auth = function auth(ctx) {
-  return ctx;
-};
+  return ctx
+}

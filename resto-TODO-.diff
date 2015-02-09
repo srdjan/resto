@@ -731,3 +731,50 @@ http://hiddentao.github.io/robe
   https://github.com/facebook/react/wiki/Complementary-Tools
   https://github.com/dustingetz/react-cursor/blob/master/README.md
   https://reactjsnews.com/building-a-test-suite-in-react-js/
+
+!
+inception.txt
+incepti.on
+incept.io
+
+CODE ON DEMAND (NOT OPTIONAL)
+STANDARD API BROWSER
+
+service that allows customers to create and send their models to be exposed as APIs
+JSON.stringify them and post
+
+each service in its own Docker?
+database choices?
+client side vs server side orcestration? http://www.gousios.gr/blog/rx-vanity-pullreqs/
+? + rule engine?
+UI - choice of designs?
+common services: pub/sub, paralell, scheduler, ...? park it for processing
+test in producation: http://bahmutov.calepin.co/test-in-production.html
+is emasc architecture right for inception? http://gbracha.blogspot.in/2014/08/taking-it-to-themacs.html
+CLIENT:
+http://visionmedia.github.io/superagent/#request-basics
+
+//-------------------------------------------------
+API levels:
+  A) lower level autonimous services (micro services?) - mostly used by external systems?
+    http://www.brunton-spall.co.uk/post/2014/05/21/what-is-a-microservice-and-why-does-it-matter/
+
+  B) higher level compsition services (orcestartion) - primaraly used by clients (ui)?
+  http://www.slideshare.net/jdubray/soa-vs-eda
+
+
+  A) product, order, inventory, sale, customer
+  B) order managament system, product catalog, customer relationship management,...
+
+//-------------------------------------------------
+RESOURCES:
+http://www.3scale.net/2014/07/five-axioms-api-economy-summarized-series-ii/?utm_content=buffer73337&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer
+https://github.com/interagent/http-api-design
+http://www.harukizaemon.com/blog/2010/03/01/functional-programming-in-object-oriented-languages/
+http://jcalcote.wordpress.com/2009/08/06/restful-transactions/
+http://nordicapis.com/how-to-monotize-your-api/
+https://github.com/rlidwka/node-hotswap/blob/master/hotswap.js
+http://www.aerobatic.io/
+https://moderncrypto.org/mail-archive/messaging/2014/000780.html
+http://www.gousios.gr/blog/rx-vanity-pullreqs/
+http://maidsafe.net/maidsafe-network-platform-libraries

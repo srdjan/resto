@@ -1,14 +1,14 @@
 //---------------------------------------------------------------------------------
 //- resource
 //---------------------------------------------------------------------------------
-var Either = require('data.either');
-var fn     = require('./fn');
-var db     = require('./db');
-var log    = console.log;
+const Either = require('data.either');
+const fn     = require('./fn');
+const db     = require('./db');
+const log    = console.log;
 
 function validateApiCall(ctx) {
-  var links = ctx.entity.getLinks();
-  if ( ! fn.some(function(link) { return link.rel === ctx.rel; }, links)) {
+  let links = ctx.entity.getLinks();
+  if ( ! fn.some(link => link.rel === ctx.rel, links)) {
     ctx.statusCode = 405;
     ctx.result = 'Conflict - Method call not allowed';
     return Either.Left(ctx);
@@ -35,7 +35,7 @@ function validatePropsMatch(ctx) {
 }
 
 function update(ctx) {
-  fn.each(function(key) { ctx.entity[key] = ctx.body[key]; }, Object.keys(ctx.body));
+  fn.each(key => ctx.entity[key] = ctx.body[key], Object.keys(ctx.body));
   return Either.Right(ctx);
 }
 
@@ -75,7 +75,7 @@ exports.get = function(ctx) {
     ctx.result = db.get(ctx.id);
   }
   else {
-    var all = db.getAll(ctx.pageNumber);
+    let all = db.getAll(ctx.pageNumber);
     ctx.result = all.page;
     ctx.pageNumber = all.pageNumber;
     ctx.pageCount = all.pageCount;
@@ -129,49 +129,49 @@ exports.delete = function(ctx) {
 //---------------------------------------------------------------------------------
 //@tests
 //---------------------------------------------------------------------------------
-  var expect = require('expect.js');
+  const expect = require('expect.js');
   log('testing: resource.js');
 
   db.clear();
 
   // test post, id = 0
-  var ctx = {
+  let ctx = {
     id: 0,
-    typeCtor: function() { this.name = '';},
+    typeCtor() { this.name = '';},
     body: {name: 'sam'}
   };
-  var result = exports.post(ctx);
+  let result = exports.post(ctx);
   expect(result.body.name).to.be.equal(result.entity.name);
 
-  var ctx = {
+  let ctx = {
     id: 0,
-    typeCtor: function() { this.name = '';},
+    typeCtor() { this.name = '';},
     body: {nammmme: 'sam'},
     entity: {name: ''}
   };
-  var result = exports.post(ctx);
+  let result = exports.post(ctx);
   expect(result.statusCode).to.be(400);
 
   // test post, id != 0
   // prepare db:
-  var ctx = {
+  let ctx = {
     id: 0,
-    typeCtor: function() { this.name = '';},
+    typeCtor() { this.name = '';},
     body: {name: 'sam'},
     entity: { name: '?'}
   };
-  var fromDb = db.add(ctx.entity);
+  let fromDb = db.add(ctx.entity);
   ctx.id = fromDb.id;
 
-  // var result = exports.post(ctx);
+  // let result = exports.post(ctx);
   // expect(result.statusCode).to.be(405);
 
-  // var ctx = {
+  // let ctx = {
   //   id: 0,
-  //   typeCtor: function() { this.name = '';},
+  //   typeCtor() { this.name = '';},
   //   body: {nammmme: 'sam'},
   //   entity: {name: ''}
   // };
-  // var result = exports.post(ctx);
+  // let result = exports.post(ctx);
   // expect(result.statusCode).to.be(400);
 db.clear();
