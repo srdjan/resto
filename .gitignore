@@ -27,3 +27,4 @@ node_modules
 *.sublime-workspace
 /datastore/
 /-TODO-.diff
+/resto-TODO-.diff
