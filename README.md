@@ -13,11 +13,11 @@ behavior it is supposed to exhibit.
 Instead, it is smart enough to follow hyperlinks and gather whatever 
 information it needs to process any representation.
 
--Express domain's possible states
--Make actions constrained by states = declare invalid states
--Pattern matching for transitions
--Hypermedia as vehecle to drive through states
--Hypermedia as vehecle to retreive meta
--API uses resource’s URL as its unique identifier, not raw ID.
+# Express domain's possible states
+# Make actions constrained by states = declare invalid states
+# Pattern matching for transitions
+# Hypermedia as vehecle to drive through states
+# ypermedia as vehecle to retreive meta
+# API uses resource’s URL as its unique identifier, not raw ID.
 
 
