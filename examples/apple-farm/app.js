@@ -5,11 +5,7 @@ const resolver      = require('../../src/resolver').resolve
 const invoker       = require('../../src/invoker').invoke
 const converter     = require('../../src/hal').convert
 const http          = require('../../src/server')
-
-const apple         = require('./resources/apple')
-const log           = console.log
-
-const appleResource = apple
+const appleResource = require('./resources/apple')
 
 const reqResp = pipeline.expose(appleResource)
                       .use(authenticator)
