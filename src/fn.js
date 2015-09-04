@@ -6,7 +6,6 @@ const R = require('ramda')
 exports.compose = R.compose
 exports.contains = R.contains
 exports.filter = R.filter
-exports.each = R.each
 exports.some = R.some
 exports.every = R.every
 exports.diff = R.difference

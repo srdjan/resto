@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //- db api
 //---------------------------------------------------------------------------------
-const datastore = require('node-persist')
+let datastore   = require('node-persist')
 const fn        = require('./fn')
 const log       = console.log
 
@@ -53,18 +53,23 @@ function get(id) {
   return entity
 }
 
-let pageSize = 3
+const pageSize = 3
 function getAll(pgNumber) {
   let pageNumber = pgNumber || 0
   let objs = []
   datastore.values(vals => objs = vals)
-  if (objs.length === 0 ) return { pageNumber: 0, pageCount: 0, page: [] }
-  if (objs.length <= pageSize) return { pageNumber: 0, pageCount: 0, page: objs }
 
-  if (pageNumber === 0) pageNumber += 1
+  if (objs.length === 0 )
+    return { pageNumber: 0, pageCount: 0, page: [] }
+
+  if (objs.length <= pageSize)
+    return { pageNumber: 0, pageCount: 0, page: objs }
+
   let pageCount = objs.length % pageSize > 0 ? Math.ceil(objs.length / pageSize) : objs.length / pageSize
 
   if (pageNumber > pageCount) pageNumber = pageCount
+
+  if (pageNumber === 0) pageNumber += 1
   let page = objs.slice((pageNumber - 1) * pageSize, pageNumber * pageSize)
   return { pageNumber: pageNumber, pageCount: pageCount, page: page }
 }
@@ -90,13 +95,16 @@ module.exports.remove = remove
   let hal = require('./hal.js')
   log('testing: db.js')
 
-init('../../../../datastore-test')
-clear()
+  init('./datastore-test')
+  clear()
 
-//-- TEST PAGING
-//TEST ZERO records
-  let todos = []
+
+  //-- TEST PAGING
+  //TEST ZERO records
+  // result = getAll()
+
   let result = getAll()
+  log(result)
   let ctx = {
     typeName: 'Todo',
     pageNumber: result.pageNumber,
@@ -110,22 +118,22 @@ clear()
   expect(fn.contains('create', res.result.listLinkRels())).to.be(true)
 
 //TEST ONE record
-  //...
+  let todos = []
   todos.push({
               content: '1',
               isDone: false,
               isArchived: false
            })
   addBatch(todos)
-  let result = getAll()
-  let ctx = {
+  result = getAll()
+  ctx = {
     typeName: 'Todo',
     pageNumber: result.pageNumber,
     pageCount: result.pageCount,
     result: result.page
   }
-  let res = hal.convert(ctx)
-  let embeds = res.result.getEmbeds('todos')
+  res = hal.convert(ctx)
+  embeds = res.result.getEmbeds('todos')
   expect(embeds.length).to.be(1)
   expect(fn.contains('self', res.result.listLinkRels())).to.be(true)
   expect(fn.contains('create', res.result.listLinkRels())).to.be(true)
@@ -143,15 +151,15 @@ clear()
               isArchived: false
               })
   addBatch(todos)
-  let result = getAll()
-  let ctx = {
+  result = getAll()
+  ctx = {
     typeName: 'Todo',
     pageNumber: result.pageNumber,
     pageCount: result.pageCount,
     result: result.page
   }
-  let res = hal.convert(ctx)
-  let embeds = res.result.getEmbeds('todos')
+  res = hal.convert(ctx)
+  embeds = res.result.getEmbeds('todos')
   expect(embeds.length).to.be(3)
   expect(fn.contains('self', res.result.listLinkRels())).to.be(true)
   expect(fn.contains('create', res.result.listLinkRels())).to.be(true)
@@ -207,17 +215,17 @@ clear()
   addBatch(todos)
 
   //- get all - when result is array: createList()
-  let result = getAll()
+  result = getAll()
   // log(result)
-  let ctx = {
+  ctx = {
     typeName: 'Todo',
     pageNumber: result.pageNumber,
     pageCount: result.pageCount,
     result: result.page
   }
-  let res = hal.convert(ctx)
+  res = hal.convert(ctx)
   log(JSON.stringify(res.result))
-  let embeds = res.result.getEmbeds('todos')
+  embeds = res.result.getEmbeds('todos')
   expect(embeds.length).to.be(3)
   expect(fn.contains('create', res.result.listLinkRels())).to.be(true)
   expect(fn.contains('next', res.result.listLinkRels())).to.be(true)

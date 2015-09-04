@@ -1,136 +1,140 @@
 //---------------------------------------------------------------------------------
 //- hal parsing
 //---------------------------------------------------------------------------------
-const halson = require('halson')
-const fn = require('./fn')
-const log = console.log
+'use strict';
+
+var halson = require('halson');
+var fn = require('./fn');
+var log = console.log;
 
 //--------
 function isFunc(obj) {
-  return obj instanceof Function
+  return obj instanceof Function;
 }
 
 function isNotFunc(obj) {
-  return !isFunc(obj)
+  return !isFunc(obj);
 }
 
 function isObject(obj) {
-  return obj instanceof Object
+  return obj instanceof Object;
 }
 
 function isNotObject(obj) {
-  return !isObject(obj)
+  return !isObject(obj);
 }
 
 function isEmbed(prop) {
-  return isObject(prop) && prop.hasOwnProperty('id')
+  return isObject(prop) && prop.hasOwnProperty('id');
 }
 
 function isNotEmbed(prop) {
-  return !isEmbed(prop)
+  return !isEmbed(prop);
 }
 
 function isNotId(propName) {
-    return propName !== 'id'
+  return propName !== 'id';
 }
-  //--------
+//--------
 
 function addProperties(halRep, result) {
   // fn.trace(result)
-  let propNames = fn.filter(propName => isNotId(propName) &&
-                                        isNotEmbed(result[propName]) &&
-                                        isNotFunc(result[propName]),
-                                        Object.keys(result))
-  return fn.map(propName => halRep[propName] = result[propName], propNames)
+  var propNames = fn.filter(function (propName) {
+    return isNotId(propName) && isNotEmbed(result[propName]) && isNotFunc(result[propName]);
+  }, Object.keys(result));
+  return fn.map(function (propName) {
+    return halRep[propName] = result[propName];
+  }, propNames);
 }
 
 function addEmbed(halRep, typeName, result) {
-  let embed = halson({}).addLink('self', '/api/' + typeName + '/' + fn.atob(result.id))
-  addProperties(embed, result)
-  halRep.addEmbed(typeName, embed)
+  var embed = halson({}).addLink('self', '/api/' + typeName + '/' + fn.atob(result.id));
+  addProperties(embed, result);
+  halRep.addEmbed(typeName, embed);
 }
 
 function addEmbeds(halRep, typeName, result) {
-  let propNames = fn.filter(propName => isNotFunc(result[propName]) &&
-                                        isEmbed(result[propName]),
-                                        Object.keys(result))
-  return propNames.forEach(propName => addEmbed(halRep, propName, result[propName]))
+  var propNames = fn.filter(function (propName) {
+    return isNotFunc(result[propName]) && isEmbed(result[propName]);
+  }, Object.keys(result));
+  return propNames.forEach(function (propName) {
+    return addEmbed(halRep, propName, result[propName]);
+  });
 }
 
 function addLinks(halRep, typeName, result) {
-  halRep.addLink('self', '/api/' + typeName + 's/' + fn.atob(result.id))
-  let links = result.getLinks()
-  links.forEach(l => {
+  halRep.addLink('self', '/api/' + typeName + 's/' + fn.atob(result.id));
+  var links = result.getLinks();
+  links.forEach(function (l) {
     halRep.addLink(l.rel, {
       href: '/api/' + typeName + 's/' + fn.atob(result.id + '/' + l.rel),
       method: l.method
-    })
-  })
-  return halRep
+    });
+  });
+  return halRep;
 }
 
 function createListRoot(halRep, typeName) {
-  halRep.addLink('self', '/api/' + typeName + 's')
+  halRep.addLink('self', '/api/' + typeName + 's');
   halRep.addLink('create', {
     href: '/api/' + typeName + 's/' + fn.atob('create'),
     method: 'POST'
-  })
-  return halRep
+  });
+  return halRep;
 }
 
 function createPagedListRoot(halRep, typeName, pgNumber, pgCount) {
-  halRep.addLink('first', '/api/' + typeName + 's' + '?page=1')
-  halRep.addLink('prev', '/api/' + typeName + 's' + '?page=' + (pgNumber < 2 ? 1 : pgNumber - 1))
-  halRep.addLink('next', '/api/' + typeName + 's' + '?page=' + (pgNumber < pgCount ? Number(pgNumber, 10) + 1 : pgCount))
-  halRep.addLink('last', '/api/' + typeName + 's' + '?page=' + pgCount)
+  halRep.addLink('first', '/api/' + typeName + 's' + '?page=1');
+  halRep.addLink('prev', '/api/' + typeName + 's' + '?page=' + (pgNumber < 2 ? 1 : pgNumber - 1));
+  halRep.addLink('next', '/api/' + typeName + 's' + '?page=' + (pgNumber < pgCount ? Number(pgNumber, 10) + 1 : pgCount));
+  halRep.addLink('last', '/api/' + typeName + 's' + '?page=' + pgCount);
   halRep.addLink('create', {
     href: '/api/' + typeName + 's/' + fn.atob('create'),
     method: 'POST'
-  })
-  return halRep
+  });
+  return halRep;
 }
 
 function createList(ctx) {
-  let halRep = undefined
+  var halRep = undefined;
   if (ctx.pageCount > 1) {
-    halRep = createPagedListRoot(halson({}), ctx.typeName.toLowerCase(), ctx.pageNumber, ctx.pageCount)
+    halRep = createPagedListRoot(halson({}), ctx.typeName.toLowerCase(), ctx.pageNumber, ctx.pageCount);
+  } else {
+    halRep = createListRoot(halson({}), ctx.typeName.toLowerCase());
   }
-  else {
-    halRep = createListRoot(halson({}), ctx.typeName.toLowerCase())
-  }
-  ctx.result.forEach((el, index, array) => {
-    addEmbed(halRep, ctx.typeName.toLowerCase() + 's', el)
-  })
-  return halRep
+  ctx.result.forEach(function (el, index, array) {
+    addEmbed(halRep, ctx.typeName.toLowerCase() + 's', el);
+  });
+  return halRep;
 }
 
 //todo: add resursion (inner resources)
 function createResource(ctx) {
-  let halRep = halson({})
-  addProperties(halRep, ctx.result)
-  addLinks(halRep, ctx.typeName.toLowerCase(), ctx.result)
-  addEmbeds(halRep, ctx.typeName.toLowerCase(), ctx.result)
-  return halRep
+  var halRep = halson({});
+  addProperties(halRep, ctx.result);
+  addLinks(halRep, ctx.typeName.toLowerCase(), ctx.result);
+  addEmbeds(halRep, ctx.typeName.toLowerCase(), ctx.result);
+  return halRep;
 }
 
 exports.convert = function convert(ctx) {
   if (ctx.result instanceof Array) {
-    ctx.result = createList(ctx)
+    ctx.result = createList(ctx);
   } else {
-    ctx.result = createResource(ctx)
+    ctx.result = createResource(ctx);
   }
-  return ctx
-}
+  return ctx;
+};
 
 //---------------------------------------------------------------------------------
 //@tests
 //---------------------------------------------------------------------------------
-const expect = require('expect.js')
-log('testing: hal.js')
+var expect = require('expect.js');
+log('testing: hal.js');
 
 //TEST EMBEDS
 // -------------------------------------------------------------------------------
-let apples = [{
+var apples = [{
   id: '3333',
   weight: 30,
   color: "red",
@@ -154,7 +158,7 @@ let apples = [{
     firstName: 'tom',
     lastName: 'peters'
   },
-  getLinks: function() {
+  getLinks: function getLinks() {
     if (this.weight > 0.0 && this.weight < 200.0) {
       return [{
         rel: 'grow',
@@ -162,9 +166,9 @@ let apples = [{
       }, {
         rel: 'toss',
         method: "DELETE"
-      }]
+      }];
     }
-    return false
+    return false;
   }
 }, {
   id: '4444',
@@ -190,7 +194,7 @@ let apples = [{
     firstName: 'tom',
     lastName: 'peters'
   },
-  getLinks: function() {
+  getLinks: function getLinks() {
     if (this.weight > 0.0 && this.weight < 200.0) {
       return [{
         rel: 'grow',
@@ -198,45 +202,45 @@ let apples = [{
       }, {
         rel: 'toss',
         method: "DELETE"
-      }]
+      }];
     }
-    return false
+    return false;
   }
-}]
+}];
 
 //test isEmbed()
 //-----------------------------------
-let result = isEmbed(apples[0].weight)
-expect(result).to.be(false)
+var result = isEmbed(apples[0].weight);
+expect(result).to.be(false);
 
-result = isEmbed(apples[0].refObj1)
-expect(result).to.be(true)
+result = isEmbed(apples[0].refObj1);
+expect(result).to.be(true);
 
-result = isObject(apples[0].refObj1)
-expect(result).to.be(true)
+result = isObject(apples[0].refObj1);
+expect(result).to.be(true);
 
 //- get all - when result is one obj: createResource()
 //-----------------------------------
-let ctx = {
+var ctx = {
   typeName: 'Apple',
   result: apples[0]
-}
-let res = exports.convert(ctx)
+};
+var res = exports.convert(ctx);
 // log(JSON.stringify(res.result))
-expect(res.result.listLinkRels().length).to.be(3)
-let embeds = res.result.getEmbeds('refObj1')
-expect(embeds.length).to.be(1)
+expect(res.result.listLinkRels().length).to.be(3);
+var embeds = res.result.getEmbeds('refObj1');
+expect(embeds.length).to.be(1);
 
 //- get all - when result is array: createList()
 //-----------------------------------
 ctx = {
   typeName: 'Apple',
   result: apples
-}
-res = exports.convert(ctx)
+};
+res = exports.convert(ctx);
 // log(JSON.stringify(res.result))
-embeds = res.result.getEmbeds('apples')
-expect(embeds.length).to.be(2)
+embeds = res.result.getEmbeds('apples');
+expect(embeds.length).to.be(2);
 
 //TEST PAGING
 //-------------------------------------------------------------------------------
