@@ -1,3 +1,0 @@
-fsarp-hyperfrest.txt
-
-http://nessos.github.io/Vagrant/index.html
