@@ -26,7 +26,7 @@ function createId() {
 }
 
 function clear() {
-  datastore.clear();
+  datastore.clearSync();
 }
 
 function add(obj) {
@@ -105,7 +105,6 @@ clear();
 // result = getAll()
 
 var result = getAll();
-log(result);
 var ctx = {
   typeName: 'Todo',
   pageNumber: result.pageNumber,
@@ -224,13 +223,13 @@ ctx = {
   result: result.page
 };
 res = hal.convert(ctx);
-log(JSON.stringify(res.result));
+// log(JSON.stringify(res.result))
 embeds = res.result.getEmbeds('todos');
 expect(embeds.length).to.be(3);
 expect(fn.contains('create', res.result.listLinkRels())).to.be(true);
 expect(fn.contains('next', res.result.listLinkRels())).to.be(true);
 
 var next = res.result.getLink('next');
-log(next);
+// log(next)
 //-- clear database after tests
 clear();

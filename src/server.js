@@ -19,10 +19,14 @@ exports.create = function(pipeline) {
   return {
     start(port) {
               server.listen(port)
-              log("Apple Farm Service running at port: " + port + "\nCTRL + SHIFT + C to shutdown")
+              log("API running at port: " + port + "\nCTRL + SHIFT + C to shutdown")
+              return this
+            },
+    stop() {
+              server.stop()
+              log("API at port: " + port + "stopping...")
               return this
             }
-    //todo: add stop,restart
   }
 }
 

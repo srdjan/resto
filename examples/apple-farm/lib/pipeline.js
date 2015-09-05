@@ -53,7 +53,6 @@ function extract(request) {
   ctx.method = request.method.toLowerCase();
   ctx.body = request.body;
   var urlParts = urlParser.parse(request.url, true, true);
-  log(urlParts);
   ctx.url = urlParts.pathname;
   ctx.pageNumber = urlParts.query.hasOwnProperty('page') ? urlParts.query.page : 0;
   return ctx;

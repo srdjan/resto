@@ -6,7 +6,7 @@ const R = require('ramda')
 exports.compose = R.compose
 exports.contains = R.contains
 exports.filter = R.filter
-exports.some = R.some
+exports.none = R.none
 exports.every = R.every
 exports.diff = R.difference
 exports.map = R.map
@@ -70,20 +70,22 @@ function trace(h, func, ctx) {
 }
 
 // f, ep, m(a) -> m(b)
-function run(h, ep, m) {
+function run(handler, ep, m) {
   return m.chain(d => {
-    if(h.trace) trace('-> ', h.func, d)
-    let r = h.func(d)
-    if(h.trace) trace('<- ', h.func, r)
-    return ep(r) ? Either.Left(r) : Either.Right(r)
+    if(handler.trace) trace('-> ', handler.func, d)
+    let r = handler.func(d)
+    if(handler.trace) trace('<- ', handler.func, r)
+
+    var res = ep(r) ? Either.Left(r) : Either.Right(r)
+    return res
   })
 }
 
 // hs, ep, a -> b | err
-exports.runAll = function(hs, ep, d) {
-  let m = Either.of(d)
-  hs.forEach(h => { m = run(h, ep, m) })
-  return m.merge()
+exports.runAll = function(handlers, ep, ctx) {
+  let mctx = Either.of(ctx)
+  handlers.forEach(handler => { mctx = run(handler, ep, mctx) })
+  return mctx.merge()
 }
 
 //---------------------------------------------------------------------------------

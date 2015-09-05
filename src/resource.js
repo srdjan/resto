@@ -8,7 +8,7 @@ const log    = console.log;
 
 function validateApiCall(ctx) {
   let links = ctx.entity.getLinks();
-  if ( ! fn.some(link => link.rel === ctx.rel, links)) {
+  if (fn.none(link => link.rel === ctx.rel, links)) {
     ctx.statusCode = 405;
     ctx.result = 'Conflict - Method call not allowed';
     return Either.Left(ctx);
@@ -86,7 +86,6 @@ exports.get = function(ctx) {
 exports.post = function(ctx) {
   if(ctx.id === 0) {
     ctx.entity = new ctx.typeCtor();
-    console.log(ctx)
     return validatePropsMatch(ctx)
                   .chain(update)
                   .chain(persist)

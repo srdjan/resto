@@ -10,7 +10,7 @@ var log = console.log;
 
 function validateApiCall(ctx) {
   var links = ctx.entity.getLinks();
-  if (!fn.some(function (link) {
+  if (fn.none(function (link) {
     return link.rel === ctx.rel;
   }, links)) {
     ctx.statusCode = 405;
@@ -87,7 +87,6 @@ exports.get = function (ctx) {
 exports.post = function (ctx) {
   if (ctx.id === 0) {
     ctx.entity = new ctx.typeCtor();
-    console.log(ctx);
     return validatePropsMatch(ctx).chain(update).chain(persist).merge();
   }
   ctx.entity = db.get(ctx.id);

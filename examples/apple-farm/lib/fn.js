@@ -8,7 +8,7 @@ var R = require('ramda');
 exports.compose = R.compose;
 exports.contains = R.contains;
 exports.filter = R.filter;
-exports.some = R.some;
+exports.none = R.none;
 exports.every = R.every;
 exports.diff = R.difference;
 exports.map = R.map;
@@ -78,22 +78,24 @@ function trace(h, func, ctx) {
 }
 
 // f, ep, m(a) -> m(b)
-function run(h, ep, m) {
+function run(handler, ep, m) {
   return m.chain(function (d) {
-    if (h.trace) trace('-> ', h.func, d);
-    var r = h.func(d);
-    if (h.trace) trace('<- ', h.func, r);
-    return ep(r) ? Either.Left(r) : Either.Right(r);
+    if (handler.trace) trace('-> ', handler.func, d);
+    var r = handler.func(d);
+    if (handler.trace) trace('<- ', handler.func, r);
+
+    var res = ep(r) ? Either.Left(r) : Either.Right(r);
+    return res;
   });
 }
 
 // hs, ep, a -> b | err
-exports.runAll = function (hs, ep, d) {
-  var m = Either.of(d);
-  hs.forEach(function (h) {
-    m = run(h, ep, m);
+exports.runAll = function (handlers, ep, ctx) {
+  var mctx = Either.of(ctx);
+  handlers.forEach(function (handler) {
+    mctx = run(handler, ep, mctx);
   });
-  return m.merge();
+  return mctx.merge();
 };
 
 //---------------------------------------------------------------------------------
