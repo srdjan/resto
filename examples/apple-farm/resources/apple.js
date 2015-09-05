@@ -1,56 +1,56 @@
-var log = console.log;
+var log = console.log
 
 exports.Apple = function() {
-  this.weight = 0.1;
-  this.color = 'green';
+  this.weight = 1
+  this.color = 'green'
 
   this.grow = function(msg) {
-    if (this.weight > 0.0 && (this.weight + msg.weightIncr) < 300.0) {
-      this.weight += msg.weightIncr;
-      return true;
+    if (this.weight > 0 && (this.weight + msg.weightIncr) < 300) {
+      this.weight += msg.weightIncr
+      return true
     }
-    return false;
-  };
+    return false
+  }
 
   this.eat = function(msg) {
-    if (msg.weight) return false;
-    return true;
-  };
+    if (msg.weight) return false
+    return true
+  }
 
   this.toss = function(msg) {
-    log('tossed apple: ' + JSON.stringify(this));
-    return true;
-  };
+    log('tossed apple: ' + JSON.stringify(this))
+    return true
+  }
 
   this.getLinks = function() {
-    if (this.weight > 0.0 && this.weight < 200.0) {
+    if (this.weight > 0 && this.weight < 200) {
       return [{ rel: 'grow', method: "POST" },
-              { rel: 'toss', method: "DELETE"}];
+              { rel: 'toss', method: "DELETE"}]
     }
-    else if (this.weight >= 200.0 && this.weight < 300.0) {
+    else if (this.weight >= 200 && this.weight < 300) {
       return [{ rel: 'eat', method: "PUT" },
-              { rel: 'toss', method: "DELETE" }];
+              { rel: 'toss', method: "DELETE" }]
     }
     else if ( ! this.weight) {
-      return [{ rel: 'toss', method: "DELETE"}];
+      return [{ rel: 'toss', method: "DELETE"}]
     }
-    return [];
-  };
+    return []
+  }
 
   this.getMeta = function() {
-    var properties = [];
+    var properties = []
     properties.push( {
           name: 'weight',
           type: 'number',
           label: 'Current Weight:',
           readOnly: true
-        });
+        })
     properties.push( {
           name: 'maxWeight',
           type: 'number',
           label: 'Maximum Weight:',
           readOnly: true
-        });
+        })
     properties.push( {
           name: 'color',
           type: 'string',
@@ -61,16 +61,16 @@ exports.Apple = function() {
                         "max-length" : 15,
                         "validator" : function(value) {
                           return function(item) {
-                              return item === value;
-                            }, ["green", "orange", "red"]; }
+                              return item === value
+                            }, ["green", "orange", "red"] }
                       }
-    });
+    })
 
     return {
       label: 'Apple',
       pageSize: 3,
       properties: props
-    };
-  };
-};
+    }
+  }
+}
 

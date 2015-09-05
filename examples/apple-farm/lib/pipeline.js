@@ -9,6 +9,8 @@ var db = require('./db');
 var log = console.log;
 
 db.init('../../../datastore');
+db.clear();
+
 var handlers = [];
 var appModel = undefined;
 

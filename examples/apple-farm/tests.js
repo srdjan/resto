@@ -20,9 +20,9 @@ db.clear()
 
 log('------ configure pipeline --------')
 var reqHandler = pipeline.expose(appleResource)
-                      // .use(authenticator)
+                      .use(authenticator)
                       .use(resolver)
-                      // .use(authorizer)
+                      .use(authorizer)
                       .use(invoker)//, true)
                       .use(converter)
 
@@ -42,40 +42,40 @@ log('------ run integration tests -----')
   expect(fn.contains('create', all.data.listLinkRels())).to.be(true)
 
 // //- test create apple 1
-  var apple = apiEndPoint.cmd(all.data, 'create', {weight: 10.0, color: "red"})
+  var apple = apiEndPoint.cmd(all.data, 'create', {weight: 10, color: "red"})
   expect(apple.data.listLinkRels().length).to.be(3)
-  expect(apple.data.weight).to.be(10.0)
+  expect(apple.data.weight).to.be(10)
   expect(fn.contains('self', apple.data.listLinkRels())).to.be(true)
   expect(fn.contains('grow', apple.data.listLinkRels())).to.be(true)
   expect(fn.contains('toss', apple.data.listLinkRels())).to.be(true)
 
 //- test create apple 2
-  var apple = apiEndPoint.cmd(all.data, 'create', {weight: 20.0, color: "green"})
+  var apple = apiEndPoint.cmd(all.data, 'create', {weight: 20, color: "green"})
   expect(apple.data.listLinkRels().length).to.be(3)
-  expect(apple.data.weight).to.be(20.0)
+  expect(apple.data.weight).to.be(20)
   expect(fn.contains('self', apple.data.listLinkRels())).to.be(true)
   expect(fn.contains('grow', apple.data.listLinkRels())).to.be(true)
   expect(fn.contains('toss', apple.data.listLinkRels())).to.be(true)
 
 //- test create apple 3 - full page size
-  var apple = apiEndPoint.cmd(all.data, 'create', {weight: 20.0, color: "orange"})
+  var apple = apiEndPoint.cmd(all.data, 'create', {weight: 20, color: "orange"})
   expect(apple.data.listLinkRels().length).to.be(3)
-  expect(apple.data.weight).to.be(20.0)
+  expect(apple.data.weight).to.be(20)
   expect(fn.contains('self', apple.data.listLinkRels())).to.be(true)
   expect(fn.contains('grow', apple.data.listLinkRels())).to.be(true)
   expect(fn.contains('toss', apple.data.listLinkRels())).to.be(true)
 
 //- test create apple 4 - page 2
-  var apple = apiEndPoint.cmd(all.data, 'create', {weight: 20.0, color: "blue"})
+  var apple = apiEndPoint.cmd(all.data, 'create', {weight: 20, color: "blue"})
   expect(apple.data.listLinkRels().length).to.be(3)
-  expect(apple.data.weight).to.be(20.0)
+  expect(apple.data.weight).to.be(20)
   expect(fn.contains('self', apple.data.listLinkRels())).to.be(true)
   expect(fn.contains('grow', apple.data.listLinkRels())).to.be(true)
   expect(fn.contains('toss', apple.data.listLinkRels())).to.be(true)
 
 //- test if create sucessful
   var self = apiEndPoint.get(apple.data.getLink('self').href)
-  expect(self.data.weight).to.be(20.0)
+  expect(self.data.weight).to.be(20)
   expect(self.data.listLinkRels().length).to.be(3)
   expect(fn.contains('self', self.data.listLinkRels())).to.be(true)
   expect(fn.contains('grow', self.data.listLinkRels())).to.be(true)
@@ -88,21 +88,21 @@ log('------ run integration tests -----')
   expect(fn.contains('create', all.data.listLinkRels())).to.be(true)
 
 //- call 'grow' api (post - with id and propertis that don't exist on entity)
-  var appleGrown = apiEndPoint.cmd(self.data, 'grow', { weightIncr: 230.0})
-  expect(appleGrown.data.weight).to.be(250.0)
+  var appleGrown = apiEndPoint.cmd(self.data, 'grow', { weightIncr: 230})
+  expect(appleGrown.data.weight).to.be(250)
   expect(appleGrown.data.listLinkRels().length).to.be(3)
   expect(fn.contains('self', appleGrown.data.listLinkRels())).to.be(true)
   expect(fn.contains('eat', appleGrown.data.listLinkRels())).to.be(true)
   expect(fn.contains('toss', appleGrown.data.listLinkRels())).to.be(true)
 
 //- call 'eat' api (full put)
-  var appleEaten = apiEndPoint.cmd(appleGrown.data, 'eat', { weight: 0.0, color: 'orange'})
-  expect(appleEaten.data.weight).to.be(0.0)
+  var appleEaten = apiEndPoint.cmd(appleGrown.data, 'eat', { weight: 0, color: 'orange'})
+  expect(appleEaten.data.weight).to.be(0)
   expect(appleEaten.data.listLinkRels().length).to.be(2)
   expect(fn.contains('self', appleEaten.data.listLinkRels())).to.be(true)
 
 // - test api whitelisting - should not be able to call 'grow' in this state
-  var notAllowedResult = apiEndPoint.cmd(appleGrown.data, 'eat',  { weight: 0.0, color: 'orange'})
+  var notAllowedResult = apiEndPoint.cmd(appleGrown.data, 'eat',  { weight: 0, color: 'orange'})
   expect(notAllowedResult.statusCode).to.be(405)
 
 // - test get before toss

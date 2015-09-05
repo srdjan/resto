@@ -7,6 +7,8 @@ const db        = require('./db')
 const log       = console.log
 
 db.init('../../../datastore')
+db.clear()
+
 let handlers = []
 let appModel
 
