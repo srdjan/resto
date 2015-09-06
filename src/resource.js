@@ -132,46 +132,50 @@ exports.delete = function(ctx) {
   const expect = require('expect.js')
   log('testing: resource.js')
 
-  // db.clear()
+  db.clear()
 
   // test post, id = 0
-  // let ctx = {
-  //   id: 0,
-  //   typeCtor() { this.name = '';},
-  //   body: {name: 'sam'}
-  // };
-  // let result = exports.post(ctx);
-  // expect(result.body.name).to.be.equal(result.entity.name);
+  let ctx = {
+    id: 0,
+    typeCtor() { this.name = '';},
+    body: {name: 'sam'}
+  };
+  let result = exports.post(ctx);
+  expect(result.body.name).to.be.equal(result.entity.name);
 
-  // ctx = {
-  //   id: 0,
-  //   typeCtor() { this.name = '';},
-  //   body: {nammmme: 'sam'},
-  //   entity: {name: ''}
-  // };
-  // result = exports.post(ctx);
-  // expect(result.statusCode).to.be(400);
+  ctx = {
+    id: 0,
+    typeCtor() { this.name = '';},
+    body: {nammmme: 'sam'},
+    entity: {name: ''}
+  };
+  result = exports.post(ctx);
+  expect(result.statusCode).to.be(400);
 
-  // test post, id != 0
-  // prepare db:
-  // ctx = {
-  //   id: 0,
-  //   typeCtor() { this.name = '';},
-  //   body: {name: 'sam'},
-  //   entity: { name: '?'}
-  // };
-  // let fromDb = db.add(ctx.entity);
-  // ctx.id = fromDb.id;
+  // test post, id != 0,  prepare db:
+  ctx = {
+    id: 0,
+    typeCtor() { this.name = '';},
+    body: {name: 'sam'},
+    entity: { name: '?',
+              getLinks: function() {
+                  return [{ rel: 'grow', method: "POST" },
+                          { rel: 'toss', method: "DELETE"}]
+      }
+    }
+  };
+  let fromDb = db.add(ctx.entity);
+  ctx.id = fromDb.id;
+  log(ctx)
+  result = exports.post(ctx);
+  expect(result.statusCode).to.be(405);
 
-  // let result = exports.post(ctx);
-  // expect(result.statusCode).to.be(405);
-
-  // let ctx = {
-  //   id: 0,
-  //   typeCtor() { this.name = '';},
-  //   body: {nammmme: 'sam'},
-  //   entity: {name: ''}
-  // };
-  // let result = exports.post(ctx);
-  // expect(result.statusCode).to.be(400);
-// db.clear()
+  ctx = {
+    id: 0,
+    typeCtor() { this.name = '';},
+    body: {nammmme: 'sam'},
+    entity: {name: ''}
+  };
+  result = exports.post(ctx);
+  expect(result.statusCode).to.be(400);
+db.clear()

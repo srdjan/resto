@@ -11,9 +11,6 @@ var log = console.log;
 db.init('../../../datastore');
 db.clear();
 
-var handlers = [];
-var appModel = undefined;
-
 function writeToResp(response, statusCode, result) {
   response.writeHead(statusCode, { "Content-Type": "application/json" });
   response.write(JSON.stringify(result));
@@ -60,11 +57,13 @@ function extract(request) {
   return ctx;
 }
 
+var handlers = [];
 exports.use = function (f, t) {
   handlers.push({ func: f, trace: t || false });
   return this;
 };
 
+var appModel = undefined;
 exports.expose = function (model) {
   appModel = model;
   return this;

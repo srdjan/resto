@@ -9,9 +9,6 @@ const log       = console.log
 db.init('../../../datastore')
 db.clear()
 
-let handlers = []
-let appModel
-
 function writeToResp(response, statusCode, result) {
   response.writeHead(statusCode, {"Content-Type": "application/json"})
   response.write(JSON.stringify(result))
@@ -59,11 +56,13 @@ function extract(request) {
   return ctx
 }
 
+let handlers = []
 exports.use = function(f, t) {
   handlers.push({ func: f, trace: t || false})
   return this
 }
 
+let appModel
 exports.expose = function(model) {
   appModel = model
   return this

@@ -5,9 +5,9 @@ const resolver      = require('./lib/resolver').resolve
 const invoker       = require('./lib/invoker').invoke
 const converter     = require('./lib/hal').convert
 const server        = require('./lib/server')
-const appleResource = require('./resources/apple')
+const apple         = require('./resources/apple')
 
-const reqHandler = pipeline.expose(appleResource)
+const reqHandler = pipeline.expose(apple)
                       .use(authenticator)
                       .use(resolver)
                       .use(authorizer)
