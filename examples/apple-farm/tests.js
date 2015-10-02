@@ -1,32 +1,32 @@
 //---------------------------------------------------------------------------------
 //- tests using apple-farm model
 //---------------------------------------------------------------------------------
-var halson        = require('halson')
-var expect        = require('expect.js')
-var fn            = require('./lib/fn')
-var db            = require('./lib/db')
-var server        = require('./lib/test-server')
-var pipeline      = require('./lib/pipeline')
-var authenticator = require('./lib/authn').auth
-var authorizer    = require('./lib/authr').auth
-var resolver      = require('./lib/resolver').resolve
-var invoker       = require('./lib/invoker').invoke
-var converter     = require('./lib/hal').convert
-var appleResource = require('./resources/apple')
-var log           = console.log
+const halson        = require('halson')
+const expect        = require('expect.js')
+const fn            = require('./lib/fn')
+const db            = require('./lib/db')
+const server        = require('./lib/test-server')
+const pipeline      = require('./lib/pipeline')
+const authenticator = require('./lib/authn').auth
+const authorizer    = require('./lib/authr').auth
+const resolver      = require('./lib/resolver').resolve
+const invoker       = require('./lib/invoker').invoke
+const converter     = require('./lib/hal').convert
+const appleResource = require('./resources/apple')
+const log           = console.log
 
 //- prepare
 db.clear()
 
 log('------ configure pipeline --------')
-var reqHandler = pipeline.expose(appleResource)
+const reqHandler = pipeline.expose(appleResource)
                       .use(authenticator)
                       .use(resolver)
                       .use(authorizer)
                       .use(invoker)//, true)
                       .use(converter)
 
-var apiEndPoint = server.create(reqHandler)
+const apiEndPoint = server.create(reqHandler)
 
 log('------ run integration tests -----')
 //-  test bad get all
@@ -35,7 +35,7 @@ log('------ run integration tests -----')
   expect(all.data.Error).to.be('type resolver error')
 
 //-  test get all - empty set
-  var all = apiEndPoint.get('/api/apples/')
+  all = apiEndPoint.get('/api/apples/')
   expect(all.statusCode).to.be(200)
   expect(all.data.listLinkRels().length).to.be(2)
   expect(fn.contains('self', all.data.listLinkRels())).to.be(true)
@@ -50,7 +50,7 @@ log('------ run integration tests -----')
   expect(fn.contains('toss', apple.data.listLinkRels())).to.be(true)
 
 //- test create apple 2
-  var apple = apiEndPoint.cmd(all.data, 'create', {weight: 20, color: "green"})
+  apple = apiEndPoint.cmd(all.data, 'create', {weight: 20, color: "green"})
   expect(apple.data.listLinkRels().length).to.be(3)
   expect(apple.data.weight).to.be(20)
   expect(fn.contains('self', apple.data.listLinkRels())).to.be(true)
@@ -58,7 +58,7 @@ log('------ run integration tests -----')
   expect(fn.contains('toss', apple.data.listLinkRels())).to.be(true)
 
 //- test create apple 3 - full page size
-  var apple = apiEndPoint.cmd(all.data, 'create', {weight: 20, color: "orange"})
+  apple = apiEndPoint.cmd(all.data, 'create', {weight: 20, color: "orange"})
   expect(apple.data.listLinkRels().length).to.be(3)
   expect(apple.data.weight).to.be(20)
   expect(fn.contains('self', apple.data.listLinkRels())).to.be(true)
@@ -66,7 +66,7 @@ log('------ run integration tests -----')
   expect(fn.contains('toss', apple.data.listLinkRels())).to.be(true)
 
 //- test create apple 4 - page 2
-  var apple = apiEndPoint.cmd(all.data, 'create', {weight: 20, color: "blue"})
+  apple = apiEndPoint.cmd(all.data, 'create', {weight: 20, color: "blue"})
   expect(apple.data.listLinkRels().length).to.be(3)
   expect(apple.data.weight).to.be(20)
   expect(fn.contains('self', apple.data.listLinkRels())).to.be(true)
@@ -82,7 +82,7 @@ log('------ run integration tests -----')
   expect(fn.contains('toss', self.data.listLinkRels())).to.be(true)
 
 //-  test get all - 2 pages
-  var all = apiEndPoint.get('/api/apples/')
+  all = apiEndPoint.get('/api/apples/')
   expect(all.statusCode).to.be(200)
   expect(all.data.listLinkRels().length).to.be(5)
   expect(fn.contains('create', all.data.listLinkRels())).to.be(true)
@@ -106,9 +106,9 @@ log('------ run integration tests -----')
   expect(notAllowedResult.statusCode).to.be(405)
 
 // - test get before toss
-  var all = apiEndPoint.get('/api/apples/')
+  all = apiEndPoint.get('/api/apples/')
   // log(JSON.stringify(all.data))
-  var embeds = all.data.getEmbeds('apples')
+  let embeds = all.data.getEmbeds('apples')
   expect(embeds.length).to.be(3)  //page 1
 
   //todo: get page 2 and a test that is has 1 embed
@@ -117,9 +117,9 @@ log('------ run integration tests -----')
   // result = apiEndPoint.cmd(appleEaten.data, 'toss', { })
 
 //- test get after toss
-  var all = apiEndPoint.get('/api/apples/')
+  all = apiEndPoint.get('/api/apples/')
   // log(JSON.stringify(all.data))
-  var embeds = all.data.getEmbeds('apples')
+  embeds = all.data.getEmbeds('apples')
   expect(embeds.length).to.be(3)
 
 //- cleanup after
