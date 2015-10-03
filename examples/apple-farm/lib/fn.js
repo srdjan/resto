@@ -31,12 +31,12 @@ exports.trimLeftAndRight = trimLeftAndRight;
 
 exports.atob = function (str) {
   var res = new Buffer(str, 'ascii').toString('base64');
-  return res.replace('+', '-').replace('/', '_').replace('=', ',');
+  return res//.replace('+', '-').replace('/', '_').replace('=', ',');
 };
 
 exports.btoa = function (str) {
   var res = new Buffer(str, 'base64').toString('ascii');
-  return res.replace('-', '+').replace('_', '/').replace(',', '=');
+  return res//.replace('-', '+').replace('_', '/').replace(',', '=');
 };
 
 exports.propsMatch = function (obj1, obj2) {

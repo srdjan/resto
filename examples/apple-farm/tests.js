@@ -41,7 +41,7 @@ log('------ run integration tests -----')
   expect(fn.contains('self', all.data.listLinkRels())).to.be(true)
   expect(fn.contains('create', all.data.listLinkRels())).to.be(true)
 
-// //- test create apple 1
+//- test create apple 1
   var apple = apiEndPoint.cmd(all.data, 'create', {weight: 10, color: "red"})
   expect(apple.data.listLinkRels().length).to.be(3)
   expect(apple.data.weight).to.be(10)
@@ -108,7 +108,7 @@ log('------ run integration tests -----')
 // - test get before toss
   all = apiEndPoint.get('/api/apples/')
   // log(JSON.stringify(all.data))
-  let embeds = all.data.getEmbeds('apples')
+  var embeds = all.data.getEmbeds('apples')
   expect(embeds.length).to.be(3)  //page 1
 
   //todo: get page 2 and a test that is has 1 embed
