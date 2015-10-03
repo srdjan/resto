@@ -3,6 +3,7 @@
 //---------------------------------------------------------------------------------
 'use strict';
 
+var URLSafeBase64 = require('urlsafe-base64');
 var Either = require('data.either');
 var R = require('ramda');
 exports.compose = R.compose;
@@ -30,13 +31,14 @@ function trimLeftAndRight(str, ch) {
 exports.trimLeftAndRight = trimLeftAndRight;
 
 exports.atob = function (str) {
-  var res = new Buffer(str, 'ascii').toString('base64');
-  return res//.replace('+', '-').replace('/', '_').replace('=', ',');
+  var buf = new Buffer(str, 'ascii');
+  var res = URLSafeBase64.encode(buf);
+  return res;
 };
 
 exports.btoa = function (str) {
-  var res = new Buffer(str, 'base64').toString('ascii');
-  return res//.replace('-', '+').replace('_', '/').replace(',', '=');
+  var res = URLSafeBase64.decode(str).toString();
+  return res;
 };
 
 exports.propsMatch = function (obj1, obj2) {
