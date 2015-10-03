@@ -3,6 +3,8 @@ RESTO POC (alpha)
 
 Minimalistic, experimatal RESTfull application framework
 
+[List of forks] (https://github.com/srdjan/resto/network/members)
+
 To run the example:
 - navigate to ./examples/apple-farm
 - run: node app.js
