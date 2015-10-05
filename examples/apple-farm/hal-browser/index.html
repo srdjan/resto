@@ -1,72 +1,70 @@
 <!doctype html>
-  <head>
-    <meta charset="utf-8">
-    <title>The HAL Browser</title>
-    <link rel="stylesheet" media="screen" href="./hal-browser/vendor/css/bootstrap.css" />
-    <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-      }
-      .sidebar-nav {
-        padding: 9px 0;
-      }
-    </style>
-    <link rel="stylesheet" media="screen" href="./hal-browser/vendor/css/bootstrap-responsive.css" />
-    <link rel="stylesheet" media="screen" href="./hal-browser/styles.css" />
-  </head>
+<head>
+  <meta charset="utf-8">
+  <title>The HAL Browser</title>
+  <link rel="stylesheet" media="screen" href="./hal-browser/vendor/css/bootstrap.css" />
+  <style type="text/css">
+    body {
+      padding-top: 60px;
+      padding-bottom: 40px;
+    }
+    .sidebar-nav {
+      padding: 9px 0;
+    }
+  </style>
+  <link rel="stylesheet" media="screen" href="./hal-browser/vendor/css/bootstrap-responsive.css" />
+  <link rel="stylesheet" media="screen" href="./hal-browser/styles.css" />
+</head>
 
-  <body>
-    <div class="navbar navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-          <a class="brand">The HAL Browser</a>
-          <div class="nav-collapse">
-            <ul class="nav">
-              <li><a href="#/" id="entryPointLink">Go To Entry Point</a></li>
-              <li><a href="https://github.com/mikekelly">About The HAL Browser</a></li>
-            </ul>
-          </div>
+<body>
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container-fluid">
+        <a class="brand">The HAL Browser</a>
+        <div class="nav-collapse">
+          <ul class="nav">
+            <li><a href="#/" id="entryPointLink">Go To Entry Point</a></li>
+            <li><a href="https://github.com/mikekelly">About The HAL Browser</a></li>
+          </ul>
         </div>
       </div>
     </div>
+  </div>
 
-    <div id="browser" class="container-fluid"></div>
+  <div id="browser" class="container-fluid"></div>
 
   <script id="location-bar-template" type="text/template">
-<form>
-    <div class="input-append span12 location-bar-container">
-      <input class="span11" id="appendedInputButton" type="text" value="<%= url %>" autofocus>
-      <button class="btn" type="submit">Go!</button>
-       <span class="ajax-loader"></span>
-    </div>
-</form>
+    <form>
+      <div class="input-append span12 location-bar-container">
+        <input class="span11" id="appendedInputButton" type="text" value="<%= url %>" autofocus>
+        <button class="btn" type="submit">Go!</button>
+        <span class="ajax-loader"></span>
+      </div>
+    </form>
   </script>
 
-  <script id="embedded-resources-template" type="text/template">
-  </script>
+  <script id="embedded-resources-template" type="text/template"></script>
 
   <script id="links-template" type="text/template">
-    <table class="table">
-      <tbody>
-      <tr>
-      <% _.each(links, function(obj, rel) { %>
-        <td>
-          <% if (obj.method === undefined) { %>
-            <a class="follow btn btn-success" href="<%= obj.href %>" method="GET"><%= HAL.truncateIfUrl(rel) %></a>
-          <% } else { %>
-            <a class="non-get btn btn-warning" href="<%= obj.href %>" method="<%= obj.method %>"><%= HAL.truncateIfUrl(rel) %></a>
-          <% } %>
-        </td>
-      <% }) %>
-      </tr>
-      </tbody>
-    </table>
+  <table class="table">
+    <tbody>
+    <tr>
+    <% _.each(links, function(obj, rel) { %>
+      <td>
+        <% if (obj.method === undefined) { %>
+          <a class="follow btn btn-success" href="<%= obj.href %>" method="GET"><%= HAL.truncateIfUrl(rel) %></a>
+        <% } else { %>
+          <a class="non-get btn btn-warning" href="<%= obj.href %>" method="<%= obj.method %>"><%= HAL.truncateIfUrl(rel) %></a>
+        <% } %>
+      </td>
+    <% }) %>
+    </tr>
+    </tbody>
+  </table>
   </script>
 
   <script id="properties-template" type="text/template">
-    </br>
-    </br>
+    </br></br>
     <pre><%= _.escape(JSON.stringify(properties, null, HAL.jsonIndent)) %></pre>
   </script>
 
