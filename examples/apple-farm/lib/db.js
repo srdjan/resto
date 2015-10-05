@@ -49,9 +49,6 @@ function save(obj) {
 
 function get(id) {
   var entity = datastore.getItem(id);
-  if (typeof entity === 'undefined') {
-    throw { statusCode: 404, message: 'Not Found' };
-  }
   return entity;
 }
 
@@ -78,8 +75,8 @@ function getAll(pgNumber) {
 
 function remove(id) {
   var entity = get(id);
-  datastore.removeItem(id);
-  return entity;
+  datastore.removeItemSync(id);
+  return true;
 }
 
 module.exports.init = init;

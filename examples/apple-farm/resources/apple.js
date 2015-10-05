@@ -36,41 +36,5 @@ exports.Apple = function() {
     }
     return []
   }
-
-  // this.getMeta = function() {
-  //   var properties = []
-  //   properties.push( {
-  //         name: 'weight',
-  //         type: 'number',
-  //         label: 'Current Weight:',
-  //         readOnly: true
-  //       })
-  //   properties.push( {
-  //         name: 'maxWeight',
-  //         type: 'number',
-  //         label: 'Maximum Weight:',
-  //         readOnly: true
-  //       })
-  //   properties.push( {
-  //         name: 'color',
-  //         type: 'string',
-  //         label: 'Color:',
-  //         readOnly: false,
-  //         validation: {
-  //                       "required": true,
-  //                       "max-length" : 15,
-  //                       "validator" : function(value) {
-  //                         return function(item) {
-  //                             return item === value
-  //                           }, ["green", "orange", "red"] }
-  //                     }
-  //   })
-
-  //   return {
-  //     label: 'Apple',
-  //     pageSize: 3,
-  //     properties: props
-  //   }
-  // }
 }
 

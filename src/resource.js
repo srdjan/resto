@@ -44,7 +44,14 @@ function persist(ctx) {
     ctx.result = db.save(ctx.entity)
   }
   else if (ctx.method === 'delete') {
-    ctx.result = db.remove(ctx.id)
+    let result = db.remove(ctx.id)
+    if (result) {
+      ctx = getAll(ctx)
+    }
+    else {
+      ctx.statusCode = 500
+      ctx.result = 'Error: not able to Delete'
+    }
   }
   else if (ctx.method === 'post') {
     if (ctx.id === 0) {
@@ -70,32 +77,44 @@ function processApi(ctx) {
   return Either.Left(ctx)
 }
 
-exports.get = function(ctx) {
-  if (ctx.id) {
-    ctx.result = db.get(ctx.id)
-  }
-  else {
+function getAll(ctx) {
     let all = db.getAll(ctx.pageNumber)
     ctx.result = all.page
     ctx.pageNumber = all.pageNumber
     ctx.pageCount = all.pageCount
+    return ctx
+}
+
+exports.get = function(ctx) {
+  if (ctx.id) {
+    let entity = db.get(ctx.id)
+    if (typeof entity === 'undefined') {
+      ctx.statusCode = 404
+      ctx.message = 'Not Found'
+    }
+    else {
+      ctx.result = entity
+    }
+  }
+  else {
+    ctx = getAll(ctx)
   }
   return ctx
 }
 
 exports.post = function(ctx) {
-  if(ctx.id === 0) {
-    ctx.entity = new ctx.typeCtor()
-    return validatePropsMatch(ctx)
-                  .chain(update)
-                  .chain(persist)
-                  .merge()
+  if(ctx.id) {
+    ctx.entity = db.get(ctx.id)
+    return validateApiCall(ctx)
+                    .chain(processApi)
+                    .chain(persist)
+                    .merge()
   }
-  ctx.entity = db.get(ctx.id)
-  return validateApiCall(ctx)
-                  .chain(processApi)
-                  .chain(persist)
-                  .merge()
+  ctx.entity = new ctx.typeCtor()
+  return validatePropsMatch(ctx)
+                .chain(update)
+                .chain(persist)
+                .merge()
 }
 
 exports.put = function(ctx) {
@@ -135,72 +154,61 @@ log('testing: resource.js')
 db.clear()
 
 // test post, id = 0
-// function test_post() {
-//   let ctx = {
-//               id: 0,
-//               typeCtor() { this.name = ''},
-//               body: {name: 'sam'}
-//             }
-//   let result = exports.post(ctx)
-//   expect(result.body.name).to.be.equal(result.entity.name)
-// }
-// test_post()
+function test_post() {
+  let ctx = {
+              id: 0,
+              typeCtor() { this.name = 'sam'},
+              body: {name: 'sam'}
+            }
+  let result = exports.post(ctx)
+  expect(result.body.name).to.be.equal(result.entity.name)
+}
+test_post()
 
-// function test_post2() {
-//   let ctx = {
-//     id: 0,
-//     typeCtor() { this.name = ''},
-//     body: {nammmme: 'sam'},
-//     entity: {name: ''}
-//   }
-//   let result = exports.post(ctx)
-//   expect(result.statusCode).to.be(400)
-// }
-// test_post2()
+function test_post2() {
+  let ctx = {
+    id: 0,
+    typeCtor() { this.name = 'sam1'},
+    body: {nammmme: 'sam'}
+  }
+  let result = exports.post(ctx)
+  expect(result.statusCode).to.be(400)
+}
+test_post2()
 
-// // test post, id != 0,  prepare db:
-// function test_post3() {
-//   let ctx = {
-//     id: 0,
-//     typeCtor() { this.name = ''},
-//     body: {name: 'sam'},
-//     entity: { name: '?',
-//               getLinks: function() {
-//                   return [{ rel: 'grow', method: "POST" },
-//                           { rel: 'toss', method: "DELETE"}]
-//       }
-//     }
-//   }
-//   let fromDb = db.add(ctx.entity)
-//   ctx.id = fromDb.id
-//   // log(ctx)
-//   let result = exports.post(ctx)
-//   expect(result.statusCode).to.be(405)
-// }
-// test_post3()
+// test post, id != 0,  prepare db:
+function test_post3() {
+  let ctx = {
+    id: 0,
+    typeCtor() { this.name = ''},
+    body: {name: 'sam'},
+    entity: { name: '???',
+              getLinks: function() {
+                  return [{ rel: 'grow', method: "POST" },
+                          { rel: 'toss', method: "DELETE"}]
+      }
+    }
+  }
+  let fromDb = db.add(ctx.entity)
+  ctx.id = fromDb.id
+  // log(ctx)
+  let result = exports.post(ctx)
+  expect(result.statusCode).to.be(405)
+}
+test_post3()
 
-// function test_post4() {
-//   let ctx = {
-//     id: 0,
-//     typeCtor() { this.name = ''},
-//     body: {nammmme: 'sam'},
-//     entity: {name: ''}
-//   }
-//   let result = exports.post(ctx)
-//   expect(result.statusCode).to.be(400)
-// }
-// test_post4()
+function test_post4() {
+  let ctx = {
+    id: 0,
+    typeCtor() { this.name = ''},
+    body: {nammmme: 'sam'},
+    entity: {name: ''}
+  }
+  let result = exports.post(ctx)
+  expect(result.statusCode).to.be(400)
+}
+test_post4()
 
-// let apple = function() {
-//   this.weight = 12
-//   this.color = 'red'
-//   this.grow = function() {log('grow')}
-//   this.toss = function(){log('toss')}
-//   this.getLinks = function() {
-//       return [{ rel: 'grow', method: "POST" },
-//               { rel: 'toss', method: "DELETE"}]
-//   }
-// }
 let Apple = function() {
   this.weight = 1
   this.color = 'green'
@@ -241,23 +249,28 @@ let Apple = function() {
 
 // test delete:
 function test_delete() {
+  let apple = new Apple()
   let ctx = {
     id: 0,
-    rel: "toss",
-    method: "delete",
+    rel: "create",
+    method: "post",
     typeCtor: Apple,
-    entity: new Apple(),
-    statusCode: 200
+    body: apple,
+    entity: apple
     }
 
-  let fromDb = db.add(ctx.entity)
-  ctx.id = fromDb.id
+  let fromDb = exports.post(ctx)
+  ctx.id = fromDb.entity.id
 
-  let result = exports.delete(ctx)
+  ctx.rel = "toss"
+  ctx.method = "delete"
+  exports.delete(ctx)
 
-  log(result)
-   expect(result.statusCode).to.be(200)
+  ctx.rel = "self"
+  ctx.method = "get"
+  fromDb = exports.get(ctx)
+  expect(fromDb.statusCode).to.be(404)
 }
 test_delete()
 
-// db.clear()
+db.clear()

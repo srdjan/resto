@@ -20,9 +20,9 @@ db.clear()
 
 log('------ configure pipeline --------')
 const reqHandler = pipeline.expose(appleResource)
-                      .use(authenticator)
+                      // .use(authenticator)
                       .use(resolver)
-                      .use(authorizer)
+                      // .use(authorizer)
                       .use(invoker)//, true)
                       .use(converter)
 
@@ -66,7 +66,7 @@ log('------ run integration tests -----')
   expect(fn.contains('toss', apple.data.listLinkRels())).to.be(true)
 
 //- test create apple 4 - page 2
-  apple = apiEndPoint.cmd(all.data, 'create', {weight: 20, color: "blue"})
+  var apple = apiEndPoint.cmd(all.data, 'create', {weight: 20, color: "blue"})
   expect(apple.data.listLinkRels().length).to.be(3)
   expect(apple.data.weight).to.be(20)
   expect(fn.contains('self', apple.data.listLinkRels())).to.be(true)
@@ -114,7 +114,7 @@ log('------ run integration tests -----')
   //todo: get page 2 and a test that is has 1 embed
 
 //- todos one of the apples
-  // result = apiEndPoint.cmd(appleEaten.data, 'toss', { })
+  var result = apiEndPoint.cmd(appleEaten.data, 'toss', { })
 
 //- test get after toss
   all = apiEndPoint.get('/api/apples/')
