@@ -117,54 +117,125 @@ log('testing: resource.js');
 db.clear();
 
 // test post, id = 0
-var ctx = {
-  id: 0,
-  typeCtor: function typeCtor() {
-    this.name = '';
-  },
-  body: { name: 'sam' }
-};
-var result = exports.post(ctx);
-expect(result.body.name).to.be.equal(result.entity.name);
+// function test_post() {
+//   let ctx = {
+//               id: 0,
+//               typeCtor() { this.name = ''},
+//               body: {name: 'sam'}
+//             }
+//   let result = exports.post(ctx)
+//   expect(result.body.name).to.be.equal(result.entity.name)
+// }
+// test_post()
 
-ctx = {
-  id: 0,
-  typeCtor: function typeCtor() {
-    this.name = '';
-  },
-  body: { nammmme: 'sam' },
-  entity: { name: '' }
-};
-result = exports.post(ctx);
-expect(result.statusCode).to.be(400);
+// function test_post2() {
+//   let ctx = {
+//     id: 0,
+//     typeCtor() { this.name = ''},
+//     body: {nammmme: 'sam'},
+//     entity: {name: ''}
+//   }
+//   let result = exports.post(ctx)
+//   expect(result.statusCode).to.be(400)
+// }
+// test_post2()
 
-// test post, id != 0,  prepare db:
-ctx = {
-  id: 0,
-  typeCtor: function typeCtor() {
-    this.name = '';
-  },
-  body: { name: 'sam' },
-  entity: { name: '?',
-    getLinks: function getLinks() {
-      return [{ rel: 'grow', method: "POST" }, { rel: 'toss', method: "DELETE" }];
+// // test post, id != 0,  prepare db:
+// function test_post3() {
+//   let ctx = {
+//     id: 0,
+//     typeCtor() { this.name = ''},
+//     body: {name: 'sam'},
+//     entity: { name: '?',
+//               getLinks: function() {
+//                   return [{ rel: 'grow', method: "POST" },
+//                           { rel: 'toss', method: "DELETE"}]
+//       }
+//     }
+//   }
+//   let fromDb = db.add(ctx.entity)
+//   ctx.id = fromDb.id
+//   // log(ctx)
+//   let result = exports.post(ctx)
+//   expect(result.statusCode).to.be(405)
+// }
+// test_post3()
+
+// function test_post4() {
+//   let ctx = {
+//     id: 0,
+//     typeCtor() { this.name = ''},
+//     body: {nammmme: 'sam'},
+//     entity: {name: ''}
+//   }
+//   let result = exports.post(ctx)
+//   expect(result.statusCode).to.be(400)
+// }
+// test_post4()
+
+// let apple = function() {
+//   this.weight = 12
+//   this.color = 'red'
+//   this.grow = function() {log('grow')}
+//   this.toss = function(){log('toss')}
+//   this.getLinks = function() {
+//       return [{ rel: 'grow', method: "POST" },
+//               { rel: 'toss', method: "DELETE"}]
+//   }
+// }
+var Apple = function Apple() {
+  this.weight = 1;
+  this.color = 'green';
+
+  this.grow = function (msg) {
+    if (this.weight > 0 && this.weight + msg.weightIncr < 300) {
+      this.weight += msg.weightIncr;
+      return true;
     }
-  }
-};
-var fromDb = db.add(ctx.entity);
-ctx.id = fromDb.id;
-log(ctx);
-result = exports.post(ctx);
-expect(result.statusCode).to.be(405);
+    return false;
+  };
 
-ctx = {
-  id: 0,
-  typeCtor: function typeCtor() {
-    this.name = '';
-  },
-  body: { nammmme: 'sam' },
-  entity: { name: '' }
+  this.eat = function (msg) {
+    if (msg.weight) return false;
+    return true;
+  };
+
+  this.toss = function (msg) {
+    log('tossed apple: ' + JSON.stringify(this));
+    return true;
+  };
+
+  this.getLinks = function () {
+    if (this.weight > 0 && this.weight < 200) {
+      return [{ rel: 'grow', method: "POST" }, { rel: 'toss', method: "DELETE" }];
+    } else if (this.weight >= 200 && this.weight < 300) {
+      return [{ rel: 'eat', method: "PUT" }, { rel: 'toss', method: "DELETE" }];
+    } else if (!this.weight) {
+      return [{ rel: 'toss', method: "DELETE" }];
+    }
+    return [];
+  };
 };
-result = exports.post(ctx);
-expect(result.statusCode).to.be(400);
-db.clear();
+
+// test delete:
+function test_delete() {
+  var ctx = {
+    id: 0,
+    rel: "toss",
+    method: "delete",
+    typeCtor: Apple,
+    entity: new Apple(),
+    statusCode: 200
+  };
+
+  var fromDb = db.add(ctx.entity);
+  ctx.id = fromDb.id;
+
+  var result = exports['delete'](ctx);
+
+  log(result);
+  expect(result.statusCode).to.be(200);
+}
+test_delete();
+
+// db.clear()
