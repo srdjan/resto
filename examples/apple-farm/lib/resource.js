@@ -131,6 +131,44 @@ exports['delete'] = function (ctx) {
 var expect = require('expect.js');
 log('testing: resource.js');
 
+//---------------------------------------------------------------------------------
+// simple resource tests
+db.clear();
+var SimpleApple = function SimpleApple() {
+  this.weight = 1;
+  this.color = 'green';
+};
+
+function test_create_simple_resource_collection() {
+  var simpleApple = new SimpleApple();
+  var ctx = {
+    id: 0,
+    rel: "self",
+    method: "post",
+    typeCtor: SimpleApple,
+    body: simpleApple,
+    entity: simpleApple
+  };
+
+  ctx = exports.post(ctx);
+  log(ctx.result);
+  expect(ctx.result.color).to.be('green');
+}
+test_create_simple_resource_collection();
+
+function test_get_simple_resource_collection() {
+  var ctx = {
+    pageNumber: 1
+  };
+
+  ctx = exports.get(ctx);
+  log(ctx);
+  expect(ctx.result.length).to.be(1);
+}
+test_get_simple_resource_collection();
+
+//---------------------------------------------------------------------------------
+// resource with states tests
 db.clear();
 
 // test post, id = 0
