@@ -56,11 +56,11 @@ function persist(ctx) {
     }
   }
   else if (ctx.method === 'post') {
-    if (ctx.id === 0) {
-      ctx.result = db.add(ctx.entity)
+    if (ctx.id) {
+      ctx.result = db.save(ctx.entity)
     }
     else {
-      ctx.result = db.save(ctx.entity)
+      ctx.result = db.add(ctx.entity)
     }
   }
   else {

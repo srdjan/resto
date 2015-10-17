@@ -11,7 +11,6 @@ const authenticator = require('./lib/authn').auth
 const authorizer    = require('./lib/authr').auth
 const resolver      = require('./lib/resolver').resolve
 const invoker       = require('./lib/invoker').invoke
-const converter     = require('./lib/hal').convert
 const appleResource = require('./resources/SimpleApple')
 const log           = console.log
 
@@ -24,7 +23,7 @@ const reqHandler = pipeline.expose(appleResource)
                       .use(resolver)
                       // .use(authorizer)
                       .use(invoker)//, true)
-                      .use(converter)
+                      // .use(converter)
 
 const apiEndPoint = server.create(reqHandler)
 const headers = {accept: 'application/json'}
@@ -33,66 +32,40 @@ log('------ run SimpleApple tests -----')
 //-  test bad get all
 var all = apiEndPoint.get('bad', headers)
 expect(all.statusCode).to.be(500)
-expect(all.data.Error).to.be('type resolver error')
+// expect(all.data.Error).to.be('type resolver error')
 
 //-  test get all - empty set
 all = apiEndPoint.get('/api/apples/', headers)
 expect(all.statusCode).to.be(200)
-expect(all.data.listLinkRels().length).to.be(2)
-expect(fn.contains('self', all.data.listLinkRels())).to.be(true)
-expect(fn.contains('create', all.data.listLinkRels())).to.be(true)
 
 //- test create apple 1
-var apple = apiEndPoint.cmd(all.data, 'create', {weight: 10, color: "red"}, headers)
-expect(apple.data.listLinkRels().length).to.be(4)
-expect(apple.data.weight).to.be(10)
-expect(fn.contains('self', apple.data.listLinkRels())).to.be(true)
-expect(fn.contains('put', apple.data.listLinkRels())).to.be(true)
-expect(fn.contains('post', apple.data.listLinkRels())).to.be(true)
-expect(fn.contains('delete', apple.data.listLinkRels())).to.be(true)
+var apple = apiEndPoint.cmd("POST", '/api/apples/', {weight: 10, color: "red"}, headers)
+var result = halson(apple.data)
+expect(result.weight).to.be(10)
 
 //- test create apple 2
-apple = apiEndPoint.cmd(all.data, 'create', {weight: 20, color: "green"}, headers)
-expect(apple.data.listLinkRels().length).to.be(4)
-expect(apple.data.weight).to.be(20)
-expect(fn.contains('self', apple.data.listLinkRels())).to.be(true)
-expect(fn.contains('put', apple.data.listLinkRels())).to.be(true)
-expect(fn.contains('post', apple.data.listLinkRels())).to.be(true)
-expect(fn.contains('delete', apple.data.listLinkRels())).to.be(true)
+apple = apiEndPoint.cmd("POST", '/api/apples/', {weight: 20, color: "green"}, headers)
+result = halson(apple.data)
+expect(result.weight).to.be(20)
 
 //- test create apple 3 - full page size
-apple = apiEndPoint.cmd(all.data, 'create', {weight: 20, color: "orange"}, headers)
-expect(apple.data.listLinkRels().length).to.be(4)
-expect(apple.data.weight).to.be(20)
-expect(fn.contains('self', apple.data.listLinkRels())).to.be(true)
-expect(fn.contains('put', apple.data.listLinkRels())).to.be(true)
-expect(fn.contains('post', apple.data.listLinkRels())).to.be(true)
-expect(fn.contains('delete', apple.data.listLinkRels())).to.be(true)
+apple = apiEndPoint.cmd("POST", '/api/apples/', {weight: 30, color: "orange"}, headers)
+result = halson(apple.data)
+expect(result.weight).to.be(30)
 
 //- test create apple 4 - page 2
-var apple = apiEndPoint.cmd(all.data, 'create', {weight: 20, color: "blue"}, headers)
-expect(apple.data.listLinkRels().length).to.be(4)
-expect(apple.data.weight).to.be(20)
-expect(fn.contains('self', apple.data.listLinkRels())).to.be(true)
-expect(fn.contains('put', apple.data.listLinkRels())).to.be(true)
-expect(fn.contains('post', apple.data.listLinkRels())).to.be(true)
-expect(fn.contains('delete', apple.data.listLinkRels())).to.be(true)
+apple = apiEndPoint.cmd("POST", '/api/apples/', {weight: 40, color: "blue"}, headers)
+result = halson(apple.data)
+expect(result.weight).to.be(40)
 
 //- test if create sucessful
-var self = apiEndPoint.get(apple.data.getLink('self').href, headers)
-expect(self.data.weight).to.be(20)
-expect(self.data.listLinkRels().length).to.be(4)
-expect(fn.contains('self', self.data.listLinkRels())).to.be(true)
-expect(fn.contains('put', apple.data.listLinkRels())).to.be(true)
-expect(fn.contains('post', apple.data.listLinkRels())).to.be(true)
-expect(fn.contains('delete', apple.data.listLinkRels())).to.be(true)
+var self = apiEndPoint.get('/api/apples/' + result.id, headers)
+result = halson(self.data)
+expect(result.weight).to.be(40)
 
 //-  test get all - 2 pages
 all = apiEndPoint.get('/api/apples/', headers)
 expect(all.statusCode).to.be(200)
-expect(all.data.listLinkRels().length).to.be(5)
-expect(fn.contains('create', all.data.listLinkRels())).to.be(true)
-
 
 //- cleanup after
 db.clear()

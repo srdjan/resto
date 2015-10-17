@@ -124,10 +124,12 @@ function createResource(ctx) {
 }
 
 exports.convert = function convert(ctx) {
-  if (ctx.result instanceof Array) {
-    ctx.result = createList(ctx)
-  } else {
-    ctx.result = createResource(ctx)
+  if(ctx.hal) {
+    if (ctx.result instanceof Array) {
+      ctx.result = createList(ctx)
+    } else {
+      ctx.result = createResource(ctx)
+    }
   }
   return ctx
 }
@@ -228,6 +230,7 @@ expect(result).to.be(true)
 //- get all - when result is one obj: createResource()
 //-----------------------------------
 let ctx = {
+  hal: true,
   typeName: 'Apple',
   result: apples[0]
 }
@@ -240,6 +243,7 @@ expect(embeds.length).to.be(1)
 //- get all - when result is array: createList()
 //-----------------------------------
 ctx = {
+  hal: true,
   typeName: 'Apple',
   result: apples
 }

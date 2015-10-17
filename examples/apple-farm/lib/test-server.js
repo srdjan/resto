@@ -16,16 +16,17 @@ exports.create = function (pipeline) {
       var request = new httpRequest('GET', url, {}, headers);
       var response = new httpResponse();
       pipeline.process(request, response);
-      var result = halson(response.body);
+      // let result = halson(response.body)
+      var result = response.body;
       return { data: result, statusCode: response.statusCode };
     },
 
-    cmd: function cmd(resource, rel, newResource, headers) {
-      var link = resource.getLink(rel);
-      var request = new httpRequest(link.method, link.href, newResource, headers);
+    cmd: function cmd(method, url, newResource, headers) {
+      var request = new httpRequest(method, url, newResource, headers);
       var response = new httpResponse();
       pipeline.process(request, response);
-      var result = halson(response.body);
+      // let result = halson(response.body)
+      var result = response.body;
       return { data: result, statusCode: response.statusCode };
     }
   };

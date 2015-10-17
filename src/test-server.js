@@ -14,16 +14,17 @@ exports.create = function(pipeline) {
       let request = new httpRequest('GET', url, {}, headers)
       let response = new httpResponse()
       pipeline.process(request, response)
-      let result = halson(response.body)
+      // let result = halson(response.body)
+      let result = response.body
       return { data: result, statusCode: response.statusCode }
     },
 
-    cmd(resource, rel, newResource, headers) {
-      let link = resource.getLink(rel)
-      let request = new httpRequest(link.method, link.href, newResource, headers)
+    cmd(method, url, newResource, headers) {
+      let request = new httpRequest(method, url, newResource, headers)
       let response = new httpResponse()
       pipeline.process(request, response)
-      let result = halson(response.body)
+      // let result = halson(response.body)
+      let result = response.body
       return { data: result, statusCode: response.statusCode }
     }
   }

@@ -102,6 +102,7 @@ module.exports.remove = remove
 
   let result = getAll()
   let ctx = {
+    hal: true,
     typeName: 'Todo',
     pageNumber: result.pageNumber,
     pageCount: result.pageCount,
@@ -123,6 +124,7 @@ module.exports.remove = remove
   addBatch(todos)
   result = getAll()
   ctx = {
+    hal: true,
     typeName: 'Todo',
     pageNumber: result.pageNumber,
     pageCount: result.pageCount,
@@ -149,6 +151,7 @@ module.exports.remove = remove
   addBatch(todos)
   result = getAll()
   ctx = {
+    hal: true,
     typeName: 'Todo',
     pageNumber: result.pageNumber,
     pageCount: result.pageCount,
@@ -214,6 +217,7 @@ module.exports.remove = remove
   result = getAll()
   // log(result)
   ctx = {
+    hal: true,
     typeName: 'Todo',
     pageNumber: result.pageNumber,
     pageCount: result.pageCount,

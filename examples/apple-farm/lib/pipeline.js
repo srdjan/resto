@@ -11,9 +11,10 @@ var log = console.log;
 db.init('../../../datastore');
 db.clear();
 
-function writeToResp(response, statusCode, result) {
-  response.writeHead(statusCode, { "Content-Type": "application/json" });
-  response.write(JSON.stringify(result));
+function writeToResp(response, ctx) {
+  var contentType = ctx.hal ? { "Content-Type": "application/hal+json" } : { "Content-Type": "application/json" };
+  response.writeHead(ctx.statusCode, contentType);
+  response.write(JSON.stringify(ctx.result));
   response.end();
 }
 
@@ -73,19 +74,15 @@ exports.process = function (request, response) {
   try {
     var ctx = {};
     if (request.headers['accept'].indexOf('application/hal+json') > -1) {
+      ctx.hal = true;
       ctx = extractIdAndRel(ctx, request);
-    } else if (request.headers['accept'].indexOf('application/json') > -1) {
-      ctx = extractId(ctx, request);
     } else {
-      throw { statusCode: 406, message: 'Error - Not Acceptable' };
+      ctx.hal = false;
     }
 
     ctx.method = request.method.toLowerCase();
     ctx.body = request.body;
     var urlParts = urlParser.parse(request.url, true, true);
-
-    log(urlParts);
-
     ctx.url = urlParts.pathname;
     ctx.pageNumber = urlParts.query.hasOwnProperty('page') ? urlParts.query.page : 0;
     ctx.model = appModel;
@@ -93,7 +90,7 @@ exports.process = function (request, response) {
     ctx = fn.runAll(handlers, function (d) {
       return d.statusCode !== 200;
     }, ctx);
-    writeToResp(response, ctx.statusCode, ctx.result);
+    writeToResp(response, ctx);
   } catch (e) {
     if (!e.hasOwnProperty('statusCode')) {
       e.statusCode = 500;

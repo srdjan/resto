@@ -11,10 +11,6 @@ exports.request = function (method, url, body, headers) {
   this.url = url;
   this.body = body || {};
   this.headers = headers || {};
-
-  // this.getHeader = function(key) {
-  //   return this.headers[key]
-  // }
 };
 
 exports.response = function () {

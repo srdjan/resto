@@ -16,6 +16,10 @@ function resolve(ctx) {
   var typeName = tokens[1].slice(0, -1);
   ctx.typeName = typeName.charAt(0).toUpperCase() + typeName.substring(1);
   ctx.typeCtor = ctx.model[ctx.typeName];
+
+  if (tokens.length === 3) {
+    ctx.id = tokens[2]; //todo: convert to number?
+  }
   return ctx;
 }
 

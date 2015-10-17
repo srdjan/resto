@@ -103,6 +103,7 @@ clear();
 
 var result = getAll();
 var ctx = {
+  hal: true,
   typeName: 'Todo',
   pageNumber: result.pageNumber,
   pageCount: result.pageCount,
@@ -124,6 +125,7 @@ todos.push({
 addBatch(todos);
 result = getAll();
 ctx = {
+  hal: true,
   typeName: 'Todo',
   pageNumber: result.pageNumber,
   pageCount: result.pageCount,
@@ -150,6 +152,7 @@ todos.push({
 addBatch(todos);
 result = getAll();
 ctx = {
+  hal: true,
   typeName: 'Todo',
   pageNumber: result.pageNumber,
   pageCount: result.pageCount,
@@ -214,6 +217,7 @@ addBatch(todos);
 result = getAll();
 // log(result)
 ctx = {
+  hal: true,
   typeName: 'Todo',
   pageNumber: result.pageNumber,
   pageCount: result.pageCount,

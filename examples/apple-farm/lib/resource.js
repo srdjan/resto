@@ -59,10 +59,10 @@ function persist(ctx) {
       ctx.result = 'Error: not able to Delete';
     }
   } else if (ctx.method === 'post') {
-    if (ctx.id === 0) {
-      ctx.result = db.add(ctx.entity);
-    } else {
+    if (ctx.id) {
       ctx.result = db.save(ctx.entity);
+    } else {
+      ctx.result = db.add(ctx.entity);
     }
   } else {
     ctx.statusCode = 405;
