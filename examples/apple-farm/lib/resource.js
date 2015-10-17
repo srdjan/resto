@@ -9,13 +9,15 @@ var db = require('./db');
 var log = console.log;
 
 function validateApiCall(ctx) {
-  var links = ctx.entity.getLinks();
-  if (fn.none(function (link) {
-    return link.rel === ctx.rel;
-  }, links)) {
-    ctx.statusCode = 405;
-    ctx.result = 'Conflict - Method call not allowed';
-    return Either.Left(ctx);
+  if (ctx.entity.getLinks) {
+    var links = ctx.entity.getLinks();
+    if (fn.none(function (link) {
+      return link.rel === ctx.rel;
+    }, links)) {
+      ctx.statusCode = 405;
+      ctx.result = 'Conflict - Method call not allowed';
+      return Either.Left(ctx);
+    }
   }
   return Either.Right(ctx);
 }
@@ -71,6 +73,9 @@ function persist(ctx) {
 }
 
 function processApi(ctx) {
+  if (ctx.rel === 'post' || ctx.rel === 'put' || ctx.rel === 'delete') {
+    return Either.Right(ctx);
+  }
   if (ctx.entity[ctx.rel](ctx.body)) {
     return Either.Right(ctx);
   }

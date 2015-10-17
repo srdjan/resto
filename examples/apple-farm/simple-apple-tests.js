@@ -43,7 +43,6 @@ expect(fn.contains('create', all.data.listLinkRels())).to.be(true)
 
 //- test create apple 1
 var apple = apiEndPoint.cmd(all.data, 'create', {weight: 10, color: "red"})
-log(apple.toString())
 expect(apple.data.listLinkRels().length).to.be(4)
 expect(apple.data.weight).to.be(10)
 expect(fn.contains('self', apple.data.listLinkRels())).to.be(true)
