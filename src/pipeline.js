@@ -71,14 +71,12 @@ function extractIdAndRel(ctx, request) {
 }
 
 exports.process = function(request, response) {
+  let ctx = { hal: false, statusCode: 200, result: {} }
+
   try {
-    let ctx = {}
     if(request.headers['accept'].indexOf('application/hal+json') > -1) {
       ctx.hal = true
       ctx = extractIdAndRel(ctx, request)
-    }
-    else {
-      ctx.hal = false
     }
 
     ctx.method = request.method.toLowerCase()
@@ -87,19 +85,21 @@ exports.process = function(request, response) {
     ctx.url = urlParts.pathname
     ctx.pageNumber = urlParts.query.hasOwnProperty('page') ? urlParts.query.page : 0
     ctx.model = appModel
-    ctx.statusCode = 200
     ctx = fn.runAll(handlers, d => d.statusCode !== 200, ctx)
-    writeToResp(response, ctx)
   }
   catch (e) {
-    if ( ! e.hasOwnProperty('statusCode')) {
-      e.statusCode = 500
+    ctx.statusCode = 500
+    if (e.hasOwnProperty('statusCode')) {
+      ctx.statusCode = e.statusCode
     }
-    if ( ! e.hasOwnProperty('message')) {
-      e.message = ''
+
+    ctx.result = 'Fx Exception, statusCode: ' + ctx.statusCode
+    if (e.hasOwnProperty('message')) {
+      ctx.result += ', Message: ' +  e.message
     }
-    log('Fx Exception, statusCode: ' + e.statusCode + ' message: ' + e.message)
-    writeToResp(response, e.statusCode, e.message)
+  }
+  finally {
+    writeToResp(response, ctx)
   }
 }
 

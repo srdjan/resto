@@ -17,8 +17,11 @@ function resolve(ctx) {
   ctx.typeName = typeName.charAt(0).toUpperCase() + typeName.substring(1);
   ctx.typeCtor = ctx.model[ctx.typeName];
 
-  if (tokens.length === 3) {
-    ctx.id = tokens[2]; //todo: convert to number?
+  if (ctx.hal) {
+    var id = Number(tokens[2]);
+    if (tokens.length === 3 && !isNaN(id)) {
+      ctx.id = tokens[2]; //todo: convert to number?
+    }
   }
   return ctx;
 }

@@ -60,16 +60,7 @@ function addEmbeds(halRep, typeName, result) {
 function addLinks(halRep, typeName, result) {
   halRep.addLink('self', '/api/' + typeName + 's/' + fn.atob(result.id))
 
-  //TODO: add default links (when getLinks(not defined))
-  let links = {}
-  if(result['getLinks']) {
-    links = result.getLinks()
-  }
-  else {
-    links =  [{ rel: 'post', method: "POST" },
-              { rel: 'put', method: "PUT" },
-              { rel: 'delete', method: "DELETE"}]
-  }
+  let links = result.getLinks()
   links.forEach(l => {
     halRep.addLink(l.rel, {
       href: '/api/' + typeName + 's/' + fn.atob(result.id + '/' + l.rel),

@@ -7,7 +7,7 @@ const db     = require('./db')
 const log    = console.log
 
 function validateApiCall(ctx) {
-  if(ctx.entity.getLinks) {
+  if(ctx.hal) {
     let links = ctx.entity.getLinks()
     if (fn.none(link => link.rel === ctx.rel, links)) {
       ctx.statusCode = 405
@@ -72,9 +72,10 @@ function persist(ctx) {
 }
 
 function processApi(ctx) {
-  if(ctx.rel==='post' || ctx.rel==='put' || ctx.rel==='delete') {
+  if(! ctx.hal) {
     return Either.Right(ctx)
   }
+
   if(ctx.entity[ctx.rel](ctx.body)) {
     return Either.Right(ctx)
   }

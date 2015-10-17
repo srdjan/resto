@@ -9,7 +9,7 @@ var db = require('./db');
 var log = console.log;
 
 function validateApiCall(ctx) {
-  if (ctx.entity.getLinks) {
+  if (ctx.hal) {
     var links = ctx.entity.getLinks();
     if (fn.none(function (link) {
       return link.rel === ctx.rel;
@@ -73,9 +73,10 @@ function persist(ctx) {
 }
 
 function processApi(ctx) {
-  if (ctx.rel === 'post' || ctx.rel === 'put' || ctx.rel === 'delete') {
+  if (!ctx.hal) {
     return Either.Right(ctx);
   }
+
   if (ctx.entity[ctx.rel](ctx.body)) {
     return Either.Right(ctx);
   }
