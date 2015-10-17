@@ -12,17 +12,17 @@ var log = console.log;
 
 exports.create = function (pipeline) {
   return {
-    get: function get(url) {
-      var request = new httpRequest('GET', url);
+    get: function get(url, headers) {
+      var request = new httpRequest('GET', url, {}, headers);
       var response = new httpResponse();
       pipeline.process(request, response);
       var result = halson(response.body);
       return { data: result, statusCode: response.statusCode };
     },
 
-    cmd: function cmd(resource, rel, newResource) {
+    cmd: function cmd(resource, rel, newResource, headers) {
       var link = resource.getLink(rel);
-      var request = new httpRequest(link.method, link.href, newResource);
+      var request = new httpRequest(link.method, link.href, newResource, headers);
       var response = new httpResponse();
       pipeline.process(request, response);
       var result = halson(response.body);

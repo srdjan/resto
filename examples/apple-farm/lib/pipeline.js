@@ -44,19 +44,6 @@ function getIdAndRel(url) {
   return idAndRel;
 }
 
-function extract(request) {
-  var ctx = {};
-  var idAndRel = getIdAndRel(request.url);
-  ctx.id = idAndRel.id;
-  ctx.rel = idAndRel.rel;
-  ctx.method = request.method.toLowerCase();
-  ctx.body = request.body;
-  var urlParts = urlParser.parse(request.url, true, true);
-  ctx.url = urlParts.pathname;
-  ctx.pageNumber = urlParts.query.hasOwnProperty('page') ? urlParts.query.page : 0;
-  return ctx;
-}
-
 var handlers = [];
 exports.use = function (f, t) {
   handlers.push({ func: f, trace: t || false });
@@ -69,9 +56,38 @@ exports.expose = function (model) {
   return this;
 };
 
+function extractId(ctx, request) {
+  var idAndRel = getIdAndRel(request.url);
+  ctx.id = idAndRel.id;
+  return ctx;
+}
+
+function extractIdAndRel(ctx, request) {
+  var idAndRel = getIdAndRel(request.url);
+  ctx.id = idAndRel.id;
+  ctx.rel = idAndRel.rel;
+  return ctx;
+}
+
 exports.process = function (request, response) {
   try {
-    var ctx = extract(request);
+    var ctx = {};
+    if (request.headers['accept'].indexOf('application/hal+json') > -1) {
+      ctx = extractIdAndRel(ctx, request);
+    } else if (request.headers['accept'].indexOf('application/json') > -1) {
+      ctx = extractId(ctx, request);
+    } else {
+      throw { statusCode: 406, message: 'Error - Not Acceptable' };
+    }
+
+    ctx.method = request.method.toLowerCase();
+    ctx.body = request.body;
+    var urlParts = urlParser.parse(request.url, true, true);
+
+    log(urlParts);
+
+    ctx.url = urlParts.pathname;
+    ctx.pageNumber = urlParts.query.hasOwnProperty('page') ? urlParts.query.page : 0;
     ctx.model = appModel;
     ctx.statusCode = 200;
     ctx = fn.runAll(handlers, function (d) {

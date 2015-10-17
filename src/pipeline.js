@@ -43,19 +43,6 @@ function getIdAndRel(url) {
   return idAndRel
 }
 
-function extract(request) {
-  let ctx = {}
-  let idAndRel = getIdAndRel(request.url)
-  ctx.id = idAndRel.id
-  ctx.rel = idAndRel.rel
-  ctx.method = request.method.toLowerCase()
-  ctx.body = request.body
-  let urlParts = urlParser.parse(request.url, true, true)
-  ctx.url = urlParts.pathname
-  ctx.pageNumber = urlParts.query.hasOwnProperty('page') ? urlParts.query.page : 0
-  return ctx
-}
-
 let handlers = []
 exports.use = function(f, t) {
   handlers.push({ func: f, trace: t || false})
@@ -68,9 +55,40 @@ exports.expose = function(model) {
   return this
 }
 
+function extractId(ctx, request) {
+  let idAndRel = getIdAndRel(request.url)
+  ctx.id = idAndRel.id
+  return ctx
+}
+
+function extractIdAndRel(ctx, request) {
+  let idAndRel = getIdAndRel(request.url)
+  ctx.id = idAndRel.id
+  ctx.rel = idAndRel.rel
+  return ctx
+}
+
 exports.process = function(request, response) {
   try {
-    let ctx = extract(request)
+    let ctx = {}
+    if(request.headers['accept'].indexOf('application/hal+json') > -1) {
+      ctx = extractIdAndRel(ctx, request)
+    }
+    else if(request.headers['accept'].indexOf('application/json') > -1) {
+      ctx = extractId(ctx, request)
+    }
+    else {
+      throw { statusCode: 406, message: 'Error - Not Acceptable' }
+    }
+
+    ctx.method = request.method.toLowerCase()
+    ctx.body = request.body
+    let urlParts = urlParser.parse(request.url, true, true)
+
+    log(urlParts)
+
+    ctx.url = urlParts.pathname
+    ctx.pageNumber = urlParts.query.hasOwnProperty('page') ? urlParts.query.page : 0
     ctx.model = appModel
     ctx.statusCode = 200
     ctx = fn.runAll(handlers, d => d.statusCode !== 200, ctx)

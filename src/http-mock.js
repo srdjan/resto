@@ -8,9 +8,9 @@ exports.request = function(method, url, body, headers) {
   this.body = body || {}
   this.headers = headers || {}
 
-  this.getHeader = function(key) {
-    return this.headers[key]
-  }
+  // this.getHeader = function(key) {
+  //   return this.headers[key]
+  // }
 }
 
 exports.response = function() {
