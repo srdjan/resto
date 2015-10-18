@@ -9,7 +9,7 @@ HAL.Views.ResponseHeaders = Backbone.View.extend({
     this.$el.html(this.template({
       status: {
         code: e.jqxhr.status,
-        text: e.jqxhr.statusText
+        text: e.jqxhr.statusText + '</br>'
       },
       headers: e.jqxhr.getAllResponseHeaders()
     }));
