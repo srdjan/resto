@@ -15,10 +15,12 @@ function resolve(ctx) {
   ctx.typeName = typeName.charAt(0).toUpperCase() + typeName.substring(1)
   ctx.typeCtor = ctx.model[ctx.typeName]
 
-  if(ctx.hal) {
-    let id = Number(tokens[2])
-    if (tokens.length === 3 && !isNaN(id)) {
-      ctx.id = tokens[2] //todo: convert to number?
+  if (! ctx.hal) {
+    if (tokens.length === 3) {
+      let id = Number(tokens[2])
+      if(! isNaN(id)) {
+        ctx.id = id //todo: convert to number?
+      }
     }
   }
   return ctx
@@ -29,32 +31,31 @@ module.exports.resolve = resolve
 //---------------------------------------------------------------------------------
 //@tests
 //---------------------------------------------------------------------------------
-  let expect = require('expect.js')
-  log('testing: type-resolver.js')
+let expect = require('expect.js')
+log('testing: type-resolver.js')
 
-  // test: resolveType(url):- api/apples/123456/create
-  let url = '/api/apples/'
-  let ctx = resolve({url: url, model: {Apple: function() {}}})
-  expect(ctx.typeName).to.be('Apple')
+// test: resolveType(url):- api/apples/123456/create
+let url = '/api/apples/'
+let ctx = resolve({hal: false, url: url, model: {Apple: function() {}}})
+expect(ctx.typeName).to.be('Apple')
 
-  url = 'api/apples/' + fn.atob('123456')
-  ctx = resolve({url: url, model: {Apple: function() {}}})
-  expect(ctx.typeName).to.be('Apple')
+url = 'api/apples/' + fn.atob('123456')
+ctx = resolve({hal: false, url: url, model: {Apple: function() {}}})
+expect(ctx.typeName).to.be('Apple')
 
-  url = 'api/apples/'
-  ctx = resolve({url: url, model: {Apple: function() {}}})
-  expect(ctx.typeName).to.be('Apple')
+url = 'api/apples/'
+ctx = resolve({hal: false, url: url, model: {Apple: function() {}}})
+expect(ctx.typeName).to.be('Apple')
 
-  url = 'api/apples/' + fn.atob('123456')
-  ctx = resolve({url: url, model: {Apple: function() {}}})
-  expect(ctx.typeName).to.be('Apple')
+url = 'api/apples/' + fn.atob('123456')
+ctx = resolve({hal: false, url: url, model: {Apple: function() {}}})
+expect(ctx.typeName).to.be('Apple')
 
-  url = 'api/apples/' + fn.atob(123456 + '/' + 'create')
-  ctx = resolve({url: url, model: {Apple: function() {}}})
-  expect(ctx.typeName).to.be('Apple')
+url = 'api/apples/' + fn.atob(123456 + '/' + 'create')
+ctx = resolve({hal: false, url: url, model: {Apple: function() {}}})
+expect(ctx.typeName).to.be('Apple')
 
-  // should fail
-  url = 'apples' + fn.atob(123456 + '/' + 'create')
-  ctx = resolve({url: url, model: {Apple: function() {}}})
-  expect(ctx.statusCode).to.be(500)
-
+//should fail
+url = 'apples' + fn.atob(123456 + '/' + 'create')
+ctx = resolve({hal: false, url: url, model: {Apple: function() {}}})
+expect(ctx.statusCode).to.be(500)

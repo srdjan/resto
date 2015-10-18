@@ -17,10 +17,12 @@ function resolve(ctx) {
   ctx.typeName = typeName.charAt(0).toUpperCase() + typeName.substring(1);
   ctx.typeCtor = ctx.model[ctx.typeName];
 
-  if (ctx.hal) {
-    var id = Number(tokens[2]);
-    if (tokens.length === 3 && !isNaN(id)) {
-      ctx.id = tokens[2]; //todo: convert to number?
+  if (!ctx.hal) {
+    if (tokens.length === 3) {
+      var id = Number(tokens[2]);
+      if (!isNaN(id)) {
+        ctx.id = id; //todo: convert to number?
+      }
     }
   }
   return ctx;
@@ -36,26 +38,26 @@ log('testing: type-resolver.js');
 
 // test: resolveType(url):- api/apples/123456/create
 var url = '/api/apples/';
-var ctx = resolve({ url: url, model: { Apple: function Apple() {} } });
+var ctx = resolve({ hal: false, url: url, model: { Apple: function Apple() {} } });
 expect(ctx.typeName).to.be('Apple');
 
 url = 'api/apples/' + fn.atob('123456');
-ctx = resolve({ url: url, model: { Apple: function Apple() {} } });
+ctx = resolve({ hal: false, url: url, model: { Apple: function Apple() {} } });
 expect(ctx.typeName).to.be('Apple');
 
 url = 'api/apples/';
-ctx = resolve({ url: url, model: { Apple: function Apple() {} } });
+ctx = resolve({ hal: false, url: url, model: { Apple: function Apple() {} } });
 expect(ctx.typeName).to.be('Apple');
 
 url = 'api/apples/' + fn.atob('123456');
-ctx = resolve({ url: url, model: { Apple: function Apple() {} } });
+ctx = resolve({ hal: false, url: url, model: { Apple: function Apple() {} } });
 expect(ctx.typeName).to.be('Apple');
 
 url = 'api/apples/' + fn.atob(123456 + '/' + 'create');
-ctx = resolve({ url: url, model: { Apple: function Apple() {} } });
+ctx = resolve({ hal: false, url: url, model: { Apple: function Apple() {} } });
 expect(ctx.typeName).to.be('Apple');
 
-// should fail
+//should fail
 url = 'apples' + fn.atob(123456 + '/' + 'create');
-ctx = resolve({ url: url, model: { Apple: function Apple() {} } });
+ctx = resolve({ hal: false, url: url, model: { Apple: function Apple() {} } });
 expect(ctx.statusCode).to.be(500);
