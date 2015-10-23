@@ -14,8 +14,8 @@ exports.create = function(pipeline) {
       let request = new httpRequest('GET', url, {}, headers)
       let response = new httpResponse()
       pipeline.process(request, response)
-      // let result = halson(response.body)
-      let result = response.body
+      let result = halson(response.body)
+      // let result = response.body
       return { data: result, statusCode: response.statusCode }
     },
 
@@ -23,8 +23,8 @@ exports.create = function(pipeline) {
       let request = new httpRequest(method, url, newResource, headers)
       let response = new httpResponse()
       pipeline.process(request, response)
-      // let result = halson(response.body)
-      let result = response.body
+      let result = halson(response.body)
+      // let result = response.body
       return { data: result, statusCode: response.statusCode }
     }
   }

@@ -15,16 +15,16 @@ exports.create = function(pipeline) {
                         file.get(request, response)
                       }
                     })
-
   return {
     start(port) {
-              server.listen(port)
+              server.port = port;
+              server.listen(server.port)
               log("API running at port: " + port + "\nCTRL + SHIFT + C to shutdown")
               return this
             },
     stop() {
               server.stop()
-              log("API at port: " + port + "stopping...")
+              log("API at port: " + server.port + "stopping...")
               return this
             }
   }
