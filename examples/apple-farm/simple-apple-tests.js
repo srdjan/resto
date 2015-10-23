@@ -1,7 +1,6 @@
 //---------------------------------------------------------------------------------
 //- tests using apple-farm model
 //---------------------------------------------------------------------------------
-const halson        = require('halson')
 const expect        = require('expect.js')
 const fn            = require('./lib/fn')
 const db            = require('./lib/db')
@@ -40,28 +39,23 @@ expect(all.statusCode).to.be(200)
 
 //- test create apple 1
 var apple = apiEndPoint.cmd("POST", '/api/apples/', {weight: 10, color: "red"}, headers)
-var result = halson(apple.data)
-expect(result.weight).to.be(10)
+expect(apple.data.weight).to.be(10)
 
 //- test create apple 2
 apple = apiEndPoint.cmd("POST", '/api/apples/', {weight: 20, color: "green"}, headers)
-result = halson(apple.data)
-expect(result.weight).to.be(20)
+expect(apple.data.weight).to.be(20)
 
 //- test create apple 3 - full page size
 apple = apiEndPoint.cmd("POST", '/api/apples/', {weight: 30, color: "orange"}, headers)
-result = halson(apple.data)
-expect(result.weight).to.be(30)
+expect(apple.data.weight).to.be(30)
 
 //- test create apple 4 - page 2
 apple = apiEndPoint.cmd("POST", '/api/apples/', {weight: 40, color: "blue"}, headers)
-result = halson(apple.data)
-expect(result.weight).to.be(40)
+expect(apple.data.weight).to.be(40)
 
 //- test if create sucessful
-var self = apiEndPoint.get('/api/apples/' + result.id, headers)
-result = halson(self.data)
-expect(result.weight).to.be(40)
+var self = apiEndPoint.get('/api/apples/' + apple.data.id, headers)
+expect(apple.data.weight).to.be(40)
 
 //-  test get all - 2 pages
 all = apiEndPoint.get('/api/apples/', headers)

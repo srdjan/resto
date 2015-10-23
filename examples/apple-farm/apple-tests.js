@@ -1,7 +1,6 @@
 //---------------------------------------------------------------------------------
 //- tests using apple-farm model
 //---------------------------------------------------------------------------------
-const halson        = require('halson')
 const expect        = require('expect.js')
 const fn            = require('./lib/fn')
 const db            = require('./lib/db')
