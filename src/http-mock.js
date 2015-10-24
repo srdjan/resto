@@ -1,15 +1,44 @@
-exports.create = function(service) { return this }
-exports.listen = function(port) {}
+//---------------------------------------------------------------------------------
+//- tests server
+//---------------------------------------------------------------------------------
+const halson = require('halson')
+const expect = require('expect.js')
+const fn = require('./fn')
+const log = console.log
+
+exports.createEndPoint = function(pipeline) {
+  return {
+    GET(url, headers) {
+      return httpCmd('GET', url, {}, headers, pipeline)
+    },
+    POST(url, headers, newResource) {
+      return httpCmd('POST', url, newResource, headers, pipeline)
+    },
+    PUT(url, headers, newResource) {
+      return httpCmd('PUT', url, newResource, headers, pipeline)
+    },
+    DELETE(url, headers) {
+      return httpCmd('DELETE', url, {}, headers, pipeline)
+    }
+  }
+}
+
+function httpCmd(method, url, newResource, headers, pipeline) {
+  let request = new Request(method, url, newResource, headers)
+  let response = new Response()
+  pipeline.process(request, response)
+  return { data: halson(response.body), statusCode: response.statusCode }
+}
 
 //note: taken from: https://github.com/vojtajina/node-mocks
-exports.request = function(method, url, body, headers) {
+var Request = function(method, url, body, headers) {
   this.method = method
   this.url = url
   this.body = body || {}
   this.headers = headers || {}
 }
 
-exports.response = function() {
+var Response = function() {
   let bodySent = false
   this.headers = {}
   this.body = null

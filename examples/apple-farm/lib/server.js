@@ -8,7 +8,7 @@ var file = require("./file-helper");
 var fn = require('./fn');
 var log = console.log;
 
-exports.create = function (pipeline) {
+exports.createEndPoint = function (pipeline) {
   var server = http.createServer(function (request, response) {
     if (fn.isApiCall(request)) {
       processApi(pipeline, request, response);

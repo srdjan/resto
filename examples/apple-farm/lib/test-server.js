@@ -1,33 +1,29 @@
-//---------------------------------------------------------------------------------
-//- tests server
-//---------------------------------------------------------------------------------
-'use strict';
+"use strict";
 
-var halson = require('halson');
-var expect = require('expect.js');
-var fn = require('./fn');
-var httpRequest = require('./http-mock').request;
-var httpResponse = require('./http-mock').response;
-var log = console.log;
+// //---------------------------------------------------------------------------------
+// //- tests server
+// //---------------------------------------------------------------------------------
+// const halson = require('halson')
+// const expect = require('expect.js')
+// const fn = require('./fn')
+// const httpRequest = require('./http-mock').request
+// const httpResponse = require('./http-mock').response
+// const log = console.log
 
-exports.create = function (pipeline) {
-  return {
-    get: function get(url, headers) {
-      var request = new httpRequest('GET', url, {}, headers);
-      var response = new httpResponse();
-      pipeline.process(request, response);
-      var result = halson(response.body);
-      // let result = response.body
-      return { data: result, statusCode: response.statusCode };
-    },
+// exports.create = function(pipeline) {
+//   return {
+//     get(url, headers) {
+//       let request = new httpRequest('GET', url, {}, headers)
+//       let response = new httpResponse()
+//       pipeline.process(request, response)
+//       return { data: halson(response.body), statusCode: response.statusCode }
+//     },
 
-    cmd: function cmd(method, url, newResource, headers) {
-      var request = new httpRequest(method, url, newResource, headers);
-      var response = new httpResponse();
-      pipeline.process(request, response);
-      var result = halson(response.body);
-      // let result = response.body
-      return { data: result, statusCode: response.statusCode };
-    }
-  };
-};
+//     cmd(method, url, newResource, headers) {
+//       let request = new httpRequest(method, url, newResource, headers)
+//       let response = new httpResponse()
+//       pipeline.process(request, response)
+//       return { data: halson(response.body), statusCode: response.statusCode }
+//     }
+//   }
+// }

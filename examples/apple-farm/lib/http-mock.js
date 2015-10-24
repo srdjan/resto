@@ -1,19 +1,46 @@
-"use strict";
+//---------------------------------------------------------------------------------
+//- tests server
+//---------------------------------------------------------------------------------
+'use strict';
 
-exports.create = function (service) {
-  return this;
+var halson = require('halson');
+var expect = require('expect.js');
+var fn = require('./fn');
+var log = console.log;
+
+exports.createEndPoint = function (pipeline) {
+  return {
+    GET: function GET(url, headers) {
+      return httpCmd('GET', url, {}, headers, pipeline);
+    },
+    POST: function POST(url, headers, newResource) {
+      return httpCmd('POST', url, newResource, headers, pipeline);
+    },
+    PUT: function PUT(url, headers, newResource) {
+      return httpCmd('PUT', url, newResource, headers, pipeline);
+    },
+    DELETE: function DELETE(url, headers) {
+      return httpCmd('DELETE', url, {}, headers, pipeline);
+    }
+  };
 };
-exports.listen = function (port) {};
+
+function httpCmd(method, url, newResource, headers, pipeline) {
+  var request = new Request(method, url, newResource, headers);
+  var response = new Response();
+  pipeline.process(request, response);
+  return { data: halson(response.body), statusCode: response.statusCode };
+}
 
 //note: taken from: https://github.com/vojtajina/node-mocks
-exports.request = function (method, url, body, headers) {
+var Request = function Request(method, url, body, headers) {
   this.method = method;
   this.url = url;
   this.body = body || {};
   this.headers = headers || {};
 };
 
-exports.response = function () {
+var Response = function Response() {
   var bodySent = false;
   this.headers = {};
   this.body = null;
