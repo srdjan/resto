@@ -24,10 +24,12 @@ function process(request, response, pipeline) {
       request.on('end', () => {
         request.body = JSON.parse(body)
         ctx = pipeline.process(request, ctx)
+        writeToResp(response, ctx)
       })
     }
     else {
       ctx = pipeline.process(request, ctx)
+      writeToResp(response, ctx)
     }
   }
   catch (e) {
@@ -40,8 +42,6 @@ function process(request, response, pipeline) {
     if (e.hasOwnProperty('message')) {
       ctx.result += ', Message: ' +  e.message
     }
-  }
-  finally {
     writeToResp(response, ctx)
   }
 }

@@ -1,18 +1,18 @@
-const Pipeline      = require('./lib/pipeline')
-const authenticator = require('./lib/authn').auth
-const authorizer    = require('./lib/authr').auth
-const resolver      = require('./lib/resolver').resolve
-const invoker       = require('./lib/invoker').invoke
-const converter     = require('./lib/hal').convert
-const server        = require('./lib/server')
-const apple         = require('./resources/apple')
+const Pipeline  = require('./lib/pipeline')
+const authn     = require('./lib/authn')
+const authr     = require('./lib/authr')
+const resolver  = require('./lib/resolver')
+const invoker   = require('./lib/invoker')
+const hal       = require('./lib/hal')
+const server    = require('./lib/server')
+const apple     = require('./resources/apple')
 
 const pipeline = Pipeline.expose(apple)
-                      .use(authenticator)
-                      .use(resolver)
-                      .use(authorizer)
-                      .use(invoker)
-                      .use(converter)
+                      .use(authn.func)
+                      .use(resolver.func)
+                      .use(authr.func)
+                      .use(invoker.func)
+                      .use(hal.func)
 
 const endPoint = server.createEndPoint(pipeline)
 endPoint.start(8080)
