@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------
-//- auth
+//- authr
 //---------------------------------------------------------------------------------
 'use strict';
 
@@ -7,6 +7,6 @@ var Either = require('data.either');
 var fn = require('./fn');
 var log = console.log;
 
-exports.auth = function auth(ctx) {
+exports.func = function (ctx) {
   return ctx;
 };

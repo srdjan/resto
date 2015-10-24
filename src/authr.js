@@ -1,10 +1,10 @@
 //---------------------------------------------------------------------------------
-//- auth
+//- authr
 //---------------------------------------------------------------------------------
 const Either = require('data.either')
 const fn = require('./fn')
 const log = console.log
 
-exports.auth = function auth(ctx) {
+exports.func = function(ctx) {
   return ctx
 }

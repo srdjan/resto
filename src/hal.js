@@ -114,7 +114,7 @@ function createResource(ctx) {
   return halRep
 }
 
-exports.convert = function convert(ctx) {
+exports.func = function(ctx) {
   if(ctx.hal) {
     if (ctx.result instanceof Array) {
       ctx.result = createList(ctx)
@@ -225,7 +225,7 @@ let ctx = {
   typeName: 'Apple',
   result: apples[0]
 }
-let res = exports.convert(ctx)
+let res = exports.func(ctx)
 // log(JSON.stringify(res.result))
 expect(res.result.listLinkRels().length).to.be(3)
 let embeds = res.result.getEmbeds('refObj1')
@@ -238,7 +238,7 @@ ctx = {
   typeName: 'Apple',
   result: apples
 }
-res = exports.convert(ctx)
+res = exports.func(ctx)
 // log(JSON.stringify(res.result))
 embeds = res.result.getEmbeds('apples')
 expect(embeds.length).to.be(2)
@@ -326,7 +326,7 @@ expect(embeds.length).to.be(2)
 //   pgCount: 4,
 //   result: todos
 // }
-// let res = exports.convert(ctx)
+// let res = exports.func(ctx)
 // log(JSON.stringify(res.result))
 // let embeds = res.result.getEmbeds('todos')
 // expect(embeds.length).to.be(12)

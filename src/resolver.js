@@ -4,7 +4,7 @@
 const fn  = require('./fn')
 const log = console.log
 
-function resolve(ctx) {
+exports.func = function(ctx) {
   let tokens = fn.getTokens(ctx.url)
   if (tokens.length < 2) {
     ctx.result = {Error: 'type resolver error'}
@@ -26,36 +26,34 @@ function resolve(ctx) {
   return ctx
 }
 
-module.exports.resolve = resolve
-
 //---------------------------------------------------------------------------------
 //@tests
 //---------------------------------------------------------------------------------
 let expect = require('expect.js')
-log('testing: type-resolver.js')
+log('testing: resolve.js')
 
 // test: resolveType(url):- api/apples/123456/create
 let url = '/api/apples/'
-let ctx = resolve({hal: false, url: url, model: {Apple: function() {}}})
+let ctx = exports.func({hal: false, url: url, model: {Apple: function() {}}})
 expect(ctx.typeName).to.be('Apple')
 
 url = 'api/apples/' + fn.atob('123456')
-ctx = resolve({hal: false, url: url, model: {Apple: function() {}}})
+ctx = exports.func({hal: false, url: url, model: {Apple: function() {}}})
 expect(ctx.typeName).to.be('Apple')
 
 url = 'api/apples/'
-ctx = resolve({hal: false, url: url, model: {Apple: function() {}}})
+ctx = exports.func({hal: false, url: url, model: {Apple: function() {}}})
 expect(ctx.typeName).to.be('Apple')
 
 url = 'api/apples/' + fn.atob('123456')
-ctx = resolve({hal: false, url: url, model: {Apple: function() {}}})
+ctx = exports.func({hal: false, url: url, model: {Apple: function() {}}})
 expect(ctx.typeName).to.be('Apple')
 
 url = 'api/apples/' + fn.atob(123456 + '/' + 'create')
-ctx = resolve({hal: false, url: url, model: {Apple: function() {}}})
+ctx = exports.func({hal: false, url: url, model: {Apple: function() {}}})
 expect(ctx.typeName).to.be('Apple')
 
 //should fail
 url = 'apples' + fn.atob(123456 + '/' + 'create')
-ctx = resolve({hal: false, url: url, model: {Apple: function() {}}})
+ctx = exports.func({hal: false, url: url, model: {Apple: function() {}}})
 expect(ctx.statusCode).to.be(500)

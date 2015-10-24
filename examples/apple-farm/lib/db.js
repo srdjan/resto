@@ -109,7 +109,7 @@ var ctx = {
   pageCount: result.pageCount,
   result: result.page
 };
-var res = hal.convert(ctx);
+var res = hal.func(ctx);
 var embeds = res.result.getEmbeds('todos');
 expect(embeds.length).to.be(0);
 expect(fn.contains('self', res.result.listLinkRels())).to.be(true);
@@ -131,7 +131,7 @@ ctx = {
   pageCount: result.pageCount,
   result: result.page
 };
-res = hal.convert(ctx);
+res = hal.func(ctx);
 embeds = res.result.getEmbeds('todos');
 expect(embeds.length).to.be(1);
 expect(fn.contains('self', res.result.listLinkRels())).to.be(true);
@@ -158,7 +158,7 @@ ctx = {
   pageCount: result.pageCount,
   result: result.page
 };
-res = hal.convert(ctx);
+res = hal.func(ctx);
 embeds = res.result.getEmbeds('todos');
 expect(embeds.length).to.be(3);
 expect(fn.contains('self', res.result.listLinkRels())).to.be(true);
@@ -223,7 +223,7 @@ ctx = {
   pageCount: result.pageCount,
   result: result.page
 };
-res = hal.convert(ctx);
+res = hal.func(ctx);
 // log(JSON.stringify(res.result))
 embeds = res.result.getEmbeds('todos');
 expect(embeds.length).to.be(3);

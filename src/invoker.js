@@ -1,11 +1,11 @@
 //---------------------------------------------------------------------------------
-//- method resolver
+//- method invoker
 //---------------------------------------------------------------------------------
 const fn        = require('./fn.js')
 const resource  = require('./resource.js')
 const log       = console.log
 
-function invoke(ctx) {
+exports.func  = function(ctx) {
   let handler = resource[ctx.method]
   if ( ! typeof handler) {
     ctx.result = { Error: 'method resolver error' }
@@ -16,13 +16,11 @@ function invoke(ctx) {
   return ctx
 }
 
-module.exports.invoke = invoke
-
 //---------------------------------------------------------------------------------
 //@tests
 //---------------------------------------------------------------------------------
   let expect = require('expect.js')
-  log('testing: method-resolver.js')
+  log('testing: invoker.js')
 
   // let ctx = invoke({ method: 'bad method name'})
   // expect(ctx.statusCode).to.be(500)

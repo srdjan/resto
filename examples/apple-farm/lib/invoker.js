@@ -1,5 +1,5 @@
 //---------------------------------------------------------------------------------
-//- method resolver
+//- method invoker
 //---------------------------------------------------------------------------------
 'use strict';
 
@@ -7,7 +7,7 @@ var fn = require('./fn.js');
 var resource = require('./resource.js');
 var log = console.log;
 
-function invoke(ctx) {
+exports.func = function (ctx) {
   var handler = resource[ctx.method];
   if (! typeof handler) {
     ctx.result = { Error: 'method resolver error' };
@@ -16,15 +16,13 @@ function invoke(ctx) {
   }
   ctx = handler(ctx);
   return ctx;
-}
-
-module.exports.invoke = invoke;
+};
 
 //---------------------------------------------------------------------------------
 //@tests
 //---------------------------------------------------------------------------------
 var expect = require('expect.js');
-log('testing: method-resolver.js');
+log('testing: invoker.js');
 
 // let ctx = invoke({ method: 'bad method name'})
 // expect(ctx.statusCode).to.be(500)

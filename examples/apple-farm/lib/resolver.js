@@ -6,7 +6,7 @@
 var fn = require('./fn');
 var log = console.log;
 
-function resolve(ctx) {
+exports.func = function (ctx) {
   var tokens = fn.getTokens(ctx.url);
   if (tokens.length < 2) {
     ctx.result = { Error: 'type resolver error' };
@@ -26,38 +26,36 @@ function resolve(ctx) {
     }
   }
   return ctx;
-}
-
-module.exports.resolve = resolve;
+};
 
 //---------------------------------------------------------------------------------
 //@tests
 //---------------------------------------------------------------------------------
 var expect = require('expect.js');
-log('testing: type-resolver.js');
+log('testing: resolve.js');
 
 // test: resolveType(url):- api/apples/123456/create
 var url = '/api/apples/';
-var ctx = resolve({ hal: false, url: url, model: { Apple: function Apple() {} } });
+var ctx = exports.func({ hal: false, url: url, model: { Apple: function Apple() {} } });
 expect(ctx.typeName).to.be('Apple');
 
 url = 'api/apples/' + fn.atob('123456');
-ctx = resolve({ hal: false, url: url, model: { Apple: function Apple() {} } });
+ctx = exports.func({ hal: false, url: url, model: { Apple: function Apple() {} } });
 expect(ctx.typeName).to.be('Apple');
 
 url = 'api/apples/';
-ctx = resolve({ hal: false, url: url, model: { Apple: function Apple() {} } });
+ctx = exports.func({ hal: false, url: url, model: { Apple: function Apple() {} } });
 expect(ctx.typeName).to.be('Apple');
 
 url = 'api/apples/' + fn.atob('123456');
-ctx = resolve({ hal: false, url: url, model: { Apple: function Apple() {} } });
+ctx = exports.func({ hal: false, url: url, model: { Apple: function Apple() {} } });
 expect(ctx.typeName).to.be('Apple');
 
 url = 'api/apples/' + fn.atob(123456 + '/' + 'create');
-ctx = resolve({ hal: false, url: url, model: { Apple: function Apple() {} } });
+ctx = exports.func({ hal: false, url: url, model: { Apple: function Apple() {} } });
 expect(ctx.typeName).to.be('Apple');
 
 //should fail
 url = 'apples' + fn.atob(123456 + '/' + 'create');
-ctx = resolve({ hal: false, url: url, model: { Apple: function Apple() {} } });
+ctx = exports.func({ hal: false, url: url, model: { Apple: function Apple() {} } });
 expect(ctx.statusCode).to.be(500);

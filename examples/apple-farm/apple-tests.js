@@ -1,29 +1,29 @@
 //---------------------------------------------------------------------------------
 //- tests using apple-farm model
 //---------------------------------------------------------------------------------
-const expect        = require('expect.js')
-const fn            = require('./lib/fn')
-const db            = require('./lib/db')
-const server        = require('./lib/http-mock')
-const Pipeline      = require('./lib/pipeline')
-const authenticator = require('./lib/authn').auth
-const authorizer    = require('./lib/authr').auth
-const resolver      = require('./lib/resolver').resolve
-const invoker       = require('./lib/invoker').invoke
-const converter     = require('./lib/hal').convert
-const appleResource = require('./resources/apple')
-const log           = console.log
+const expect    = require('expect.js')
+const fn        = require('./lib/fn')
+const db        = require('./lib/db')
+const server     = require('./lib/http-mock')
+const Pipeline   = require('./lib/pipeline')
+const authn      = require('./lib/authn')
+const authr      = require('./lib/authr')
+const resolver   = require('./lib/resolver')
+const invoker    = require('./lib/invoker')
+const hal        = require('./lib/hal')
+const Apple      = require('./resources/apple')
+const log        = console.log
 
 //- prepare
 db.clear()
 
 log('------ configure pipeline --------')
-const pipeline = Pipeline.expose(appleResource)
-                      // .use(authenticator)
-                      .use(resolver)
-                      // .use(authorizer)
-                      .use(invoker)//, true)
-                      .use(converter)
+const pipeline = Pipeline.expose(Apple)
+                      .use(authn.func)
+                      .use(resolver.func)
+                      .use(authr.func)
+                      .use(invoker.func)//, true)
+                      .use(hal.func)
 
 const apiEndPoint = server.createEndPoint(pipeline)
 const headers = {accept: 'application/hal+json'}
