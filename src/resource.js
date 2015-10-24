@@ -11,7 +11,7 @@ function validateApiCall(ctx) {
     let links = ctx.entity.getLinks()
     if (fn.none(link => link.rel === ctx.rel, links)) {
       ctx.statusCode = 405
-      ctx.result = 'Conflict - Method call not allowed'
+      ctx.result = { Error: 'Conflict - Method call not allowed'}
       return Either.Left(ctx)
     }
   }
@@ -21,7 +21,7 @@ function validateApiCall(ctx) {
 function validatePropsExist(ctx) {
   if (fn.propsDontExist(ctx.body, ctx.entity)) {
     ctx.statusCode = 400
-    ctx.result = 'Bad Request - props do not exist'
+    ctx.result = { Error: 'Bad Request - props do not exist'}
     return Either.Left(ctx)
   }
   return Either.Right(ctx)
@@ -30,7 +30,7 @@ function validatePropsExist(ctx) {
 function validatePropsMatch(ctx) {
   if (fn.propsDontMatch(ctx.body, ctx.entity)) {
     ctx.statusCode = 400
-    ctx.result = 'Bad Request - props do not match'
+    ctx.result = { Error: 'Bad Request - props do not match'}
     return Either.Left(ctx)
   }
   return Either.Right(ctx)
@@ -52,7 +52,7 @@ function persist(ctx) {
     }
     else {
       ctx.statusCode = 500
-      ctx.result = 'Error: not able to Delete'
+      ctx.result = { Error:' not able to Delete'}
     }
   }
   else if (ctx.method === 'post') {
@@ -65,7 +65,7 @@ function persist(ctx) {
   }
   else {
     ctx.statusCode = 405
-    ctx.result = 'Method Not Allowed'
+    ctx.result = { Error: 'Method Not Allowed'}
     return Either.Left(ctx)
   }
   return Either.Right(ctx)

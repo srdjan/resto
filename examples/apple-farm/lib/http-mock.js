@@ -27,9 +27,9 @@ exports.createEndPoint = function (pipeline) {
 
 function httpCmd(method, url, newResource, headers, pipeline) {
   var request = new Request(method, url, newResource, headers);
-  var response = new Response();
-  pipeline.process(request, response);
-  return { data: halson(response.body), statusCode: response.statusCode };
+  var ctx = { hal: false, statusCode: 200, result: {} };
+  ctx = pipeline.process(request, ctx);
+  return { data: halson(ctx.result), statusCode: ctx.statusCode };
 }
 
 //note: taken from: https://github.com/vojtajina/node-mocks

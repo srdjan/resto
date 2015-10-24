@@ -9,14 +9,6 @@ const log       = console.log
 db.init('../../../datastore')
 db.clear()
 
-function writeToResp(response, ctx) {
-  let contentType = ctx.hal ? {"Content-Type": "application/hal+json"} :
-                               {"Content-Type": "application/json" }
-  response.writeHead(ctx.statusCode, contentType)
-  response.write(JSON.stringify(ctx.result))
-  response.end()
-}
-
 function getId(tokens) {
   let id = fn.btoa(tokens[tokens.length - 1])
   if (isNaN(id)) {
@@ -70,37 +62,20 @@ function extractIdAndRel(ctx, request) {
   return ctx
 }
 
-exports.process = function(request, response) {
-  let ctx = { hal: false, statusCode: 200, result: {} }
-
-  try {
-    if(request.headers['accept'].indexOf('application/hal+json') > -1) {
-      ctx.hal = true
-      ctx = extractIdAndRel(ctx, request)
-    }
-
-    ctx.method = request.method.toLowerCase()
-    ctx.body = request.body
-    let urlParts = urlParser.parse(request.url, true, true)
-    ctx.url = urlParts.pathname
-    ctx.pageNumber = urlParts.query.hasOwnProperty('page') ? urlParts.query.page : 0
-    ctx.model = appModel
-    ctx = fn.runAll(handlers, d => d.statusCode !== 200, ctx)
+exports.process = function(request, ctx) {
+  if(request.headers['accept'].indexOf('application/hal+json') > -1) {
+    ctx.hal = true
+    ctx = extractIdAndRel(ctx, request)
   }
-  catch (e) {
-    ctx.statusCode = 500
-    if (e.hasOwnProperty('statusCode')) {
-      ctx.statusCode = e.statusCode
-    }
 
-    ctx.result = 'Fx Exception, statusCode: ' + ctx.statusCode
-    if (e.hasOwnProperty('message')) {
-      ctx.result += ', Message: ' +  e.message
-    }
-  }
-  finally {
-    writeToResp(response, ctx)
-  }
+  ctx.method = request.method.toLowerCase()
+  ctx.body = request.body
+  let urlParts = urlParser.parse(request.url, true, true)
+  ctx.url = urlParts.pathname
+  ctx.pageNumber = urlParts.query.hasOwnProperty('page') ? urlParts.query.page : 0
+  ctx.model = appModel
+  ctx = fn.runAll(handlers, d => d.statusCode !== 200, ctx)
+  return ctx
 }
 
 //---------------------------------------------------------------------------------
