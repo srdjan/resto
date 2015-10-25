@@ -49,12 +49,6 @@ exports.expose = function(model) {
   return this
 }
 
-function extractId(ctx, request) {
-  let idAndRel = getIdAndRel(request.url)
-  ctx.id = idAndRel.id
-  return ctx
-}
-
 function extractIdAndRel(ctx, request) {
   let idAndRel = getIdAndRel(request.url)
   ctx.id = idAndRel.id
