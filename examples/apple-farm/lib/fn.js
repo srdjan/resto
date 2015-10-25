@@ -1,3 +1,4 @@
+/* global Buffer */
 //---------------------------------------------------------------------------------
 //- functions
 //---------------------------------------------------------------------------------
@@ -54,7 +55,7 @@ exports.propsExist = function (obj1, obj2) {
 };
 
 exports.propsDontExist = function (obj1, obj2) {
-  return !propsExist(obj1, obj2);
+  return !exports.propsExist(obj1, obj2);
 };
 
 exports.getFnName = function (func) {

@@ -1,11 +1,9 @@
 {
 	"version": "0.1.0",
-	// List of configurations. Add new configurations or edit existing ones.
-	// ONLY "node" and "mono" are supported, change "type" to switch.
 	"configurations": [
 		{
 			// Name of configuration; appears in the launch configuration drop down menu.
-			"name": "Launch app.js",
+			"name": "App.js",
 			// Type of configuration. Possible values: "node", "mono".
 			"type": "node",
 			// Workspace relative or absolute path to the program.
@@ -31,11 +29,11 @@
 		},
 		{
 			// Name of configuration; appears in the launch configuration drop down menu.
-			"name": "Launch apple tests.js",
+			"name": "Apple tests.js",
 			// Type of configuration. Possible values: "node", "mono".
 			"type": "node",
 			// Workspace relative or absolute path to the program.
-			"program": "./examples/apple-farm/apple-tests.js",
+			"program": "./tests/apple-tests.js",
 			// Automatically stop program after launch.
 			"stopOnEntry": false,
 			// Command line arguments passed to the program.
@@ -57,37 +55,11 @@
 		},
 		{
 			// Name of configuration; appears in the launch configuration drop down menu.
-			"name": "Launch simple apple tests.js",
+			"name": "Simple apple tests.js",
 			// Type of configuration. Possible values: "node", "mono".
 			"type": "node",
 			// Workspace relative or absolute path to the program.
-			"program": "./examples/apple-farm/simple-apple-tests.js",
-			// Automatically stop program after launch.
-			"stopOnEntry": false,
-			// Command line arguments passed to the program.
-			"args": [],
-			// Workspace relative or absolute path to the working directory of the program being debugged. Default is the current workspace.
-			"cwd": ".",
-			// Workspace relative or absolute path to the runtime executable to be used. Default is the runtime executable on the PATH.
-			"runtimeExecutable": null,
-			// Optional arguments passed to the runtime executable.
-			"runtimeArgs": ["--nolazy"],
-			// Environment variables passed to the program.
-			"env": {
-				"NODE_ENV": "development"
-			},
-			// Use JavaScript source maps (if they exist).
-			"sourceMaps": false,
-			// If JavaScript source maps are enabled, the generated code is expected in this directory.
-			"outDir": null
-		},
-		{
-			// Name of configuration; appears in the launch configuration drop down menu.
-			"name": "Launch resource.js",
-			// Type of configuration. Possible values: "node", "mono".
-			"type": "node",
-			// Workspace relative or absolute path to the program.
-			"program": "./examples/apple-farm/lib/resource.js",
+			"program": "./tests/simple-apple-tests.js",
 			// Automatically stop program after launch.
 			"stopOnEntry": false,
 			// Command line arguments passed to the program.
