@@ -1,18 +1,18 @@
 //---------------------------------------------------------------------------------
 //- tests using apple-farm model
 //---------------------------------------------------------------------------------
-const expect    = require('expect.js')
-const fn        = require('./lib/fn')
-const db        = require('./lib/db')
-const server     = require('./lib/http-mock')
-const Pipeline   = require('./lib/pipeline')
-const authn      = require('./lib/authn')
-const authr      = require('./lib/authr')
-const resolver   = require('./lib/resolver')
-const invoker    = require('./lib/invoker')
-const hal        = require('./lib/hal')
-const Apple      = require('./resources/apple')
-const log        = console.log
+const expect   = require('expect.js')
+const fn       = require('../src/fn')
+const db       = require('../src/db')
+const server   = require('../src/http-mock')
+const Pipeline = require('../src/pipeline')
+const authn    = require('../src/authn')
+const authr    = require('../src/authr')
+const resolver = require('../src/resolver')
+const invoker  = require('../src/invoker')
+const hal      = require('../src/hal')
+const Apple    = require('./apple')
+const log      = console.log
 
 //- prepare
 db.clear()
