@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------------
 //- tests using apple-farm model
 //---------------------------------------------------------------------------------
-const test_source = '../src' //'../lib'
+const test_source = '../lib'
 
 const expect   = require('expect.js')
 const fn       = require(test_source + '/fn')
