@@ -3,7 +3,7 @@
 //---------------------------------------------------------------------------------
 const http = require("http")
 const file = require("./file-helper")
-const fn   = require('./fn')
+const fn = require('./fn')
 const log  = console.log
 
 function writeToResp(response, ctx) {
