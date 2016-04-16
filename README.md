@@ -1,4 +1,4 @@
-RESTO POC (alpha) 
+RESTO POC (alpha)
 ==========================
 
 Minimalistic, experimatal RESTfull application framework
@@ -6,6 +6,7 @@ Minimalistic, experimatal RESTfull application framework
 [List of forks] (https://github.com/srdjan/resto/network/members)
 
 To run the example:
+- npm install
 - navigate to ./examples/apple-farm
 - run: node app.js
 - in the browser, open: localhost:8080/
