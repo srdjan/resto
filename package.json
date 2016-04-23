@@ -13,8 +13,10 @@
   },
   "devDependencies": {},
   "scripts": {
-    "build": "node ./src/server.js",
-    "test": "node ./tests/apple-tests.js"
+    "test": "node ./tests/apple-tests.js",
+    "build": "node ./src/index.js",
+    "minor-release": "npm version minor && npm publish && git push --follow-tags",
+    "major-release": "npm version major && npm publish && git push --follow-tags"
   },
   "author": "Srdjan",
   "license": "MIT"

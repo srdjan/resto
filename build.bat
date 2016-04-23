@@ -5,5 +5,5 @@ echo Target folder: %targetFolder%
 
 xcopy /S /I /Y %~dp0hal-browser %~dp0examples\apple-farm\hal-browser\
 
-babel src --out-dir %targetFolder%
+node src/server.js --out-dir %targetFolder%
 
