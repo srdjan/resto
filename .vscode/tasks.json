@@ -31,7 +31,7 @@
 //task runer for Babel
 {
     "version": "0.1.0",
-    "command": "babel",
+    "command": "node",
     "isShellCommand": true,
     "tasks": [
         {

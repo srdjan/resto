@@ -1,6 +1,8 @@
 //---------------------------------------------------------------------------------
 //- resource
 //---------------------------------------------------------------------------------
+"use strict"
+
 const Either = require('data.either')
 const fn     = require('./fn')
 const db     = require('./db')
@@ -116,7 +118,7 @@ exports.post = function(ctx) {
                     .chain(persist)
                     .merge()
   }
-  ctx.entity = new ctx.typeCtor()
+  ctx.entity =  new ctx.typeCtor()
   return validatePropsMatch(ctx)
                 .chain(update)
                 .chain(persist)
@@ -201,7 +203,7 @@ db.clear()
 function test_post() {
   let ctx = {
               id: 0,
-              typeCtor() { this.name = 'sam'},
+              typeCtor: function() {  this.name = 'sam'},
               body: {name: 'sam'}
             }
   let result = exports.post(ctx)
@@ -212,7 +214,7 @@ test_post()
 function test_post2() {
   let ctx = {
     id: 0,
-    typeCtor() { this.name = 'sam1'},
+    typeCtor: function () { this.name = 'sam1'},
     body: {nammmme: 'sam'}
   }
   let result = exports.post(ctx)
@@ -224,7 +226,7 @@ test_post2()
 function test_post3() {
   let ctx = {
     id: 0,
-    typeCtor() { this.name = ''},
+    typeCtor: function() { this.name = ''},
     body: {name: 'sam'},
     entity: { name: '???',
               getLinks: function() {
@@ -244,7 +246,7 @@ test_post3()
 function test_post4() {
   let ctx = {
     id: 0,
-    typeCtor() { this.name = ''},
+    typeCtor: function()  { this.name = ''},
     body: {nammmme: 'sam'},
     entity: {name: ''}
   }

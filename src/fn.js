@@ -2,6 +2,8 @@
 //---------------------------------------------------------------------------------
 //- functions
 //---------------------------------------------------------------------------------
+"use strict"
+
 const URLSafeBase64 = require('urlsafe-base64')
 const Either = require('data.either')
 const R = require('ramda')
@@ -39,6 +41,7 @@ exports.btoa = function (str) {
 }
 
 exports.propsMatch = function (obj1, obj2) {
+  if (! obj1 || ! obj2) return false
   return R.difference(Object.keys(obj1), Object.keys(obj2)).length === 0
 }
 
@@ -96,6 +99,9 @@ exports.runAll = function (handlers, ep, ctx) {
 //---------------------------------------------------------------------------------
 let expect = require('expect.js')
 log('testing: fn.js')
+
+expect(exports.propsMatch({name: "tom"}, {name: "tom"})).to.be(true)
+expect(exports.propsDontMatch({name: "tom"}, {name1: "tom"})).to.be(true)
 
 function f1(ctx) {
   if (ctx.counter > 1) {

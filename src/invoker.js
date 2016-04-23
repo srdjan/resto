@@ -1,6 +1,8 @@
 //---------------------------------------------------------------------------------
 //- method invoker
 //---------------------------------------------------------------------------------
+"use strict"
+
 const fn        = require('./fn.js')
 const resource  = require('./resource.js')
 const log       = console.log
