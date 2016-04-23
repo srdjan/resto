@@ -33,7 +33,7 @@ const pipeline = Pipeline.expose(Apple)
 const apiEndPoint = server.createEndPoint(pipeline)
 const headers = {accept: 'application/hal+json'}
 
-log('------ run Apple tests -----')
+log('------ Run Apple tests -----')
 //-  test bad get all
 var all = apiEndPoint.GET('bad', headers)
 expect(all.statusCode).to.be(500)

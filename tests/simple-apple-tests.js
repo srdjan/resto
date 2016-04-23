@@ -15,8 +15,8 @@ const authr    = require(test_source + '/authr')
 const resolver = require(test_source + '/resolver')
 const invoker  = require(test_source + '/invoker')
 const hal      = require(test_source + '/hal')
-const Apple     = require('./SimpleApple')
-const log       = console.log
+const Apple    = require('./SimpleApple')
+const log      = console.log
 
 //- prepare
 db.clear()
