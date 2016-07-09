@@ -91,12 +91,13 @@ module.exports.remove = remove
 //@tests
 //---------------------------------------------------------------------------------
   let expect = require('expect.js')
-  let hal = require('./hal.js')
+
+  //todo: remove HAL dependancy from the tests here in ./lib/core
+  let hal = require('../hal.js')  
   log('testing: db.js')
 
   init('./datastore-test')
   clear()
-
 
   //-- TEST PAGING
   //TEST ZERO records

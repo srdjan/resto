@@ -1,22 +1,16 @@
-/* global debug */
-//---------------------------------------------------------------------------------
-//- tests using apple-farm model
-//---------------------------------------------------------------------------------
 "use strict"
 
-const test_source = '../lib'
-
 const expect   = require('expect.js')
-const fn       = require(test_source + '/fn')
-const db       = require(test_source + '/db')
-const server   = require(test_source + '/http-mock')
-const Pipeline = require(test_source + '/pipeline')
-const authn    = require(test_source + '/authn')
-const authr    = require(test_source + '/authr')
-const resolver = require(test_source + '/resolver')
-const invoker  = require(test_source + '/invoker')
-const hal      = require(test_source + '/hal')
+const Pipeline = require('../src/pipeline')
+const authn    = require('../src/authn')
+const authr    = require('../src/authr')
+const resolver = require('../src/resolver')
+const invoker  = require('../src/invoker')
+const hal      = require('../src/hal')
+const db       = require('../src/core/db')
+
 const Apple    = require('./apple')
+const server   = require('./http-mock')
 const log      = console.log
 
 //- prepare

@@ -1,4 +1,4 @@
-var log = console.log
+const log = console.log
 
 exports.Apple = function() {
   this.weight = 1

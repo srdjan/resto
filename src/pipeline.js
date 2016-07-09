@@ -4,8 +4,8 @@
 "use strict"
 
 const urlParser = require('url')
-const fn        = require('./fn')
-const db        = require('./db')
+const fn        = require('./core/fn')
+const db        = require('./core/db')
 const log       = console.log
 
 db.init('../../../datastore')
