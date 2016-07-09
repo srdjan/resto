@@ -3,14 +3,14 @@
 //---------------------------------------------------------------------------------
 "use strict"
 
-const http = require("http")
-const file = require("./file-helper")
-const fn = require('./fn')
+const http = require('http')
+const fileHelper = require('./fileHelper')
+const fn = require('../core').fn
 const log  = console.log
 
 function writeToResp(response, ctx) {
-  let contentType = ctx.hal ? {"Content-Type": "application/hal+json"} :
-                               {"Content-Type": "application/json" }
+  let contentType = ctx.hal ? {'Content-Type': 'application/hal+json'} :
+                               {'Content-Type': 'application/json' }
   response.writeHead(ctx.statusCode, contentType)
   response.write(JSON.stringify(ctx.result))
   response.end()
@@ -54,7 +54,7 @@ exports.createEndPoint = function(pipeline) {
                       process(request, response, pipeline)
                     }
                     else {
-                      file.get(request, response)
+                      fileHelper.get(request, response)
                     }
                   }
                 )
@@ -63,12 +63,12 @@ exports.createEndPoint = function(pipeline) {
     start(port) {
               server.port = port;
               server.listen(server.port)
-              log("API running at port: " + port + "\nCTRL + SHIFT + C to shutdown")
+              log('API running at port: ' + port + '\nCTRL + SHIFT + C to shutdown')
               return this
             },
     stop() {
               server.stop()
-              log("API at port: " + server.port + "stopping...")
+              log('API at port: ' + server.port + 'stopping...')
               return this
             }
   }

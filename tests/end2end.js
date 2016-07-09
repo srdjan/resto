@@ -1,14 +1,14 @@
 "use strict"
 
 const expect   = require('expect.js')
-const fn       = require('../src/core/fn.js')
-const db       = require('../src/core/db')
-const Pipeline = require('../src/pipeline')
-const authn    = require('../src/authn')
-const authr    = require('../src/authr')
-const resolver = require('../src/resolver')
-const invoker  = require('../src/invoker')
-const hal      = require('../src/hal')
+const fn       = require('../src/core').fn
+const db       = require('../src/core').db
+const Pipeline = require('../src/server').pipeline
+const authn    = require('../src/middleware').authn
+const authr    = require('../src/middleware').authr
+const resolver = require('../src/middleware').resolver
+const invoker  = require('../src/middleware').invoker
+const hal      = require('../src/middleware').hal
 
 const Apple    = require('./apple')
 const server   = require('./http-mock')

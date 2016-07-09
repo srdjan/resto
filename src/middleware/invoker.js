@@ -3,8 +3,8 @@
 //---------------------------------------------------------------------------------
 "use strict"
 
-const fn        = require('./core/fn.js')
-const resource  = require('./core/resource.js')
+const fn        = require('../core').fn
+const resource  = require('./resource')
 const log       = console.log
 
 exports.func = function(ctx) {

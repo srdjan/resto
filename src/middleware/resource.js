@@ -4,8 +4,8 @@
 "use strict"
 
 const Either = require('data.either')
-const fn     = require('./fn')
-const db     = require('./db')
+const fn     = require('../core').fn
+const db     = require('../core').db
 const log    = console.log
 
 function validateApiCall(ctx) {

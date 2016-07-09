@@ -5,7 +5,6 @@
 
 const halson = require('halson')
 const expect = require('expect.js')
-const fn = require('../src/core/fn')
 const log = console.log
 
 exports.createEndPoint = function(pipeline) {

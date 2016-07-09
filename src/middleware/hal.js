@@ -4,7 +4,7 @@
 "use strict"
 
 const halson = require('halson')
-const fn = require('./core/fn')
+const fn = require('../core').fn
 const log = console.log
 
 //--------

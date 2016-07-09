@@ -4,10 +4,10 @@
 "use strict"
 
 const path = require("path")
-const fs = require("fs")
-const url = require("url")
-const fn = require('./fn')
-const log = console.log
+const fs   = require("fs")
+const url  = require("url")
+const fn   = require('../core').fn
+const log  = console.log
 
 function getFile(fileName, response) {
   fs.readFile(fileName, "binary", (err, file) => {

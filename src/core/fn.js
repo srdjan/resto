@@ -76,11 +76,11 @@ function trace(h, func, ctx) {
 }
 
 // f, ep, m(a) -> m(b)
-function run(handler, ep, m) {
+function run(middleware, ep, m) {
   return m.chain(d => {
-    if (handler.trace) trace('-> ', handler.func, d)
-    let r = handler.func(d)
-    if (handler.trace) trace('<- ', handler.func, r)
+    if (middleware.trace) trace('-> ', middleware.func, d)
+    let r = middleware.func(d)
+    if (middleware.trace) trace('<- ', middleware.func, r)
 
     var res = ep(r) ? Either.Left(r) : Either.Right(r)
     return res
@@ -88,9 +88,9 @@ function run(handler, ep, m) {
 }
 
 // hs, ep, a -> b | err
-exports.runAll = function (handlers, ep, ctx) {
+exports.runAll = function (pipeline, ep, ctx) {
   let mctx = Either.of(ctx)
-  handlers.forEach(handler => { mctx = run(handler, ep, mctx) })
+  pipeline.forEach(middleware => { mctx = run(middleware, ep, mctx) })
   return mctx.merge()
 }
 
@@ -129,13 +129,13 @@ function f3(ctx) {
 }
 
 // setup
-let handlers = []
-handlers.push({ func: f1, pred: false, trace: false })
-handlers.push({ func: f2, pred: false, trace: false })
-handlers.push({ func: f3, pred: false, trace: false })
+let pipeline = []
+pipeline.push({ func: f1, pred: false, trace: false })
+pipeline.push({ func: f2, pred: false, trace: false })
+pipeline.push({ func: f3, pred: false, trace: false })
 
 // run until failure
 let ctx = { counter: 1, statusCode: 200 }
-ctx = exports.runAll(handlers, d => d.statusCode !== 200, ctx)
+ctx = exports.runAll(pipeline, d => d.statusCode !== 200, ctx)
 expect(ctx.counter).to.be(2)
 expect(ctx.statusCode).to.be(500)

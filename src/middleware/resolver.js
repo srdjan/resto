@@ -3,7 +3,7 @@
 //---------------------------------------------------------------------------------
 "use strict"
 
-const fn  = require('./core/fn')
+const fn  = require('../core').fn
 const log = console.log
 
 exports.func = function(ctx) {
@@ -32,7 +32,7 @@ exports.func = function(ctx) {
 //@tests
 //---------------------------------------------------------------------------------
 let expect = require('expect.js')
-log('testing: resolve.js')
+log('testing: resolver.js')
 
 // test: resolveType(url):- api/apples/123456/create
 let url = '/api/apples/'

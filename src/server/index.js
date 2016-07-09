@@ -1,4 +1,4 @@
 module.exports = {
-    middleware: require('./middleware'),
+    pipeline: require('./pipeline'),
     server: require('./server')
 }
