@@ -7,7 +7,7 @@
     "data.either": "^1.4.0",
     "expect.js": "^0.3.1",
     "halson": "^2.3.1",
-    "node-persist": "0.0.11",
+    "node-persist": "^0.0.11",
     "ramda": "^0.21.0",
     "urlsafe-base64": "^1.0.0"
   },
