@@ -1,6 +1,6 @@
 {
   "name": "resto",
-  "version": "2.1.1",
+  "version": "3.0.0",
   "description": "Playground for experimenting with Hypemedia driven APIs ",
   "main": "examples/apple-farm/app.js",
   "repository": {
@@ -25,5 +25,5 @@
     "major-release": "npm version major && npm publish && git push --follow-tags"
   },
   "author": "Srdjan",
-"license": "MIT"
+  "license": "MIT"
 }
