@@ -1,7 +1,0 @@
-refactor-state-invarinats-for-resto.txt
-
-resources:
-http://www.chorusjs.com/2015/01/18/state-machines-and-computation/
-http://www.fewbutripe.com/swift/math/algebra/2015/02/17/algebraic-structure-and-protocols.html
-http://james-forbes.com/#!posts/ramdaScrape
-http://blog.jle.im/entry/inside-my-world-ode-to-functor-and-monad#.U3o49arQUEY.twitter

@@ -1,6 +1,6 @@
 {
   "name": "resto",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Playground for experimenting with Hypemedia driven APIs ",
   "main": "examples/apple-farm/app.js",
   "repository": {
@@ -9,17 +9,18 @@
   },
   "dependencies": {
     "data.either": "^1.4.0",
-    "expect.js": "^0.3.1",
     "halson": "^2.3.1",
     "node-persist": "^0.0.11",
     "ramda": "^0.21.0",
     "tcomb": "^3.2.5",
     "urlsafe-base64": "^1.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "expect.js": "^0.3.1"
+  },
   "scripts": {
-    "test": "node ./tests/apple-tests.js",
-    "build": "node ./src/index.js",
+    "test": "node ./tests/end2end.js",
+    "build": "node index.js",
     "minor-release": "npm version minor && npm publish && git push --follow-tags",
     "major-release": "npm version major && npm publish && git push --follow-tags"
   },
