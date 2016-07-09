@@ -68,7 +68,11 @@ exports.process = function(request, ctx) {
   ctx.body = request.body
   let urlParts = urlParser.parse(request.url, true, true)
   ctx.url = urlParts.pathname
-  ctx.pageNumber = urlParts.query.hasOwnProperty('page') ? urlParts.query.page : 0
+  
+  ctx.pageNumber = 0
+  if( urlParts.query && urlParts.query.hasOwnProperty && urlParts.query.hasOwnProperty('page')) {
+    ctx.pageNumber = urlParts.query.page
+  }
   ctx.model = appModel
   ctx = fn.runAll(handlers, d => d.statusCode !== 200, ctx)
   return ctx

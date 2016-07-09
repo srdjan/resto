@@ -7,7 +7,7 @@ const fn        = require('./core/fn.js')
 const resource  = require('./core/resource.js')
 const log       = console.log
 
-exports.func  = function(ctx) {
+exports.func = function(ctx) {
   let handler = resource[ctx.method]
   if ( ! typeof handler) {
     ctx.result = { Error: 'method resolver error' }
