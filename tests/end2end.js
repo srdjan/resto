@@ -9,12 +9,10 @@ const authr    = require('../middleware').authr
 const resolver = require('../middleware').resolver
 const invoker  = require('../middleware').invoker
 const hal      = require('../middleware').hal
-
 const Apple    = require('./apple')
 const server   = require('./http-mock')
 const log      = console.log
 
-//- prepare
 db.clear()
 
 log('------ configure pipeline --------')
